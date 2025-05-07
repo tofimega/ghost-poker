@@ -8,8 +8,7 @@ enum Suit{
 	HEART,
 	SPADE,
 	CLUB,
-	DIAMOND,
-	SUIT_COUNT
+	DIAMOND
 }
 
 enum Rank{
@@ -17,17 +16,17 @@ enum Rank{
 	THREE,
 	FOUR,
 	FIVE,
-	SIC,
+	SIX,
 	SEVEN,
 	EIGHT,
 	NINE,
 	QUEEN,
 	KING,
-	ACE,
-	RANK_COUNT
+	ACE
 }
 
 
+@warning_ignore("shadowed_variable")
 func _init(suit: Suit, rank: Rank ):
 	self.suit=suit
 	self.rank=rank
