@@ -43,56 +43,121 @@ func new_game():
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
-	var suit_hands=[]
+	assert(hand.size()>=5)
+	var rankings: Array[Ranking] = []
+	@warning_ignore_start("int_as_enum_without_cast")
+	if hand.size()<5: return Ranking.new(0,[0,0,0,0,0])
+	
+	var suits=[]
 	for s in Card.Suit:
 		var suit_hand: Array[Card] = hand.filter(func (c: Card)-> bool: return c.suit==Card.Suit[s])
-		if suit_hand.size()>=5:
-			suit_hands.append(suit_hand)
-	if !suit_hands.is_empty():
-		suit_hands.sort_custom(func (left: Array[Card], right: Array[Card]): return left.reduce(func (acc: int,c: Card): return c.rank+acc, 0)>right.reduce(func (acc: int,c: Card): return c.rank+acc, 0))
-		return _rank_hand_with_flush(suit_hands[0])
-	
-	var trunc_hand: Array[Card] = hand.duplicate()
-	trunc_hand.sort_custom( func (left: Card, right: Card)->bool: return left.rank-right.rank>0 )
-	trunc_hand.resize(5)
-	@warning_ignore("int_as_enum_without_cast")
-	if trunc_hand.filter(func (c): return c != null).size()<5: return Ranking.new(Ranking.HandRank.HighCard, [0,0,0,0,0])
-	var card_rank: Array[Card.Rank] = trunc_hand.map(func (c: Card):  return c.rank)
+		suits.append(suit_hand)
+	for suit in suits:
+		if suit.size()<5: continue
+		rankings.append(_rank_hand_with_flush(suit))
 	
 	
-	if (card_rank[0]==card_rank[1] and 
-		card_rank[0]==card_rank[2] and 
-		card_rank[0]==card_rank[3]):
-		return Ranking.new(Ranking.HandRank.FourKind, card_rank)
+	var ranks: Array[int]
+	ranks.resize(Card.Rank.size())
 	
-	if (card_rank[0]==card_rank[1] and 
-		card_rank[0]==card_rank[2]):
-		if card_rank[3]==card_rank[4]: return Ranking.new(Ranking.HandRank.FullHouse,card_rank)
-		return Ranking.new(Ranking.HandRank.ThreeKind, card_rank)
+	for r in Card.Rank:
+		var rank: int = hand.reduce(func (count,c: Card)-> int: return (count+1 if c.rank==Card.Rank[r] else count), 0)
+		ranks[Card.Rank[r]]=rank
+	ranks.reverse()
+	
+	
+	var fkind_4: int=ranks.find(4)
+	var fkind_1: int=ranks.find(1)
+	if fkind_1>=0 and fkind_4>=0: 
+		@warning_ignore_start("confusable_local_declaration")
+		var card_ranks: Array[Card.Rank]
+		card_ranks.resize(5)
+		for i in 4: card_ranks[i]=(ranks.size()-fkind_4)+1
+		card_ranks[4]=(ranks.size()-fkind_1)+1
+		rankings.append(Ranking.new(Ranking.HandRank.FourKind, card_ranks))
+	
+	var fhouse_3: int=ranks.find(3)
+	var fhouse_2: int=ranks.find(2)
+	if fhouse_3>=0 and fhouse_2>=0: 
+		var card_ranks: Array[Card.Rank]
+		card_ranks.resize(5)
+		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)+1
+		for i in range(3,5): card_ranks[i]=(ranks.size()-fhouse_2)+1
+		rankings.append(Ranking.new(Ranking.HandRank.FullHouse, card_ranks))
 		
-	var straight_flag: bool=true
-	for i in range(1,5):
-		if abs(card_rank[i-1]-card_rank[i])!=1: 
-			straight_flag=false
-			break
-	if straight_flag:  Ranking.new(Ranking.HandRank.Straight,card_rank)
+	for i in ranks.size()-4:
+		if (ranks[i]>0 and
+			ranks[i+1]>0 and
+			ranks[i+2]>0 and
+			ranks[i+3]>0 and
+			ranks[i+4]>0):
+			
+			var card_ranks: Array[Card.Rank] = [(ranks.size()-i)+1,
+												(ranks.size()-(i+1))+1,
+												(ranks.size()-(i+2))+1,
+												(ranks.size()-(i+3))+1,
+												(ranks.size()-(i+4))+1]
+			
+			rankings.append(Ranking.new(Ranking.HandRank.Straight, card_ranks))
 	
-	if (card_rank[0]==card_rank[1] and 
-		card_rank[2]==card_rank[3]):
-		return Ranking.new(Ranking.HandRank.TwoPair, card_rank)
-	if (card_rank[0]==card_rank[1]): return Ranking.new(Ranking.HandRank.Pair, card_rank)
+	var tkind_1=ranks.find(1, fkind_1+1)
+	if tkind_1>=0 and fkind_1>=0 and fhouse_3>=0:
+		var card_ranks: Array[Card.Rank]
+		card_ranks.resize(5)
+		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)+1
+		for i in range(3,4): card_ranks[i]=(ranks.size()-fkind_1)+1
+		card_ranks[4]=(ranks.size()-tkind_1)+1
+		rankings.append(Ranking.new(Ranking.HandRank.ThreeKind, card_ranks))
+		
+	var tpair_2: int=ranks.find(2,fhouse_2+1)
+	if tpair_2>=0 and fkind_1>=0 and fhouse_2>=0:
+		var card_ranks: Array[Card.Rank]
+		card_ranks.resize(5)
+		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)+1
+		for i in range(2,4): card_ranks[i]=(ranks.size()-tpair_2)+1
+		card_ranks[4]=(ranks.size()-fkind_1)+1
+		rankings.append(Ranking.new(Ranking.HandRank.TwoPair, card_ranks))
 	
-	return Ranking.new(Ranking.HandRank.HighCard,card_rank)
+	var pair_1: int=ranks.find(1, tkind_1+1)
+	if pair_1>=0 and fkind_1>=0 and tkind_1>=0 and fhouse_2>=0:
+		var card_ranks: Array[Card.Rank]
+		card_ranks.resize(5)
+		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)+1
+		card_ranks[2]=(ranks.size()-fkind_1)+1
+		card_ranks[3]=(ranks.size()-tkind_1)+1
+		card_ranks[4]=(ranks.size()-pair_1)+1
+		rankings.append(Ranking.new(Ranking.HandRank.Pair, card_ranks))
+	
+	var card_ranks: Array[Card.Rank]
+	for i in ranks.size():
+		for j in ranks[i]:
+			if card_ranks.size()>=5: break
+			card_ranks.append((ranks.size()-i)+1)
+
+	rankings.append(Ranking.new(Ranking.HandRank.HighCard, card_ranks))
+	
+	rankings.sort_custom(func (left: Ranking, right: Ranking): return left.hand_rank>right.hand_rank || (left.hand_rank==right.hand_rank && left.cards_rank>right.cards_rank))
+	return rankings[0]
 
 
 func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
-	var trunc_hand: Array[Card]=hand.duplicate() 
-	trunc_hand.sort_custom(func (left: Card, right: Card)->bool: return left.rank-right.rank>0)
-	trunc_hand.resize(5)
-	var card_rank: Array[Card.Rank] = trunc_hand.map(func (c: Card):  return c.rank)
-	for i in range(1,5):
-		if abs(card_rank[i-1]-card_rank[i])!=1: return Ranking.new(Ranking.HandRank.Flush,card_rank)
-	return Ranking.new(Ranking.HandRank.StraightFlush,card_rank)
+	hand.sort_custom(func (left: Card, right: Card)->bool: return left.rank-right.rank>0)
+	var card_rank: Array[Card.Rank] = hand.map(func (c: Card):  return c.rank)
+	
+	if card_rank.size()<5: return Ranking.new(Ranking.HandRank.HighCard,card_rank)
+	
+	for i in card_rank.size()-4 :
+		if (card_rank[i+1]==card_rank[i]-1 and
+			card_rank[i+2]==card_rank[i]-2 and
+			card_rank[i+3]==card_rank[i]-3 and
+			card_rank[i+4]==card_rank[i]-4):
+				return Ranking.new(Ranking.HandRank.StraightFlush, [card_rank[i],
+																	card_rank[i+1],
+																	card_rank[i+2],
+																	card_rank[i+3],
+																	card_rank[i+4]])
+	card_rank.duplicate().resize(5)
+	return Ranking.new(Ranking.HandRank.Flush,card_rank)
 
 
 func compare_hands(left: Array[Card], right: Array[Card]) -> int:
