@@ -1,51 +1,123 @@
 extends Node
 
+enum GameState{
+	CLOSED,
+	RUNNING,
+	TIE,
+	CONCLUSIVE
 
+}
+
+signal hand_dealt(player: Player)
+signal game_start
+signal next_round
+signal deck_empty
+signal game_over(result: GameState, winner)
 
 const PLAYER_COUNT: int = 4
 const STARING_HAND_SIZE: int = 5
+const CARDS_PER_ROUND: int = 2
 const STARING_CHIP_COUNT: int = 100
+const STARTING_ANTE: int = 40
 
 var players: Array[Player] = []
 
 var deck: Array[Card] = []
 
+var pool: int=0
 
-func _ready(): _init_game_state()
+var game_state: GameState=GameState.CLOSED
+
+func _ready()->void: 
+	_init_game_state()
+	deck_empty.connect(showdown)
 
 
-func deal_cards(player: Player, count: int):
+func get_player(id: int)->Player:
+	var rt: Player=null
+	
+	var i: int=players.find_custom(func(p: Player): return p.id==id)
+	if i>=0: rt=players[i]
+	return rt
+
+@warning_ignore_start("int_as_enum_without_cast")
+func showdown()->void:
+	print("Showdown!")
+	var winning_hand: Ranking = players.reduce(func(acc: Ranking, player: Player):
+		var rank: Ranking=rank_hand(player.hand)
+		
+		if rank.hand_rank>acc.hand_rank || (rank.hand_rank==acc.hand_rank && rank.cards_rank>acc.cards_rank):
+			return rank
+		return acc
+		
+		, Ranking.new(Ranking.HandRank.HighCard, [0,0,0,0,0]))
+	
+	var winners: Array[Player]
+	
+	for p in players:
+		var ranking: Ranking=rank_hand(p.hand)
+		if ranking.hand_rank==winning_hand.hand_rank && ranking.cards_rank==winning_hand.cards_rank:
+			winners.append(p)
+			
+	if winners.size()==1:
+		game_state=GameState.CONCLUSIVE
+		game_over.emit(GameState.CONCLUSIVE, winners[0])
+		print("WINNER: "+str(winners[0].id))
+	else:
+		game_state=GameState.TIE
+		game_over.emit(GameState.TIE, winners)
+		print("TIE! "+str(winners.map(func(p: Player): return p.id)))
+
+func deal_cards(player: Player, count: int)->void:
 	for i in count:
-		if deck.is_empty(): return # TODO: signal empty deck
+		if deck.is_empty(): 
+			deck_empty.emit()
+			return
 		player.hand.append(deck.pop_back())
+	hand_dealt.emit(player)
+	if deck.is_empty(): 
+			deck_empty.emit()
 
 
-func _clear_game_state():
+func start_next_round()->void:
+	for p in players:
+		if deck.size()==0: break
+		deal_cards(p, CARDS_PER_ROUND)
+	next_round.emit()
+
+
+func _clear_game_state()->void:
 	players.clear()
 	deck.clear()
+	game_state=GameState.CLOSED
 
 
-func _init_game_state():
+func _init_game_state()->void:
 	for i in Card.Suit.size(): 
 		for j in Card.Rank.size():
 			deck.append(Card.new(i,j))
 
 	deck.shuffle()
-	for i in PLAYER_COUNT: players.append(Player.new())
+	for i in PLAYER_COUNT: 
+		players.append(Player.new())
+		players[-1].id=i
 	for p in players:
 		deal_cards(p, STARING_HAND_SIZE)
 		p.chips=STARING_CHIP_COUNT
+		p.bet(STARTING_ANTE)
+	game_state=GameState.RUNNING
 
 
-func new_game():
+func new_game()->void:
 	_clear_game_state()
 	_init_game_state()
+	game_start.emit()
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
 	assert(hand.size()>=5)
 	var rankings: Array[Ranking] = []
-	@warning_ignore_start("int_as_enum_without_cast")
+	
 	if hand.size()<5: return Ranking.new(0,[0,0,0,0,0])
 	
 	var suits=[]
@@ -92,11 +164,11 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 			ranks[i+3]>0 and
 			ranks[i+4]>0):
 			
-			var card_ranks: Array[Card.Rank] = [(ranks.size()-i)+1,
-												(ranks.size()-(i+1))+1,
-												(ranks.size()-(i+2))+1,
-												(ranks.size()-(i+3))+1,
-												(ranks.size()-(i+4))+1]
+			var card_ranks: Array[Card.Rank] = [(ranks.size()-i)-1,
+												(ranks.size()-(i+1))-1,
+												(ranks.size()-(i+2))-1,
+												(ranks.size()-(i+3))-1,
+												(ranks.size()-(i+4))-1]
 			
 			rankings.append(Ranking.new(Ranking.HandRank.Straight, card_ranks))
 	
@@ -104,35 +176,35 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 	if tkind_1>=0 and fkind_1>=0 and fhouse_3>=0:
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
-		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)+1
-		for i in range(3,4): card_ranks[i]=(ranks.size()-fkind_1)+1
-		card_ranks[4]=(ranks.size()-tkind_1)+1
+		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)-1
+		for i in range(3,4): card_ranks[i]=(ranks.size()-fkind_1)-1
+		card_ranks[4]=(ranks.size()-tkind_1)-1
 		rankings.append(Ranking.new(Ranking.HandRank.ThreeKind, card_ranks))
 		
 	var tpair_2: int=ranks.find(2,fhouse_2+1)
 	if tpair_2>=0 and fkind_1>=0 and fhouse_2>=0:
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
-		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)+1
-		for i in range(2,4): card_ranks[i]=(ranks.size()-tpair_2)+1
-		card_ranks[4]=(ranks.size()-fkind_1)+1
+		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)-1
+		for i in range(2,4): card_ranks[i]=(ranks.size()-tpair_2)-1
+		card_ranks[4]=(ranks.size()-fkind_1)-1
 		rankings.append(Ranking.new(Ranking.HandRank.TwoPair, card_ranks))
 	
 	var pair_1: int=ranks.find(1, tkind_1+1)
 	if pair_1>=0 and fkind_1>=0 and tkind_1>=0 and fhouse_2>=0:
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
-		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)+1
-		card_ranks[2]=(ranks.size()-fkind_1)+1
-		card_ranks[3]=(ranks.size()-tkind_1)+1
-		card_ranks[4]=(ranks.size()-pair_1)+1
+		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)-1
+		card_ranks[2]=(ranks.size()-fkind_1)-1
+		card_ranks[3]=(ranks.size()-tkind_1)-1
+		card_ranks[4]=(ranks.size()-pair_1)-1
 		rankings.append(Ranking.new(Ranking.HandRank.Pair, card_ranks))
 	
 	var card_ranks: Array[Card.Rank]
 	for i in ranks.size():
 		for j in ranks[i]:
 			if card_ranks.size()>=5: break
-			card_ranks.append((ranks.size()-i)+1)
+			card_ranks.append((ranks.size()-i)-1)
 
 	rankings.append(Ranking.new(Ranking.HandRank.HighCard, card_ranks))
 	
@@ -142,9 +214,12 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 
 func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
 	hand.sort_custom(func (left: Card, right: Card)->bool: return left.rank-right.rank>0)
-	var card_rank: Array[Card.Rank] = hand.map(func (c: Card):  return c.rank)
+	var card_rank: Array[Card.Rank]
+	card_rank.resize(hand.size())
+	for h in hand.size():
+		card_rank[h]=hand[h].rank
 	
-	if card_rank.size()<5: return Ranking.new(Ranking.HandRank.HighCard,card_rank)
+	if card_rank.size()<5: return Ranking.new(Ranking.HandRank.HighCard,[0,0,0,0,0])
 	
 	for i in card_rank.size()-4 :
 		if (card_rank[i+1]==card_rank[i]-1 and
@@ -156,8 +231,9 @@ func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
 																	card_rank[i+2],
 																	card_rank[i+3],
 																	card_rank[i+4]])
-	card_rank.duplicate().resize(5)
-	return Ranking.new(Ranking.HandRank.Flush,card_rank)
+	var a=card_rank.duplicate()
+	a.resize(5)
+	return Ranking.new(Ranking.HandRank.Flush,a)
 
 
 func compare_hands(left: Array[Card], right: Array[Card]) -> int:

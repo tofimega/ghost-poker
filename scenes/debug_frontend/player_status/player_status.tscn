@@ -51,4 +51,3 @@ theme_override_constants/separation = 10
 [node name="Rank" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Rank: "
-autowrap_mode = 2
