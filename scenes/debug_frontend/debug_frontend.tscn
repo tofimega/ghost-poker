@@ -27,12 +27,20 @@ layout_mode = 2
 [node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="HBoxContainer"]
+[node name="NextRound" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "Next Round"
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="NewGame" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "New Game"
 
 [node name="Players" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
 
-[connection signal="pressed" from="HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/NextRound" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/NewGame" to="." method="_on_new_game_pressed"]

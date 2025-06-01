@@ -12,6 +12,8 @@ signal hand_dealt(player: Player)
 signal game_start
 signal next_round
 signal deck_empty
+@warning_ignore("unused_signal")
+signal player_out(p: Player)
 signal game_over(result: GameState, winner)
 
 const PLAYER_COUNT: int = 4
@@ -20,30 +22,28 @@ const CARDS_PER_ROUND: int = 2
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 
-var players: Array[Player] = []
+var players: Dictionary[int, Player] = {}
 
 var deck: Array[Card] = []
 
 var pool: int=0
 
 var game_state: GameState=GameState.CLOSED
+var current_turn: int=-1
 
 func _ready()->void: 
 	_init_game_state()
 	deck_empty.connect(showdown)
+	
 
 
 func get_player(id: int)->Player:
-	var rt: Player=null
-	
-	var i: int=players.find_custom(func(p: Player): return p.id==id)
-	if i>=0: rt=players[i]
-	return rt
+	return players[id]
 
 @warning_ignore_start("int_as_enum_without_cast")
 func showdown()->void:
 	print("Showdown!")
-	var winning_hand: Ranking = players.reduce(func(acc: Ranking, player: Player):
+	var winning_hand: Ranking = players.values().reduce(func(acc: Ranking, player: Player):
 		var rank: Ranking=rank_hand(player.hand)
 		
 		if rank.hand_rank>acc.hand_rank || (rank.hand_rank==acc.hand_rank && rank.cards_rank>acc.cards_rank):
@@ -54,7 +54,7 @@ func showdown()->void:
 	
 	var winners: Array[Player]
 	
-	for p in players:
+	for p in players.values():
 		var ranking: Ranking=rank_hand(p.hand)
 		if ranking.hand_rank==winning_hand.hand_rank && ranking.cards_rank==winning_hand.cards_rank:
 			winners.append(p)
@@ -80,33 +80,44 @@ func deal_cards(player: Player, count: int)->void:
 
 
 func start_next_round()->void:
-	for p in players:
+	for p in players.values():
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
+	current_turn+=1
 	next_round.emit()
 
 
 func _clear_game_state()->void:
 	players.clear()
 	deck.clear()
+	pool=0
+	current_turn=-1
 	game_state=GameState.CLOSED
 
 
 func _init_game_state()->void:
+	current_turn=0
 	for i in Card.Suit.size(): 
 		for j in Card.Rank.size():
 			deck.append(Card.new(i,j))
 
 	deck.shuffle()
 	for i in PLAYER_COUNT: 
-		players.append(Player.new())
-		players[-1].id=i
-	for p in players:
+		players[i]=Player.new()
+		
+	for p in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
 		p.chips=STARING_CHIP_COUNT
 		p.bet(STARTING_ANTE)
 	game_state=GameState.RUNNING
 
+
+#TODO: is only for debug
+#CRITICAL: DON'T FORGET TO RESTORE PHYSICS TICK RATE WHEN REMOVING THIS
+func _physics_process(delta: float) -> void:
+	for p: Player in players.values():
+		p.controller.my_turn()
+	print()
 
 func new_game()->void:
 	_clear_game_state()

@@ -18,10 +18,18 @@ func _ready():
 
 
 func _fetch_player_data():
-	player_id_label.text="ID: "+str(player.get_ref().id)
-	chips.text="Chips: "+str(player.get_ref().chips)
+	var maybe_player: Player = player.get_ref()
+	if maybe_player == null:
+		queue_free()
+		return
+	if !maybe_player.in_game:
+		modulate=Color(0.5,0.5,0.5,1)
+		return
+	modulate=Color(1,1,1,1)
+	player_id_label.text="ID: "+str(maybe_player.id)
+	chips.text="Chips: "+str(maybe_player.chips)
 	for c in cards.get_children(): c.queue_free()
-	for c in player.get_ref().hand:
+	for c in maybe_player.hand:
 		var card_label: Label = Label.new()
 		card_label.text="suit: "+str(Card.Suit.find_key(c.suit))+", "+"rank: "+str(Card.Rank.find_key(c.rank))
 		cards.add_child(card_label)
