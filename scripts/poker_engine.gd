@@ -22,6 +22,7 @@ const CARDS_PER_ROUND: int = 2
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 
+#CRITICAL: memleak on new game
 var players: Dictionary[int, Player] = {}
 
 var deck: Array[Card] = []
@@ -88,7 +89,13 @@ func start_next_round()->void:
 
 
 func _clear_game_state()->void:
+	players.values().map(func(p:Player): 
+		p.free()
+		return null)
 	players.clear()
+	deck.map(func(p:Card): 
+		p.free()
+		return null)
 	deck.clear()
 	pool=0
 	current_turn=-1
@@ -104,7 +111,8 @@ func _init_game_state()->void:
 	deck.shuffle()
 	for i in PLAYER_COUNT: 
 		players[i]=Player.new()
-		
+	
+	pool=0
 	for p in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
 		p.chips=STARING_CHIP_COUNT

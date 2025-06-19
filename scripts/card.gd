@@ -1,5 +1,5 @@
 class_name Card
-extends RefCounted
+extends Object
 
 var suit: Suit
 var rank: Rank
