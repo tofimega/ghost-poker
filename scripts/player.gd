@@ -14,6 +14,9 @@ var in_game: bool=true
 
 var controller: PlayerController = PlayerController.new(self)
 
+func _init():
+	PokerEngine.next_round.connect(func(): if in_game: controller.my_turn())
+
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_PREDELETE:

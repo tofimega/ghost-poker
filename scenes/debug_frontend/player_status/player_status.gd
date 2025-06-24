@@ -5,6 +5,7 @@ extends PanelContainer
 @onready var chips: Label = $VBoxContainer/Chips
 @onready var cards: VBoxContainer = $VBoxContainer/ScrollContainer/Cards
 @onready var rank: Label = $VBoxContainer/Rank
+@onready var conf: Label = $VBoxContainer/Conf
 
 
 var player: Player
@@ -13,7 +14,7 @@ var player_id: int = PokerEngine.PLAYER_COUNT+1
 
 func _ready():
 	player=PokerEngine.get_player(player_id)
-	PokerEngine.next_round.connect(_fetch_player_data)
+	PokerEngine.next_round.connect(_fetch_player_data, CONNECT_DEFERRED)
 	_fetch_player_data()
 
 
@@ -35,3 +36,4 @@ func _fetch_player_data():
 		cards.add_child(card_label)
 	var a=PokerEngine.rank_hand(player.hand)
 	rank.text="Rank: "+Ranking.HandRank.find_key(a.hand_rank)+", "+ str(a.cards_rank) #a.cards_rank.map(func (r: Card.Rank): Card.Rank.find_key(r))
+	conf.text="Conf: "+str(player.controller.conf_last_turn)

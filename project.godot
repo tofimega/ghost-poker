@@ -19,10 +19,6 @@ config/icon="res://icon.svg"
 
 PokerEngine="*res://scripts/poker_engine.gd"
 
-[physics]
-
-common/physics_ticks_per_second=1
-
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

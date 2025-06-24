@@ -22,7 +22,7 @@ const CARDS_PER_ROUND: int = 2
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 
-#CRITICAL: memleak on new game
+
 var players: Dictionary[int, Player] = {}
 
 var deck: Array[Card] = []
@@ -85,6 +85,7 @@ func start_next_round()->void:
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
 	current_turn+=1
+	
 	next_round.emit()
 
 
@@ -120,13 +121,6 @@ func _init_game_state()->void:
 	game_state=GameState.RUNNING
 
 
-#TODO: is only for debug
-#CRITICAL: DON'T FORGET TO RESTORE PHYSICS TICK RATE WHEN REMOVING THIS
-func _physics_process(delta: float) -> void:
-	for p: Player in players.values():
-		p.controller.my_turn()
-	print()
-
 func new_game()->void:
 	_clear_game_state()
 	_init_game_state()
@@ -134,6 +128,8 @@ func new_game()->void:
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
+	
+	
 	assert(hand.size()>=5)
 	var rankings: Array[Ranking] = []
 	
