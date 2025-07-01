@@ -21,6 +21,12 @@ layout_mode = 2
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="HIghestBet" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="VSeparator4" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+
 [node name="Deck" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 

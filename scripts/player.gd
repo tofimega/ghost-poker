@@ -4,7 +4,9 @@ extends Object
 
 var hand: Array[Card] = []
 
-var chips: int = 0
+var chips: int = 0:
+	set(c):
+		chips=max(c, 0)
 
 var id: int =-1:
 	get:
@@ -14,8 +16,7 @@ var in_game: bool=true
 
 var controller: PlayerController = PlayerController.new(self)
 
-func _init():
-	PokerEngine.next_round.connect(func(): if in_game: controller.my_turn())
+
 
 func _notification(what: int) -> void:
 	match what:
@@ -25,13 +26,11 @@ func _notification(what: int) -> void:
 
 
 @warning_ignore("shadowed_variable")
-func bet(bet: int)-> int:
-	bet=min(bet, chips)
-	chips-=bet
-	PokerEngine.pool+=bet
+func bet()-> PlayerController.Bet:
+	if !in_game: return null
+	var bet: PlayerController.Bet = controller.my_turn()
 	return bet
 
-func fold()-> void:
+func fold()->void:
 	in_game=false
 	PokerEngine.player_out.emit(self)
-	
