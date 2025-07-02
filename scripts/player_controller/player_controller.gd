@@ -18,12 +18,19 @@ const POWER_MULT_HSIZE: float=1
 const POWER_MULT_PLAYERS:float=1
 const TIME_OFFSET: float=0.5
 
+
+
 const MIN_VAR: float=0.9
 const MAX_VAR: float=1.1
 
 const BLUFF_THRESH: float = 0.3
 const BLUFF_MULT: float = 1.1
 const BLUFF_COUNT: int = 3
+
+const FOLD_MULT: float = 1.3
+const CALL_MULT: float = 1.1
+const RAISE_MULT: float = 0.99
+const ALL_IN_MULT: float = 0.7
 
 #TODO: consider previous bets in round
 func find_odds()->float:
@@ -37,16 +44,27 @@ func find_odds()->float:
 	rt+=add_rank
 	var add_card: float=float(hand_rank.cards_rank[0])/(Card.Rank.size()-1)*POWER_ADD_CRANK
 	rt+=add_card
-
-	# more players  -> smaller num
-	var mult_players: float=(float(PokerEngine.players.values().reduce(func(acc: int,p: Player):
-		if p.in_game: acc+=1
-		return acc , 0))/(float(PokerEngine.PLAYER_COUNT)))*POWER_MULT_PLAYERS
 	
-	rt*=mult_players
 	# some randomness
 	rt*=randf_range(MIN_VAR, MAX_VAR)
-	rt/=(POWER_ADD_CRANK+POWER_ADD_HRANK)*mult_players*MAX_VAR
+	
+	
+	var avg_bet: float=0
+	for id: int in PokerEngine.player_bets:
+		if id == player.id: continue
+		
+		match PokerEngine.player_bets[id]:
+			Bet.Type.CALL: avg_bet+=CALL_MULT
+			Bet.Type.RAISE: avg_bet+=RAISE_MULT
+			Bet.Type.FOLD: avg_bet+=FOLD_MULT
+			Bet.Type.ALL_IN: avg_bet+=ALL_IN_MULT
+	
+	if PokerEngine.player_bets.size()>0:
+		avg_bet/=PokerEngine.player_bets.size()
+		rt*=avg_bet
+		rt/=RAISE_MULT
+	
+	rt/=(POWER_ADD_CRANK+POWER_ADD_HRANK)*MAX_VAR
 	rt=ease(rt, -((PokerEngine.current_turn+TIME_OFFSET)*POWER_ADD_TIME))
 	
 	#bluff
@@ -73,9 +91,10 @@ class Bet extends RefCounted:
 		self.type=type
 
 
-const CALL_THRESHOLD: float = 0.1/MAX_VAR
-const RAISE_THRESHOLD: float = 0.5/MAX_VAR
-const ALL_IN_THRESHOLD: float = 0.7/MAX_VAR
+const CALL_THRESHOLD: float = 0.05/MAX_VAR
+const RAISE_THRESHOLD: float = 0.7/MAX_VAR
+const FORCED_ALL_IN_MULT: float = 1.1
+const ALL_IN_THRESHOLD: float = 0.9/MAX_VAR
 var conf_last_turn: float = -1325
 
 func my_turn() -> Bet:
@@ -86,16 +105,18 @@ func my_turn() -> Bet:
 	conf_last_turn = confidence
 	
 	if player.chips <= PokerEngine.highest_bet:
-		if confidence >= ALL_IN_THRESHOLD:
+		if confidence >= CALL_THRESHOLD*FORCED_ALL_IN_MULT:
 			return Bet.new(player.chips, Bet.Type.ALL_IN)
 		return Bet.new(0, Bet.Type.FOLD)
 		
+	if confidence >= ALL_IN_THRESHOLD:
+		return Bet.new(player.chips, Bet.Type.ALL_IN)
 	
-	if confidence > RAISE_THRESHOLD:
-		var amount: int = min(PokerEngine.highest_bet + player.chips*(confidence-RAISE_THRESHOLD), player.chips)
+	if confidence >= RAISE_THRESHOLD:
+		var amount: int = min(PokerEngine.highest_bet + max(player.chips*(confidence-RAISE_THRESHOLD+0.01)/10, 1), player.chips)
 		if amount == player.chips:
-			if confidence >= ALL_IN_THRESHOLD: return Bet.new(amount, Bet.Type.ALL_IN)
-			return Bet.new(0, Bet.Type.FOLD)
+			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: return Bet.new(amount, Bet.Type.ALL_IN)
+			return Bet.new(PokerEngine.highest_bet, Bet.Type.CALL)
 		return Bet.new(amount, Bet.Type.RAISE)
 	
 	if confidence >= CALL_THRESHOLD:

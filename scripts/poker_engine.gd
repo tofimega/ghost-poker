@@ -21,7 +21,7 @@ const STARING_HAND_SIZE: int = 5
 const CARDS_PER_ROUND: int = 2
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
-
+const MINIMUM_BET: int = 3
 
 var players: Dictionary[int, Player] = {}
 
@@ -74,6 +74,7 @@ func showdown()->void:
 		
 
 func deal_cards(player: Player, count: int)->void:
+	if !player.in_game: return
 	for i in count:
 		if deck.is_empty():
 			deck_empty.emit()
@@ -93,8 +94,9 @@ func current_player_count()->int:
 		,0)
 
 func start_next_round()->void:
+	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
-	highest_bet = 0
+	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
 
 	for p in players.values():
@@ -105,11 +107,23 @@ func start_next_round()->void:
 
 	while calls_this_turn < current_player_count(): #or highest_bet==0
 		for id in players:
+			if current_player_count() <=1:
+				game_state=GameState.CONCLUSIVE
+				var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
+				game_over.emit(GameState.CONCLUSIVE, winning_player)
+				return
+				
 			var p: Player = players[id]
 			if !p.in_game: continue
 			_handle_player_bet(id, p.bet())
+	
+	for p: Player in players.values():
+		if !p.in_game: continue
+		var bet: int = min(highest_bet, p.chips)
+		p.chips-=bet
+		pool+=bet
 
-	if highest_bet ==0: showdown() #TODO: find better fix
+	#if highest_bet ==0: showdown() #TODO: find better fix
 	next_round.emit()
 
 var calls_this_turn: int=0
@@ -117,8 +131,6 @@ var calls_this_turn: int=0
 func _handle_player_bet(id: int, bet: PlayerController.Bet)->void:
 	player_bets[id] = bet.type
 	highest_bet=max(bet.amount, highest_bet)
-	players[id].chips-=bet.amount
-	pool+=bet.amount
 
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()

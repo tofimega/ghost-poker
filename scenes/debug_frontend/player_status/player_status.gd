@@ -16,6 +16,7 @@ var player_id: int = PokerEngine.PLAYER_COUNT+1
 func _ready():
 	player=PokerEngine.get_player(player_id)
 	PokerEngine.next_round.connect(_fetch_player_data, CONNECT_DEFERRED)
+	PokerEngine.game_over.connect(func(a,b): _fetch_player_data(), CONNECT_DEFERRED)
 	_fetch_player_data()
 
 
@@ -26,8 +27,8 @@ func _fetch_player_data():
 		return
 	if !player.in_game:
 		modulate=Color(0.5,0.5,0.5,1)
-		return
-	modulate=Color(1,1,1,1)
+	else: modulate=Color(1,1,1,1)
+	
 	player_id_label.text="ID: "+str(player.id)
 	chips.text="Chips: "+str(player.chips)
 	for c in cards.get_children(): c.queue_free()
