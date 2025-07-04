@@ -43,7 +43,7 @@ func get_player(id: int)->Player:
 
 @warning_ignore_start("int_as_enum_without_cast")
 func showdown()->void:
-	print("Showdown!")
+	Logger.log_text("Showdown!")
 	var winning_hand: Ranking = players.values().reduce(func(acc: Ranking, player: Player):
 		if !player.in_game: return acc
 		var rank: Ranking=rank_hand(player.hand)
@@ -65,11 +65,11 @@ func showdown()->void:
 	if winners.size()==1:
 		game_state=GameState.CONCLUSIVE
 		game_over.emit(GameState.CONCLUSIVE, winners[0])
-		print("WINNER: "+str(winners[0].id))
+		Logger.log_text("WINNER: "+str(winners[0].id))
 	else:
 		game_state=GameState.TIE
 		game_over.emit(GameState.TIE, winners)
-		print("TIE! "+str(winners.map(func(p: Player): return p.id)))
+		Logger.log_text("TIE! "+str(winners.map(func(p: Player): return p.id)))
 		
 		
 
@@ -98,32 +98,47 @@ func start_next_round()->void:
 	player_bets.clear()
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
+	Logger.log_text("CURRENT TURN: "+str(current_turn))
 
 	for p in players.values():
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
 	current_turn+=1
 
-
-	while calls_this_turn < current_player_count(): #or highest_bet==0
-		for id in players:
-			if current_player_count() <=1:
-				game_state=GameState.CONCLUSIVE
-				var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
-				game_over.emit(GameState.CONCLUSIVE, winning_player)
-				return
-				
-			var p: Player = players[id]
-			if !p.in_game: continue
-			_handle_player_bet(id, p.bet())
+	var counter: int=0
+	while calls_this_turn < current_player_count():
+		var ids: Array[int] = players.keys()
+		var id: int = counter % ids.size()
+		counter+=1
+		if current_player_count() <=1:
+			game_state=GameState.CONCLUSIVE
+			var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
+			Logger.log_text("GAME OVER!")
+			Logger.log_text("WINNER: "+str(winning_player.id))
+			game_over.emit(GameState.CONCLUSIVE, winning_player)
+			return
+			
+		var p: Player = players[id]
+		if !p.in_game: continue
+		Logger.log_text("current highest bet: "+str(highest_bet))
+		
+		var player_bets_text: Dictionary[int, String]
+		for i in player_bets.keys(): player_bets_text[i] = PlayerController.Bet.Type.find_key(player_bets[i])
+		Logger.log_text("current player bets: "+str(player_bets_text))
+		Logger.log_text("players remaining: "+str(current_player_count()))
+		Logger.log_text(" ")
+		_handle_player_bet(id, p.bet())
+		
 	
+	Logger.log_text("final bet: "+str(highest_bet))
+	Logger.log_text(" ")
 	for p: Player in players.values():
 		if !p.in_game: continue
 		var bet: int = min(highest_bet, p.chips)
 		p.chips-=bet
 		pool+=bet
 
-	#if highest_bet ==0: showdown() #TODO: find better fix
+
 	next_round.emit()
 
 var calls_this_turn: int=0
@@ -136,7 +151,7 @@ func _handle_player_bet(id: int, bet: PlayerController.Bet)->void:
 		players[id].fold()
 		return
 
-	if bet.type == bet.Type.CALL or bet.type == bet.Type.ALL_IN: calls_this_turn+=1
+	if bet.type == bet.Type.CALL or (bet.type == bet.Type.ALL_IN and players[id].controller.forced_all_in): calls_this_turn+=1
 	else: calls_this_turn = 0
 
 
@@ -145,6 +160,7 @@ func _clear_game_state()->void:
 		p.free()
 		return null)
 	players.clear()
+	player_bets.clear()
 	deck.map(func(p:Card):
 		p.free()
 		return null)
@@ -180,7 +196,6 @@ func new_game()->void:
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
-
 
 	assert(hand.size()>=5)
 	var rankings: Array[Ranking] = []

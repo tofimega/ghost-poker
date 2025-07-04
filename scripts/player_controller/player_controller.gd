@@ -78,10 +78,10 @@ func find_odds()->float:
 
 class Bet extends RefCounted:
 	enum Type {
+		FOLD,
 		CALL,
 		RAISE,
-		ALL_IN,
-		FOLD
+		ALL_IN
 	}
 	var amount: int
 	var type: Type
@@ -91,35 +91,58 @@ class Bet extends RefCounted:
 		self.type=type
 
 
-const CALL_THRESHOLD: float = 0.05/MAX_VAR
+const CALL_THRESHOLD: float = 0.08/MAX_VAR
 const RAISE_THRESHOLD: float = 0.7/MAX_VAR
-const FORCED_ALL_IN_MULT: float = 1.1
+const FORCED_ALL_IN_MULT: float = 1.3
 const ALL_IN_THRESHOLD: float = 0.9/MAX_VAR
 var conf_last_turn: float = -1325
 
+var forced_all_in: bool = false
 func my_turn() -> Bet:
 	if player == null or !player.in_game: return null
+	forced_all_in=false
+	Logger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
+	Logger.log_text(" ")
 	
 	
 	var confidence: float = find_odds()
+	Logger.log_text("player "+str(player.id)+"'s confidence: "+ str(confidence))
 	conf_last_turn = confidence
 	
-	if player.chips <= PokerEngine.highest_bet:
-		if confidence >= CALL_THRESHOLD*FORCED_ALL_IN_MULT:
-			return Bet.new(player.chips, Bet.Type.ALL_IN)
-		return Bet.new(0, Bet.Type.FOLD)
-		
+	Logger.log_text("player "+str(player.id)+" considers going ALL IN... "+" (threshold: " + str(ALL_IN_THRESHOLD) + ")")
 	if confidence >= ALL_IN_THRESHOLD:
+		Logger.log_text("player "+str(player.id)+" goes ALL IN!")
 		return Bet.new(player.chips, Bet.Type.ALL_IN)
 	
+	if player.chips <= PokerEngine.highest_bet or player.chips==0:
+		Logger.log_text("player "+str(player.id)+" has insufficient chips, considering going ALL IN... "+ "(threshold: " + str(CALL_THRESHOLD*FORCED_ALL_IN_MULT) + ")")
+		if confidence >= CALL_THRESHOLD*FORCED_ALL_IN_MULT:
+			Logger.log_text("player "+str(player.id)+" goes ALL IN!")
+			forced_all_in=true
+			return Bet.new(player.chips, Bet.Type.ALL_IN)
+		Logger.log_text("player "+str(player.id)+" FOLDS!")
+		return Bet.new(0, Bet.Type.FOLD)
+		
+	
+	Logger.log_text("player "+str(player.id)+" considers RAISING... "+" (threshold: " + str(RAISE_THRESHOLD) + ")")
 	if confidence >= RAISE_THRESHOLD:
 		var amount: int = min(PokerEngine.highest_bet + max(player.chips*(confidence-RAISE_THRESHOLD+0.01)/10, 1), player.chips)
+		Logger.log_text("player "+str(player.id)+" tries RAISING bet to: "+ str(amount))
 		if amount == player.chips:
-			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: return Bet.new(amount, Bet.Type.ALL_IN)
+			Logger.log_text("player "+str(player.id)+"'s RAISE is more than all their chips, considering going ALL IN... "+ "(threshold: " + str(RAISE_THRESHOLD*FORCED_ALL_IN_MULT) + ")")
+			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: 
+				Logger.log_text("player "+str(player.id)+" goes ALL IN!")
+				return Bet.new(amount, Bet.Type.ALL_IN)
+			Logger.log_text("player "+str(player.id)+" CALLS instead!")
 			return Bet.new(PokerEngine.highest_bet, Bet.Type.CALL)
+		
+		Logger.log_text("player "+str(player.id)+" RAISES!")
 		return Bet.new(amount, Bet.Type.RAISE)
 	
+	Logger.log_text("player "+str(player.id)+" considers CALLING... "+" (threshold: " + str(CALL_THRESHOLD) + ")")
 	if confidence >= CALL_THRESHOLD:
+		Logger.log_text("player "+str(player.id)+" CALLS!")
 		return Bet.new(PokerEngine.highest_bet, Bet.Type.CALL)
 		
+	Logger.log_text("player "+str(player.id)+" FOLDS!")
 	return Bet.new(0, Bet.Type.FOLD)
