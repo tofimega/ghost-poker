@@ -16,7 +16,8 @@ const POWER_ADD_CRANK: float= 1.2
 const POWER_ADD_TIME: float=1.5
 const POWER_MULT_HSIZE: float=1
 const POWER_MULT_PLAYERS:float=1
-const TIME_OFFSET: float=0.5
+const POWER_MULT_AVGBET: float = 0.6
+const TIME_OFFSET: float=0.1
 
 
 
@@ -42,14 +43,17 @@ func find_odds()->float:
 	# lower ranking -> smaller num
 	var add_rank: float=float(hand_rank.hand_rank)/(hand_rank.HandRank.size()-1)*POWER_ADD_HRANK
 	rt+=add_rank
+	Logger.log_text("Player " +str(player.id)+"'s hand is ranked: " + str(Ranking.HandRank.find_key(hand_rank.hand_rank))+ " ("+str(hand_rank.hand_rank)+"), confidence gained: "+str(add_rank)+", confidence total: "+str(rt))
 	var add_card: float=float(hand_rank.cards_rank[0])/(Card.Rank.size()-1)*POWER_ADD_CRANK
 	rt+=add_card
-	
+	Logger.log_text("Player " +str(player.id)+"'s hand: Best card in ranking is ranked: " +str(Card.Rank.find_key(hand_rank.cards_rank[0])) + " ("+str(hand_rank.cards_rank[0])+"), confidence gained: "+str(add_card)+", confidence total: "+str(rt))
 	# some randomness
 	rt*=randf_range(MIN_VAR, MAX_VAR)
+	Logger.log_text("Player "+str(player.id)+"'s confidence randomized: "+str(rt))
 	
 	
 	var avg_bet: float=0
+	Logger.log_text("Player "+str(player.id)+" is considering other players' bets...")
 	for id: int in PokerEngine.player_bets:
 		if id == player.id: continue
 		
@@ -59,21 +63,30 @@ func find_odds()->float:
 			Bet.Type.FOLD: avg_bet+=FOLD_MULT
 			Bet.Type.ALL_IN: avg_bet+=ALL_IN_MULT
 	
-	if PokerEngine.player_bets.size()>0:
+	if (PokerEngine.player_bets.size()>0 and !PokerEngine.player_bets.has(player.id)) or (PokerEngine.player_bets.size()>1):
 		avg_bet/=PokerEngine.player_bets.size()
-		rt*=avg_bet
+		rt*=((avg_bet-1)*POWER_MULT_AVGBET)+1
 		rt/=RAISE_MULT
+		Logger.log_text("\t Player "+str(player.id)+"'s confidence adjusted according to others' bets: "+str(rt))
+	else: Logger.log_text("\t But there were no bets to consider...")
 	
 	rt/=(POWER_ADD_CRANK+POWER_ADD_HRANK)*MAX_VAR
+	Logger.log_text("Player "+str(player.id)+"'s confidence normalized: "+str(rt))
 	rt=ease(rt, -((PokerEngine.current_turn+TIME_OFFSET)*POWER_ADD_TIME))
+	Logger.log_text("Player "+str(player.id)+"'s confidence adjusted according to time passed: "+str(rt))
+	
 	
 	#bluff
 	if rt>=BLUFF_THRESH: return rt
-	
+	Logger.log_text("Player "+str(player.id)+"'s confidence too low, trying to bluff...")
 	for i in randi()%BLUFF_COUNT:
 		rt*=BLUFF_MULT
+		Logger.log_text("\t Bluff "+str(i+1)+": "+str(rt))
 	
+	Logger.log_text("Player "+str(player.id)+"'s confidence after bluff: "+str(rt))
+
 	rt=clamp(rt,0,1)
+	Logger.log_text("Player "+str(player.id)+"'s confidence clamped: "+str(rt))
 	return rt
 
 class Bet extends RefCounted:

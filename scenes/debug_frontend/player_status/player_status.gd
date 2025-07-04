@@ -36,7 +36,9 @@ func _fetch_player_data():
 		var card_label: Label = Label.new()
 		card_label.text="suit: "+str(Card.Suit.find_key(c.suit))+", "+"rank: "+str(Card.Rank.find_key(c.rank))
 		cards.add_child(card_label)
+	Logger.mute=true
 	var a=PokerEngine.rank_hand(player.hand)
+	Logger.mute=false
 	rank.text="Rank: "+Ranking.HandRank.find_key(a.hand_rank)+", "+ str(a.cards_rank) #a.cards_rank.map(func (r: Card.Rank): Card.Rank.find_key(r))
 	conf.text="Conf: "+str(player.controller.conf_last_turn)
 	bet.text="Bet: "+str(PlayerController.Bet.Type.find_key(PokerEngine.player_bets.get(player.id)))
