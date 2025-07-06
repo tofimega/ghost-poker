@@ -11,10 +11,14 @@ enum GameState{
 signal hand_dealt(player: Player)
 signal game_start
 signal next_round
+signal round_over
 signal deck_empty
 @warning_ignore("unused_signal")
-signal player_out(p: Player)
+signal player_out(p: int)
 signal game_over(result: GameState, winner)
+
+signal player_bet(p: int, bet: PlayerController.Bet)
+signal next_player(p: int)
 
 const PLAYER_COUNT: int = 4
 const STARING_HAND_SIZE: int = 5
@@ -32,11 +36,30 @@ var pool: int=0
 var game_state: GameState=GameState.CLOSED
 var current_turn: int=-1
 
+var current_player: int = -1
+var empty_deck_flag: bool=false
+
 func _ready()->void:
 	_init_game_state()
-	deck_empty.connect(showdown)
+	deck_empty.connect(func(): empty_deck_flag=true)
+	player_bet.connect(func (p: int, bet: PlayerController.Bet):
+		if p != current_player or !players[p].in_game: return
+		_handle_player_bet(p, bet)
+		_find_next_player()
+		_ask_next_player()
+		
+		
+		)
 
-
+func _find_next_player():
+	var id: int = current_player+1
+	id%=players.size()
+	var counter: int = 0
+	while !players[id].in_game and counter<players.size():
+		counter+=1
+		current_player+1
+		id%=players.size()
+	current_player=id
 
 func get_player(id: int)->Player:
 	return players[id]
@@ -100,28 +123,44 @@ func start_next_round()->void:
 	player_bets.clear()
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
-	Logger.log_text("CURRENT TURN: "+str(current_turn))
-
+	current_turn+=1
+	Logger.log_text("CURRENT TURN: " + str(current_turn))
+	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
+	Logger.log_text("CHIPS IN POOL: "+ str(pool))
+	next_round.emit()
 	for p in players.values():
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
+		
+	_ask_next_player()
 	
 
-	var counter: int=0
-	while calls_this_turn < current_player_count():
-		var ids: Array[int] = players.keys()
-		var id: int = counter % ids.size()
-		counter+=1
-		if current_player_count() <=1:
-			game_state=GameState.CONCLUSIVE
-			var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
-			Logger.log_text("GAME OVER!")
-			Logger.log_text("WINNER: "+str(winning_player.id))
-			game_over.emit(GameState.CONCLUSIVE, winning_player)
-			return
-			
-		var p: Player = players[id]
-		if !p.in_game: continue
+	
+
+var calls_this_turn: int=0
+
+func _ask_next_player():
+	
+	if current_player_count() <= 1:
+		game_state=GameState.CONCLUSIVE
+		var winning_player: Player = players[current_player]
+		Logger.log_text("GAME OVER!")
+		Logger.log_text("WINNER: "+str(winning_player.id))
+		Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
+		Logger.log_text("CHIPS IN POOL: "+ str(pool))
+		game_over.emit(GameState.CONCLUSIVE, winning_player)
+		return
+
+	if empty_deck_flag:
+		showdown()
+		return
+
+
+	#BUG: if first three players call in one turn, the fourth is never asked
+	if calls_this_turn < current_player_count()-1 or player_bets.size() < PLAYER_COUNT:
+
+		players[current_player].bet()
+		next_player.emit(current_player)
 		Logger.log_text("current highest bet: "+str(highest_bet))
 		
 		var player_bets_text: Dictionary[int, String]
@@ -129,9 +168,8 @@ func start_next_round()->void:
 		Logger.log_text("current player bets: "+str(player_bets_text))
 		Logger.log_text("players remaining: "+str(current_player_count()))
 		Logger.log_text(" ")
-		_handle_player_bet(id, p.bet())
+		return
 		
-	
 	Logger.log_text("final bet: "+str(highest_bet))
 	Logger.log_text(" ")
 	for p: Player in players.values():
@@ -139,23 +177,27 @@ func start_next_round()->void:
 		var bet: int = min(highest_bet, p.chips)
 		p.chips-=bet
 		pool+=bet
+		
+	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
+	Logger.log_text("CHIPS IN POOL: "+ str(pool))
+	round_over.emit()
 
-	current_turn+=1
-	next_round.emit()
 
-var calls_this_turn: int=0
 
-#TODO: doesn't quite work
+
 func _handle_player_bet(id: int, bet: PlayerController.Bet)->void:
-	player_bets[id] = bet.type
-	highest_bet=max(bet.amount, highest_bet)
 
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()
+		player_bets[id] = bet.type
 		return
 
-	if bet.type == bet.Type.CALL or (bet.type == bet.Type.ALL_IN and players[id].controller.forced_all_in): calls_this_turn+=1
+	if bet.amount <= highest_bet: calls_this_turn+=1
 	else: calls_this_turn = 0
+
+	player_bets[id] = bet.type
+	highest_bet=max(bet.amount, highest_bet)
+
 
 
 func _clear_game_state()->void:
@@ -186,11 +228,13 @@ func _init_game_state()->void:
 	for i in Card.Suit.size():
 		for j in Card.Rank.size():
 			deck.append(Card.new(i,j))
+	empty_deck_flag=false
 	Logger.log_text("Deck created")
 	deck.shuffle()
 	Logger.log_text("Deck shuffled")
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
+	current_player = 0
 	Logger.log_text("Players created")
 	pool=0
 	Logger.log_text("Pool initialized")

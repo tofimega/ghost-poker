@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 PokerEngine="*res://scripts/poker_engine.gd"
 Logger="*res://scripts/logger.gd"
+FrontendManager="*res://scripts/frontend_manager.gd"
 
 [rendering]
 

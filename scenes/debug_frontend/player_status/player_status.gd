@@ -15,7 +15,7 @@ var player_id: int = PokerEngine.PLAYER_COUNT+1
 
 func _ready():
 	player=PokerEngine.get_player(player_id)
-	PokerEngine.next_round.connect(_fetch_player_data, CONNECT_DEFERRED)
+	PokerEngine.round_over.connect(_fetch_player_data, CONNECT_DEFERRED)
 	PokerEngine.game_over.connect(func(a,b): _fetch_player_data(), CONNECT_DEFERRED)
 	_fetch_player_data()
 

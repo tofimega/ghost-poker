@@ -18,7 +18,6 @@ var in_game: bool=true
 var controller: PlayerController = PlayerController.new(self)
 
 
-
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_PREDELETE:
@@ -29,11 +28,11 @@ func _notification(what: int) -> void:
 
 
 @warning_ignore("shadowed_variable")
-func bet()-> PlayerController.Bet:
-	if !in_game: return null
-	var bet: PlayerController.Bet = controller.my_turn()
-	return bet
+func bet()-> void:
+	if !in_game: pass
+	controller.my_turn()
+	
 
 func fold()->void:
 	in_game=false
-	PokerEngine.player_out.emit(self)
+	PokerEngine.player_out.emit(id)
