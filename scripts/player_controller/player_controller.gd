@@ -113,6 +113,7 @@ var conf_last_turn: float = -1325
 var forced_all_in: bool = false
 func my_turn() -> void:
 	if player == null or !player.in_game: pass
+
 	forced_all_in=false
 	Logger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	Logger.log_text(" ")
@@ -126,6 +127,7 @@ func my_turn() -> void:
 	if confidence >= ALL_IN_THRESHOLD:
 		Logger.log_text("player "+str(player.id)+" goes ALL IN!")
 		PokerEngine.player_bet.emit(player.id, Bet.new(player.chips, Bet.Type.ALL_IN))
+		return
 	
 	if player.chips <= PokerEngine.highest_bet or player.chips==0:
 		Logger.log_text("player "+str(player.id)+" has insufficient chips, considering going ALL IN... "+ "(threshold: " + str(CALL_THRESHOLD*FORCED_ALL_IN_MULT) + ")")
@@ -133,8 +135,10 @@ func my_turn() -> void:
 			Logger.log_text("player "+str(player.id)+" goes ALL IN!")
 			forced_all_in=true
 			PokerEngine.player_bet.emit(player.id, Bet.new(player.chips, Bet.Type.ALL_IN))
+			return
 		Logger.log_text("player "+str(player.id)+" FOLDS!")
 		PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
+		return
 		
 	
 	Logger.log_text("player "+str(player.id)+" considers RAISING... "+" (threshold: " + str(RAISE_THRESHOLD) + ")")
@@ -146,16 +150,21 @@ func my_turn() -> void:
 			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: 
 				Logger.log_text("player "+str(player.id)+" goes ALL IN!")
 				PokerEngine.player_bet.emit(player.id, Bet.new(amount, Bet.Type.ALL_IN))
+				return
 			Logger.log_text("player "+str(player.id)+" CALLS instead!")
 			PokerEngine.player_bet.emit(player.id, Bet.new(PokerEngine.highest_bet, Bet.Type.CALL))
+			return
 		
 		Logger.log_text("player "+str(player.id)+" RAISES!")
 		PokerEngine.player_bet.emit(player.id, Bet.new(amount, Bet.Type.RAISE))
+		return
 	
 	Logger.log_text("player "+str(player.id)+" considers CALLING... "+" (threshold: " + str(CALL_THRESHOLD) + ")")
 	if confidence >= CALL_THRESHOLD:
 		Logger.log_text("player "+str(player.id)+" CALLS!")
 		PokerEngine.player_bet.emit(player.id, Bet.new(PokerEngine.highest_bet, Bet.Type.CALL))
+		return
 		
 	Logger.log_text("player "+str(player.id)+" FOLDS!")
 	PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
+	return

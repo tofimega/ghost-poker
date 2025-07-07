@@ -116,11 +116,13 @@ func current_player_count()->int:
 		return acc
 		,0)
 
+var pc_at_start_of_round: int = 0
 
-#TODO: do it in an event-oriented way
 func start_next_round()->void:
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
+	pc_at_start_of_round = current_player_count()
+	current_player=0
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
 	current_turn+=1
@@ -131,7 +133,8 @@ func start_next_round()->void:
 	for p in players.values():
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
-		
+	
+	if !players[0].in_game: _find_next_player()
 	_ask_next_player()
 	
 
@@ -156,18 +159,18 @@ func _ask_next_player():
 		return
 
 
-	#BUG: if first three players call in one turn, the fourth is never asked
-	if calls_this_turn < current_player_count()-1 or player_bets.size() < PLAYER_COUNT:
-
-		players[current_player].bet()
-		next_player.emit(current_player)
+	#BUG: somtimes round doesn't advance to next player if a previous player folded
+	if calls_this_turn < pc_at_start_of_round-1 or player_bets.size() < pc_at_start_of_round:
+		if !players[current_player].in_game: return
+		Logger.log_text(" ")
 		Logger.log_text("current highest bet: "+str(highest_bet))
-		
 		var player_bets_text: Dictionary[int, String]
 		for i in player_bets.keys(): player_bets_text[i] = PlayerController.Bet.Type.find_key(player_bets[i])
 		Logger.log_text("current player bets: "+str(player_bets_text))
 		Logger.log_text("players remaining: "+str(current_player_count()))
 		Logger.log_text(" ")
+		players[current_player].bet()
+		next_player.emit(current_player)
 		return
 		
 	Logger.log_text("final bet: "+str(highest_bet))
