@@ -46,9 +46,8 @@ func _ready()->void:
 		if p != current_player or !players[p].in_game: return
 		_handle_player_bet(p, bet)
 		_find_next_player()
-		_ask_next_player()
-		
-		
+		_ask_next_player(),
+		CONNECT_DEFERRED # to prevent stack overflow, just in case
 		)
 
 func _find_next_player():
@@ -57,7 +56,7 @@ func _find_next_player():
 	var counter: int = 0
 	while !players[id].in_game and counter<players.size():
 		counter+=1
-		current_player+1
+		id+=1
 		id%=players.size()
 	current_player=id
 
@@ -159,11 +158,10 @@ func _ask_next_player():
 		return
 
 
-	#BUG: somtimes round doesn't advance to next player if a previous player folded
+
 	if calls_this_turn < pc_at_start_of_round-1 or player_bets.size() < pc_at_start_of_round:
 		if !players[current_player].in_game: return
-		Logger.log_text(" ")
-		Logger.log_text("current highest bet: "+str(highest_bet))
+		
 		var player_bets_text: Dictionary[int, String]
 		for i in player_bets.keys(): player_bets_text[i] = PlayerController.Bet.Type.find_key(player_bets[i])
 		Logger.log_text("current player bets: "+str(player_bets_text))
@@ -171,6 +169,8 @@ func _ask_next_player():
 		Logger.log_text(" ")
 		players[current_player].bet()
 		next_player.emit(current_player)
+		Logger.log_text(" ")
+		Logger.log_text("current highest bet: "+str(highest_bet))
 		return
 		
 	Logger.log_text("final bet: "+str(highest_bet))
