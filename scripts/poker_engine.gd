@@ -70,7 +70,7 @@ func showdown()->void:
 		if !player.in_game: return acc
 		var rank: Ranking=rank_hand(player.hand)
 
-		if rank.hand_rank>acc.hand_rank || (rank.hand_rank==acc.hand_rank && rank.cards_rank>acc.cards_rank):
+		if compare_rankings(rank, acc)>0:
 			return rank
 		return acc
 
@@ -81,7 +81,7 @@ func showdown()->void:
 	for p in players.values():
 		if !p.in_game: continue
 		var ranking: Ranking=rank_hand(p.hand)
-		if ranking.hand_rank==winning_hand.hand_rank && ranking.cards_rank==winning_hand.cards_rank:
+		if compare_rankings(ranking, winning_hand)>=0:
 			winners.append(p)
 
 	if winners.size()==1:
@@ -164,13 +164,13 @@ func _ask_next_player():
 		
 		var player_bets_text: Dictionary[int, String]
 		for i in player_bets.keys(): player_bets_text[i] = PlayerController.Bet.Type.find_key(player_bets[i])
+		Logger.log_text(" ")
+		Logger.log_text("current highest bet: "+str(highest_bet))
 		Logger.log_text("current player bets: "+str(player_bets_text))
 		Logger.log_text("players remaining: "+str(current_player_count()))
 		Logger.log_text(" ")
 		players[current_player].bet()
 		next_player.emit(current_player)
-		Logger.log_text(" ")
-		Logger.log_text("current highest bet: "+str(highest_bet))
 		return
 		
 	Logger.log_text("final bet: "+str(highest_bet))
@@ -399,7 +399,10 @@ func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
 func compare_hands(left: Array[Card], right: Array[Card]) -> int:
 	var left_rank:  Ranking = rank_hand(left)
 	var right_rank: Ranking = rank_hand(right)
+	return compare_rankings(left_rank, right_rank)
+	
 
+func compare_rankings(left_rank: Ranking, right_rank: Ranking) -> int:
 	if left_rank.hand_rank>right_rank.hand_rank: return 1
 	if right_rank.hand_rank>left_rank.hand_rank: return -1
 
