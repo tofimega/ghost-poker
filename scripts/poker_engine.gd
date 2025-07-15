@@ -363,7 +363,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 
 	rankings.append(Ranking.new(Ranking.HandRank.HighCard, card_ranks))
 
-	rankings.sort_custom(func (left: Ranking, right: Ranking): return left.hand_rank>right.hand_rank || (left.hand_rank==right.hand_rank && left.cards_rank>right.cards_rank))
+	rankings.sort_custom(func (left: Ranking, right: Ranking): return compare_rankings(left, right)>0)
 	Logger.log_text("Final Ranking: "+ str(Ranking.HandRank.find_key(rankings[0].hand_rank))+ " "+ str(rankings[0].cards_rank))
 	Logger.log_text(" ")
 	return rankings[0]

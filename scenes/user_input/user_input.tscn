@@ -2,11 +2,73 @@
 
 [ext_resource type="Script" uid="uid://bc2fsea0bt042" path="res://scenes/user_input/user_input.gd" id="1_ikf2b"]
 
-[node name="UserInput" type="Control"]
-layout_mode = 3
+[node name="UserInput" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ikf2b")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ChipCount" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CurrentChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "XXX chips"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlaceholderArrow" type="ReferenceRect" parent="VBoxContainer/HBoxContainer/ChipCount"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+editor_only = false
+
+[node name="RemainingChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "XXX chips"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BetType" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "CALL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Fold" type="Button" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "FOLD"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BetAmount" type="SpinBox" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+suffix = "chips"
+
+[node name="Bet" type="Button" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "BET"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/VBoxContainer/Fold" to="." method="_on_fold_pressed"]
+[connection signal="value_changed" from="VBoxContainer/HBoxContainer2/BetAmount" to="." method="_on_bet_amount_value_changed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/Bet" to="." method="_on_bet_pressed"]

@@ -18,3 +18,6 @@ func _send_bet(bet: PlayerController.Bet) -> PlayerController.Bet:
 	
 func my_turn() -> void:
 	FrontendManager.interfaces[player.id].enabled=true
+
+func is_human()->bool:
+	return true

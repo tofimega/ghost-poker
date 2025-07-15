@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0" version="27.2.0">
+  <diagram name="Page-1" id="kb_qNQwRl3WbcMuPnEgt">
+    <mxGraphModel dx="868" dy="438" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="luzCJKttSwwVg8csR273-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="80" width="150" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-6" value="BET" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="459" y="154" width="47" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-10" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="364" y="154" width="91" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-3" value="XXX chips" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="luzCJKttSwwVg8csR273-10">
+          <mxGeometry width="91" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-4" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;shadow=0;dashed=0;strokeWidth=2;shape=mxgraph.ios7.misc.up;strokeColor=#0080f0;" vertex="1" parent="luzCJKttSwwVg8csR273-10">
+          <mxGeometry x="79" y="8" width="8" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-5" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;shadow=0;dashed=0;strokeWidth=2;shape=mxgraph.ios7.misc.up;strokeColor=#0080f0;rotation=-180;" vertex="1" parent="luzCJKttSwwVg8csR273-10">
+          <mxGeometry x="79" y="18" width="8" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-11" value="XXX chips" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="364" y="127" width="91" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-13" target="luzCJKttSwwVg8csR273-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-13" value="XXX chips" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="364" y="84" width="91" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-15" value="FOLD" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="459" y="127" width="47" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-16" value="CALL" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fontColor=#4FBF4F;" vertex="1" parent="1">
+          <mxGeometry x="459" y="84" width="47" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="355.4666748046875" y="107.79999796549481" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-17" value="chips before -&amp;gt; after bet" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="97" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="403.5333251953125" y="191.86666870117188" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-21" value="&lt;div&gt;chips to bet&lt;/div&gt;&lt;div&gt;(cant go below minimum)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="362" y="222" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-23">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="516" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-23" value="&lt;div&gt;Bet type being made&lt;/div&gt;&lt;div&gt;(based on amount being bet)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="558" y="70" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-26" value="&lt;div&gt;Bet button, bets amount specified&lt;/div&gt;(shows confirmation before)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="543" y="218" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1.006;entryY=0.788;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-26" target="luzCJKttSwwVg8csR273-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-29" value="&lt;div&gt;Fold button, folds player, ends game if no human players remain&lt;/div&gt;&lt;div&gt;(shows confirmation before)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="696" y="218" width="120" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="luzCJKttSwwVg8csR273-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.567;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="luzCJKttSwwVg8csR273-29" target="luzCJKttSwwVg8csR273-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

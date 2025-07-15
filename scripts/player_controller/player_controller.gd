@@ -168,3 +168,6 @@ func my_turn() -> void:
 	Logger.log_text("player "+str(player.id)+" FOLDS!")
 	PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
 	return
+
+func is_human()->bool:
+	return false
