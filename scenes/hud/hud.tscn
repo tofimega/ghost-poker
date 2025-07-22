@@ -28,6 +28,12 @@ layout_mode = 2
 [node name="Deck" type="Label" parent="GameStatus"]
 layout_mode = 2
 
+[node name="VSeparator5" type="VSeparator" parent="GameStatus"]
+layout_mode = 2
+
+[node name="Round" type="Label" parent="GameStatus"]
+layout_mode = 2
+
 [node name="Players" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_vertical = 3

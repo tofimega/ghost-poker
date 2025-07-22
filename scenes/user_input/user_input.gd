@@ -17,16 +17,19 @@ signal user_bet(bet: PlayerController.Bet)
 
 var player_id: int
 
-var enabled: bool:
+var enabled: bool = false:
 	set(e):
-		enabled=e #TODO: enable/disable all ui elements 
+		enabled=e 
+		fold.disabled=!e
+		bet_amount.editable=e
+		bet.disabled=!e
 
 #TODO: select bet type, amount via interface
 #TODO: bet and fold buttons
 
 
 func _ready()->void:
-	pass #TODO: initialize text
+	_update_text()
 
 
 func _on_fold_pressed() -> void:
@@ -34,8 +37,32 @@ func _on_fold_pressed() -> void:
 
 
 func _on_bet_pressed() -> void:
-	pass #TODO: show popup, validate amount, bet
+	#TODO: show confirmation or error popups as needed
+	_update_text()
+	var bet: int = bet_amount.value
+	if bet > PokerEngine.players[player_id].chips: return
+	if bet < PokerEngine.highest_bet: return
+	
+	var rt: PlayerController.Bet
+	if bet==PokerEngine.players[player_id].chips: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.ALL_IN)
+	elif bet > PokerEngine.highest_bet: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.RAISE)
+	else: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.CALL)
+	user_bet.emit(rt)
 
 
 func _on_bet_amount_value_changed(value: float) -> void:
-	pass #TODO: validate, clamp, store amount, update remaining chip count text
+	var bet: int = clamp(value, PokerEngine.highest_bet, PokerEngine.players[player_id].chips)
+	bet_amount.set_value_no_signal(bet)
+	_update_text()
+	
+	
+	
+func _update_text()->void:
+	var chip_count: int =PokerEngine.players[player_id].chips
+	var bet: int = bet_amount.value
+	current_chips.text=str(chip_count)+" chips"
+	remaining_chips.text=str(chip_count-bet)+" chips"
+	
+	if bet>=chip_count: bet_type.text="ALL IN"
+	elif bet>PokerEngine.highest_bet: bet_type.text="RAISE"
+	else: bet_type.text="CALL"

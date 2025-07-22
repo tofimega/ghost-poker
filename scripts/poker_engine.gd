@@ -45,10 +45,12 @@ func _ready()->void:
 	player_bet.connect(func (p: int, bet: PlayerController.Bet):
 		if p != current_player or !players[p].in_game: return
 		_handle_player_bet(p, bet)
+		await get_tree().create_timer(0.5).timeout
 		_find_next_player()
 		_ask_next_player(),
 		CONNECT_DEFERRED # to prevent stack overflow, just in case
 		)
+	round_over.connect(start_next_round)
 
 func _find_next_player():
 	var id: int = current_player+1

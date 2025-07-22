@@ -6,6 +6,7 @@ extends VBoxContainer
 @onready var deck: Label = $GameStatus/Deck
 @onready var game_status: HBoxContainer = $GameStatus
 @onready var players: HBoxContainer = $Players
+@onready var round: Label = $GameStatus/Round
 
 const PLAYER_STATUS = preload("res://scenes/debug_frontend/player_status/player_status.tscn")
 
@@ -17,9 +18,11 @@ func _ready() -> void:
 		player_status.player_id=i
 		players.add_child(player_status)
 	
+	PokerEngine.start_next_round()
 	_update()
 
 func _update()-> void:
 	pool.text="Pool: "+str(PokerEngine.pool)
 	deck.text="Cards in deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
+	round.text="Round "+str(PokerEngine.current_turn)
