@@ -131,6 +131,8 @@ func start_next_round()->void:
 	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
 	Logger.log_text("CHIPS IN POOL: "+ str(pool))
 	next_round.emit()
+	
+	#TODO: give cards one at a time for better distribution
 	for p in players.values():
 		if deck.size()==0: break
 		deal_cards(p, CARDS_PER_ROUND)
@@ -143,6 +145,9 @@ func start_next_round()->void:
 
 var calls_this_turn: int=0
 
+
+
+#TODO: don't ask players that have gone all in or have no chips remaining
 func _ask_next_player():
 	
 	if current_player_count() <= 1:

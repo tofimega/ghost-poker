@@ -41,7 +41,7 @@ func _on_bet_pressed() -> void:
 	_update_text()
 	var bet: int = bet_amount.value
 	if bet > PokerEngine.players[player_id].chips: return
-	if bet < PokerEngine.highest_bet: return
+	if bet < PokerEngine.highest_bet and bet <PokerEngine.players[player_id].chips: return
 	
 	var rt: PlayerController.Bet
 	if bet==PokerEngine.players[player_id].chips: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.ALL_IN)

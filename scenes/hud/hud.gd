@@ -12,6 +12,10 @@ const PLAYER_STATUS = preload("res://scenes/debug_frontend/player_status/player_
 
 func _ready() -> void:
 	PokerEngine.next_player.connect(func(a): _update())
+	PokerEngine.round_over.connect(_update)
+	PokerEngine.game_over.connect(func(a,b): _update())
+	PokerEngine.deck_empty.connect(_update)
+	
 	
 	for i in PokerEngine.PLAYER_COUNT:
 		var player_status: PlayerStatus= PLAYER_STATUS.instantiate()
