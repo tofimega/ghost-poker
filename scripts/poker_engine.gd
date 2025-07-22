@@ -237,6 +237,7 @@ func _init_game_state()->void:
 	Logger.log_text("Deck shuffled")
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
+		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 	current_player = 0
 	Logger.log_text("Players created")
 	pool=0

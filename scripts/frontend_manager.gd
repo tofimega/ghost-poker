@@ -12,6 +12,10 @@ const UI_PACKED: PackedScene = preload("res://scenes/user_input/user_input.tscn"
 func add_user_player_interface(id: int) -> UserInput: 
 	var player_input: UserInput = UI_PACKED.instantiate()
 	player_input.player_id=id
-#TODO: add it to screen
 	interfaces[id] = player_input
+	get_hud().add_child(player_input)
 	return player_input
+
+
+func get_hud() -> HUD:
+	return get_tree().get_first_node_in_group("HUD")

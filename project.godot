@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ghost poker"
-run/main_scene="uid://bmq57livjq4vk"
+run/main_scene="uid://cah3d0viyesfg"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 

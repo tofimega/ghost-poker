@@ -15,7 +15,7 @@ var id: int =-1:
 
 var in_game: bool=true
 
-var controller: PlayerController = PlayerController.new(self)
+var controller: PlayerController = null
 
 
 func _notification(what: int) -> void:
