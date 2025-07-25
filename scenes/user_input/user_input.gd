@@ -29,6 +29,7 @@ var enabled: bool = false:
 
 
 func _ready()->void:
+	bet_amount.set_value_no_signal(PokerEngine.MINIMUM_BET)
 	_update_text()
 
 

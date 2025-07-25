@@ -121,7 +121,7 @@ var pc_at_start_of_round: int = 0
 
 func start_next_round()->void:
 	if game_state!=GameState.RUNNING: return
-	player_bets.clear()
+	player_bets.clear() #TODO: maybe don't do this
 	pc_at_start_of_round = current_player_count()
 	current_player=0
 	highest_bet = MINIMUM_BET
@@ -249,6 +249,7 @@ func _init_game_state()->void:
 	Logger.log_text("Players created")
 	pool=0
 	Logger.log_text("Pool initialized")
+	player_bets.clear()
 	for p in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
 		p.chips=STARING_CHIP_COUNT
