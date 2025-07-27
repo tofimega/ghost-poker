@@ -1,7 +1,7 @@
 class_name UserInput
 extends Control
 
-signal user_bet(bet: PlayerController.Bet)
+signal user_bet(bet: Bet)
 
 # show-only
 @onready var current_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/CurrentChips
@@ -44,10 +44,10 @@ func _on_bet_pressed() -> void:
 	if bet > PokerEngine.players[player_id].chips: return
 	if bet < PokerEngine.highest_bet and bet <PokerEngine.players[player_id].chips: return
 	
-	var rt: PlayerController.Bet
-	if bet==PokerEngine.players[player_id].chips: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.ALL_IN)
-	elif bet > PokerEngine.highest_bet: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.RAISE)
-	else: rt = PlayerController.Bet.new(bet, PlayerController.Bet.Type.CALL)
+	var rt: Bet
+	if bet==PokerEngine.players[player_id].chips: rt = Bet.new(bet, Bet.Type.ALL_IN)
+	elif bet > PokerEngine.highest_bet: rt = Bet.new(bet, Bet.Type.RAISE)
+	else: rt = Bet.new(bet, Bet.Type.CALL)
 	user_bet.emit(rt)
 
 

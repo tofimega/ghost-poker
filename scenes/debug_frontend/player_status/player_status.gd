@@ -42,4 +42,4 @@ func _fetch_player_data():
 	Logger.mute=false
 	rank.text="Rank: "+Ranking.HandRank.find_key(a.hand_rank)+", "+ str(a.cards_rank) #a.cards_rank.map(func (r: Card.Rank): Card.Rank.find_key(r))
 	conf.text="Conf: "+str(player.controller.conf_last_turn)
-	bet.text="Bet: "+str(PlayerController.Bet.Type.find_key(PokerEngine.player_bets.get(player.id)))
+	bet.text="Bet: "+str(Bet.Type.find_key(PokerEngine.player_bets.get(player.id)))

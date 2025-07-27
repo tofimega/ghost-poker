@@ -89,20 +89,6 @@ func find_odds()->float:
 	Logger.log_text("Player "+str(player.id)+"'s confidence clamped: "+str(rt))
 	return rt
 
-class Bet extends RefCounted:
-	enum Type {
-		FOLD,
-		CALL,
-		RAISE,
-		ALL_IN
-	}
-	var amount: int
-	var type: Type
-	
-	func _init(amount: int, type: Type) -> void:
-		self.amount=amount
-		self.type=type
-
 
 const CALL_THRESHOLD: float = 0.08/MAX_VAR
 const RAISE_THRESHOLD: float = 0.7/MAX_VAR

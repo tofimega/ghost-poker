@@ -17,7 +17,7 @@ signal deck_empty
 signal player_out(p: int)
 signal game_over(result: GameState, winner)
 
-signal player_bet(p: int, bet: PlayerController.Bet)
+signal player_bet(p: int, bet: Bet)
 signal next_player(p: int)
 
 const PLAYER_COUNT: int = 4
@@ -42,7 +42,7 @@ var empty_deck_flag: bool=false
 func _ready()->void:
 	_init_game_state()
 	deck_empty.connect(func(): empty_deck_flag=true)
-	player_bet.connect(func (p: int, bet: PlayerController.Bet):
+	player_bet.connect(func (p: int, bet: Bet):
 		if p != current_player or !players[p].in_game: return
 		_handle_player_bet(p, bet)
 		await get_tree().create_timer(0.5).timeout
@@ -108,7 +108,7 @@ func deal_cards(player: Player, count: int)->void:
 	if deck.is_empty():
 		deck_empty.emit()
 
-var player_bets: Dictionary[int, PlayerController.Bet.Type]
+var player_bets: Dictionary[int, Bet.Type]
 var highest_bet: int = 0
 
 func current_player_count()->int:
@@ -170,7 +170,7 @@ func _ask_next_player():
 		if !players[current_player].in_game: return
 		
 		var player_bets_text: Dictionary[int, String]
-		for i in player_bets.keys(): player_bets_text[i] = PlayerController.Bet.Type.find_key(player_bets[i])
+		for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i])
 		Logger.log_text(" ")
 		Logger.log_text("current highest bet: "+str(highest_bet))
 		Logger.log_text("current player bets: "+str(player_bets_text))
@@ -195,7 +195,7 @@ func _ask_next_player():
 
 
 
-func _handle_player_bet(id: int, bet: PlayerController.Bet)->void:
+func _handle_player_bet(id: int, bet: Bet)->void:
 
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()

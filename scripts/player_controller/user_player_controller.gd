@@ -9,7 +9,7 @@ func _init(player: Player) -> void:
 	
 	
 	
-func _send_bet(bet: PlayerController.Bet) -> PlayerController.Bet:
+func _send_bet(bet: Bet) -> Bet:
 	
 	FrontendManager.interfaces[player.id].enabled=false
 	# send bet
