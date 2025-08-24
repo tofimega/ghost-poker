@@ -26,7 +26,7 @@ func _ready() -> void:
 		player_status.player_id=i
 		#players.add_child(player_status)
 	
-	PokerEngine.start_next_round()
+	#PokerEngine.start_next_round()
 	_update()
 
 func _update()-> void:

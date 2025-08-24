@@ -258,11 +258,11 @@ func _init_game_state()->void:
 		p.chips-=STARTING_ANTE
 		pool+=STARTING_ANTE
 	Logger.log_text("Cards, chips dealt")
-	game_state=GameState.RUNNING
+	
 	for i in PLAYER_COUNT:
 	#	players[i]=Player.new()
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
-	
+	game_state=GameState.RUNNING
 	Logger.log_text("Game Opened")
 
 
@@ -272,6 +272,7 @@ func new_game()->void:
 	_clear_game_state()
 	_init_game_state()
 	game_start.emit()
+	start_next_round()
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
