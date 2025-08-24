@@ -15,26 +15,30 @@ signal user_bet(bet: Bet)
 
 
 
-var player_id: int = 0
+var player_id: int = 0:
+	set(id):
+		player_id=id
+		_update_text()
 
+signal input_enabled(e: bool)
 var enabled: bool = false:
 	set(e):
 		enabled=e 
 		fold.disabled=!e
 		bet_amount.editable=e
 		bet.disabled=!e
+		input_enabled.emit(e)
 
-#TODO: select bet type, amount via interface
-#TODO: bet and fold buttons
+
 
 
 func _ready()->void:
 	bet_amount.set_value_no_signal(PokerEngine.MINIMUM_BET)
-	_update_text()
+	
 
 
 func _on_fold_pressed() -> void:
-	pass #TODO: show popup, fold
+	user_bet.emit(Bet.new(0,Bet.Type.FOLD))
 
 
 func _on_bet_pressed() -> void:

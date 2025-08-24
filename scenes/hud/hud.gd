@@ -8,6 +8,8 @@ extends Control
 #@onready var players: HBoxContainer = $Players
 @onready var round: Label = $Info/PanelContainer/Round #$GameStatus/Round
 @onready var user_input: UserInput = $UserInput
+@onready var hand: Control = $Hand_PH
+@onready var pow: Control = $Pow_PH2
 
 const PLAYER_STATUS = preload("res://scenes/debug_frontend/player_status/player_status.tscn")
 
@@ -16,6 +18,7 @@ func _ready() -> void:
 	PokerEngine.round_over.connect(_update)
 	PokerEngine.game_over.connect(func(a,b): _update())
 	PokerEngine.deck_empty.connect(_update)
+	user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
 	
 	for i in PokerEngine.PLAYER_COUNT:
@@ -31,3 +34,10 @@ func _update()-> void:
 	#deck.text="Cards in deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
+	
+
+
+func _toggle_hud(enabled: bool) -> void:
+	user_input.visible=enabled
+	hand.visible=enabled
+	pow.visible=enabled

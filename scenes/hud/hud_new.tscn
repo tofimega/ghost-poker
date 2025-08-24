@@ -132,6 +132,7 @@ offset_right = 37.0
 offset_bottom = 124.0
 
 [node name="Bet" type="Panel" parent="UI_BLOCKOUT/HUD"]
+visible = false
 layout_mode = 0
 offset_left = 2.0
 offset_top = 125.0
@@ -181,3 +182,17 @@ offset_left = 2.0
 offset_top = 125.0
 offset_right = 76.0
 offset_bottom = 179.0
+
+[node name="Hand_PH" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 81.0
+offset_top = 119.0
+offset_right = 311.0
+offset_bottom = 171.0
+
+[node name="Pow_PH2" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -1.0
+offset_top = 89.0
+offset_right = 39.0
+offset_bottom = 125.0

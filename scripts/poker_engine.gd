@@ -21,8 +21,8 @@ signal player_bet(p: int, bet: Bet)
 signal next_player(p: int)
 
 const PLAYER_COUNT: int = 4
-const STARING_HAND_SIZE: int = 5
 const CARDS_PER_ROUND: int = 2
+const STARING_HAND_SIZE: int = clamp(5-CARDS_PER_ROUND, 0, 5)
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 const MINIMUM_BET: int = 3
@@ -40,7 +40,6 @@ var current_player: int = -1
 var empty_deck_flag: bool=false
 
 func _ready()->void:
-	_init_game_state()
 	deck_empty.connect(func(): empty_deck_flag=true)
 	player_bet.connect(func (p: int, bet: Bet):
 		if p != current_player or !players[p].in_game: return
@@ -104,7 +103,7 @@ func deal_cards(player: Player, count: int)->void:
 			deck_empty.emit()
 			return
 		player.hand.append(deck.pop_back())
-	hand_dealt.emit(player)
+	
 	if deck.is_empty():
 		deck_empty.emit()
 
@@ -133,9 +132,11 @@ func start_next_round()->void:
 	next_round.emit()
 	
 	#TODO: give cards one at a time for better distribution
-	for p in players.values():
-		if deck.size()==0: break
-		deal_cards(p, CARDS_PER_ROUND)
+	for i in CARDS_PER_ROUND:
+		for p in players.values():
+			if deck.size()==0: break
+			deal_cards(p, 1)
+			hand_dealt.emit(p)
 	
 	if !players[0].in_game: _find_next_player()
 	_ask_next_player()
@@ -244,7 +245,7 @@ func _init_game_state()->void:
 	Logger.log_text("Deck shuffled")
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
-		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
+	#	players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 	current_player = 0
 	Logger.log_text("Players created")
 	pool=0
@@ -252,11 +253,16 @@ func _init_game_state()->void:
 	player_bets.clear()
 	for p in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
+		hand_dealt.emit(p)
 		p.chips=STARING_CHIP_COUNT
 		p.chips-=STARTING_ANTE
 		pool+=STARTING_ANTE
 	Logger.log_text("Cards, chips dealt")
 	game_state=GameState.RUNNING
+	for i in PLAYER_COUNT:
+	#	players[i]=Player.new()
+		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
+	
 	Logger.log_text("Game Opened")
 
 
