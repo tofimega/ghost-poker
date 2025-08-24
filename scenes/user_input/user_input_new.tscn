@@ -1,19 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://n2sehur5a576"]
+[gd_scene load_steps=2 format=3 uid="uid://difs31wlhbq6w"]
 
-[ext_resource type="Script" uid="uid://bc2fsea0bt042" path="res://scenes/user_input/user_input.gd" id="1_ikf2b"]
+[ext_resource type="Script" uid="uid://bc2fsea0bt042" path="res://scenes/user_input/user_input.gd" id="1_es1le"]
 
 [node name="UserInput" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -193.0
-offset_bottom = -85.0
+offset_right = -246.0
+offset_bottom = -126.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.43
-script = ExtResource("1_ikf2b")
+script = ExtResource("1_es1le")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -25,6 +25,7 @@ size_flags_vertical = 3
 [node name="ChipCount" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.43
 
 [node name="CurrentChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
 layout_mode = 2
@@ -32,10 +33,11 @@ size_flags_vertical = 3
 text = "XXX chips"
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="PlaceholderArrow" type="ReferenceRect" parent="VBoxContainer/HBoxContainer/ChipCount"]
-custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+size_flags_vertical = 3
 editor_only = false
 
 [node name="RemainingChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
@@ -44,6 +46,7 @@ size_flags_vertical = 3
 text = "XXX chips"
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -52,15 +55,16 @@ size_flags_horizontal = 3
 [node name="BetType" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 20.0
 text = "CALL"
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="Fold" type="Button" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 disabled = true
-text = "FOLD"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

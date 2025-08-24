@@ -33,7 +33,6 @@ const CALL_MULT: float = 1.1
 const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
-#TODO: consider previous bets in round
 func find_odds()->float:
 
 	var hand_rank: Ranking = PokerEngine.rank_hand(player.hand)

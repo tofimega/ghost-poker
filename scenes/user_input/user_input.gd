@@ -15,7 +15,7 @@ signal user_bet(bet: Bet)
 
 
 
-var player_id: int
+var player_id: int = 0
 
 var enabled: bool = false:
 	set(e):

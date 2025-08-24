@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ghost poker"
-run/main_scene="uid://cah3d0viyesfg"
+run/main_scene="uid://7vhkgdhoemv3"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 PokerEngine="*res://scripts/poker_engine.gd"
 Logger="*res://scripts/logger.gd"
-FrontendManager="*res://scripts/frontend_manager.gd"
+FrontendManager="res://scripts/frontend_manager.gd"
 
 [debug]
 
@@ -43,6 +43,13 @@ window/size/viewport_height=180
 window/size/mode=4
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+
+[gui]
+
+theme/custom="uid://d3es0tj0ah17v"
+theme/default_font_antialiasing=0
+theme/default_font_subpixel_positioning=0
+theme/lcd_subpixel_layout=0
 
 [rendering]
 

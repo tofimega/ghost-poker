@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://bpj3sc2yypnfx"]
+
+[ext_resource type="Script" uid="uid://bg6endom8kbyq" path="res://scenes/hud/custom_sb/custom_sb.gd" id="1_j6yi6"]
+
+[sub_resource type="Gradient" id="Gradient_bu2av"]
+interpolation_mode = 1
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_j6yi6"]
+gradient = SubResource("Gradient_bu2av")
+
+[sub_resource type="Gradient" id="Gradient_a2pl1"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0.0669456)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vx10x"]
+gradient = SubResource("Gradient_a2pl1")
+
+[node name="CustomSB" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+script = ExtResource("1_j6yi6")
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="LineEdit" parent="Panel"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Up" type="TextureButton" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("GradientTexture1D_j6yi6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Down" type="TextureButton" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("GradientTexture1D_vx10x")
+ignore_texture_size = true
+stretch_mode = 0
