@@ -37,7 +37,6 @@ clip_text = true
 
 [node name="PlaceholderArrow" type="ReferenceRect" parent="VBoxContainer/HBoxContainer/ChipCount"]
 layout_mode = 2
-size_flags_vertical = 3
 editor_only = false
 
 [node name="RemainingChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
@@ -65,17 +64,19 @@ clip_text = true
 layout_mode = 2
 size_flags_vertical = 3
 disabled = true
+text = "Fold
+"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.15
 
 [node name="BetAmount" type="SpinBox" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
 editable = false
-suffix = "chips"
 
 [node name="Bet" type="Button" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2

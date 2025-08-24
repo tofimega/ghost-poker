@@ -41,7 +41,7 @@ gdscript/warnings/confusable_local_usage=0
 window/size/viewport_width=320
 window/size/viewport_height=180
 window/size/mode=4
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 
 [gui]
@@ -56,4 +56,3 @@ theme/lcd_subpixel_layout=0
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-2d/snap/snap_2d_transforms_to_pixel=true
