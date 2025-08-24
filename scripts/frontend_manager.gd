@@ -10,10 +10,10 @@ var interfaces: Dictionary[int, UserInput]={} # player id, player Interface
 const UI_PACKED: PackedScene = preload("res://scenes/user_input/user_input.tscn") 
 
 func add_user_player_interface(id: int) -> UserInput: 
-	var player_input: UserInput = UI_PACKED.instantiate()
+	var player_input: UserInput = get_node("/root/GameScene/HUD/UserInput") #TODO: there has to be a better way
 	player_input.player_id=id
 	interfaces[id] = player_input
-	get_hud().add_child(player_input)
+	#get_hud().add_child(player_input)
 	return player_input
 
 
