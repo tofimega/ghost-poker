@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dw13hmaff8m1r"]
+
+[ext_resource type="Script" uid="uid://pjoee4jdoykq" path="res://scenes/hud/hand_cont/hand_cont.gd" id="1_q4fuw"]
+
+[node name="HandCont" type="Container"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_q4fuw")
+max_spacing = 0.02
+max_rotation_deg = 90.0
