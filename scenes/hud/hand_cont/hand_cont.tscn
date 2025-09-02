@@ -9,5 +9,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_q4fuw")
-max_spacing = 0.02
-max_rotation_deg = 90.0

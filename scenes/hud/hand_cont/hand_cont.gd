@@ -2,6 +2,12 @@
 class_name HandCont
 extends Container
 
+
+@export_range(0,1) var max_size: float = 1:
+	set(s):
+		max_size=s
+		queue_sort() #TODO: implement
+
 @export_range(0,1) var max_spacing: float = 1:
 	set(s):
 		max_spacing=s
@@ -58,10 +64,12 @@ func _notification(what: int) -> void:
 					_sort_center()
 				ChildPositioning.RIGHT:
 					_sort_right()
+			
+			normalize_rotation()
 
 
 func normalize_rotation():
-	if children.size()<1: pass
+	if children.size()<1: return
 	var _min_rot: float=children[0].rotation
 	var _max_rot: float=children[-1].rotation
 	
@@ -71,8 +79,8 @@ func normalize_rotation():
 
 
 func _sort_left()->void:
-	if children.size()==0: pass
-	var spacing: float = clamp(size.x/children.size(), 1, max_spacing)
+	if children.size()==0: return
+	
 	
 	var t: float = begin_offset
 	children[0].pivot_offset=children[0].size/2
@@ -93,11 +101,11 @@ func _sort_left()->void:
 		t=_t
 		i+=1
 		
-	normalize_rotation()
+	
 
 
 func _sort_center()->void:
-	if children.size()==0: pass
+	if children.size()==0: return
 	var spacing: float = min(1.0/(children.size()-1), max_spacing)
 	
 	var t: float = 0.5-(spacing/2*(children.size()-1))
@@ -119,11 +127,11 @@ func _sort_center()->void:
 		t=_t
 		i+=1
 		
-	normalize_rotation()
-	
+
+
 func _sort_right()->void:
-	if children.size()==0: pass
-	var spacing: float = clamp(size.x/children.size(), 1, max_spacing)
+	if children.size()==0: return
+	
 	
 	var t: float = begin_offset
 	children[0].pivot_offset=children[0].size/2
@@ -143,5 +151,3 @@ func _sort_right()->void:
 		
 		t=_t
 		i+=1
-		
-	normalize_rotation()

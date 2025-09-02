@@ -8,10 +8,11 @@ extends Control
 #@onready var players: HBoxContainer = $Players
 @onready var round: Label = $Info/PanelContainer/Round #$GameStatus/Round
 @onready var user_input: UserInput = $UserInput
-@onready var hand: Control = $Hand_PH
+@onready var hand: Control = $Hand
 @onready var pow: Control = $Pow_PH2
 
-const PLAYER_STATUS = preload("res://scenes/debug_frontend/player_status/player_status.tscn")
+
+const CARD_HUD = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 func _ready() -> void:
 	PokerEngine.next_player.connect(func(a): _update())
@@ -21,20 +22,22 @@ func _ready() -> void:
 	user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
 	
-	for i in PokerEngine.PLAYER_COUNT:
-		var player_status: PlayerStatus= PLAYER_STATUS.instantiate()
-		player_status.player_id=i
-		#players.add_child(player_status)
 	
-	#PokerEngine.start_next_round()
-	_update()
+	
+
+	#_update()
 
 func _update()-> void:
 	pool.text="Pool: "+str(PokerEngine.pool)
 	#deck.text="Cards in deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
-	
+	for c in hand.get_children():
+		hand.remove_child(c)
+	for c in PokerEngine.get_player(0).hand:
+		var ch: CardHUD = CARD_HUD.instantiate()
+		ch.card=c
+		hand.add_child(ch)
 
 
 func _toggle_hud(enabled: bool) -> void:
