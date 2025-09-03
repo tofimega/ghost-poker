@@ -196,7 +196,6 @@ offset_right = 312.0
 offset_bottom = 173.0
 grow_horizontal = 1
 grow_vertical = 1
-max_size = 1.0
 max_spacing = 0.071
 
 [node name="Pow_PH2" type="Control" parent="."]

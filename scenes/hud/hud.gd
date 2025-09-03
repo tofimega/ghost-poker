@@ -33,7 +33,7 @@ func _update()-> void:
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	for c in hand.get_children():
-		hand.remove_child(c)
+		c.queue_free()
 	for c in PokerEngine.get_player(0).hand:
 		var ch: CardHUD = CARD_HUD.instantiate()
 		ch.card=c
