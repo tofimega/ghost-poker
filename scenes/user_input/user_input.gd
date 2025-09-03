@@ -13,14 +13,13 @@ signal user_bet(bet: Bet)
 @onready var bet_amount: SpinBox = $VBoxContainer/HBoxContainer2/BetAmount
 @onready var bet: Button = $VBoxContainer/HBoxContainer2/Bet
 
-
-
 var player_id: int = 0:
 	set(id):
 		player_id=id
 		_update_text()
 
 signal input_enabled(e: bool)
+
 var enabled: bool = false:
 	set(e):
 		enabled=e 
@@ -29,12 +28,8 @@ var enabled: bool = false:
 		bet.disabled=!e
 		input_enabled.emit(e)
 
-
-
-
 func _ready()->void:
 	bet_amount.set_value_no_signal(PokerEngine.MINIMUM_BET)
-	
 
 
 func _on_fold_pressed() -> void:
@@ -59,9 +54,8 @@ func _on_bet_amount_value_changed(value: float) -> void:
 	var bet: int = clamp(value, PokerEngine.highest_bet, PokerEngine.players[player_id].chips)
 	bet_amount.set_value_no_signal(bet)
 	_update_text()
-	
-	
-	
+
+
 func _update_text()->void:
 	var chip_count: int =PokerEngine.players[player_id].chips
 	var bet: int = bet_amount.value

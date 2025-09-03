@@ -1,8 +1,5 @@
 extends Node
 
-
-
-
 signal user_player_added(id: int)
 
 var interfaces: Dictionary[int, UserInput]={} # player id, player Interface

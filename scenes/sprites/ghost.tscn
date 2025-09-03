@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bati8d7pq1ysj"]
+[gd_scene load_steps=9 format=3 uid="uid://bati8d7pq1ysj"]
 
 [ext_resource type="Texture2D" uid="uid://bhda8wpkkkepd" path="res://assets/images/ghost body.png" id="1_f4eol"]
 [ext_resource type="Texture2D" uid="uid://bdi58ybx3rufc" path="res://assets/images/cards.png" id="2_48iy0"]
@@ -253,9 +253,37 @@ tracks/9/keys = {
 "values": [Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_e5mws"]
+resource_name = "bet"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hands/HandL:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.151144, 0.199096, 0.249955, 0.3, 0.348795, 0.400293, 0.5, 0.6, 0.666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-2, 4.76837e-07), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-23, -23), Vector2(-17, -6), Vector2(-2, 4.76837e-07)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hands/HandL:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(-1, -1), Vector2(1, -1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e5mws"]
 _data = {
 &"RESET": SubResource("Animation_48iy0"),
+&"bet": SubResource("Animation_e5mws"),
 &"idle_default": SubResource("Animation_efg5g")
 }
 

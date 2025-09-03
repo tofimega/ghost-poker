@@ -11,7 +11,6 @@ extends Control
 @onready var hand: Control = $Hand
 @onready var pow: Control = $Pow_PH2
 
-
 const CARD_HUD = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 func _ready() -> void:
@@ -21,14 +20,10 @@ func _ready() -> void:
 	PokerEngine.deck_empty.connect(_update)
 	user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
-	
-	
-	
 
-	#_update()
 
 func _update()-> void:
-	pool.text="Pool: "+str(PokerEngine.pool)
+	pool.text="Pot: "+str(PokerEngine.pool)
 	#deck.text="Cards in deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)

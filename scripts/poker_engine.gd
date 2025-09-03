@@ -60,11 +60,8 @@ func _next_step()->void:
 		showdown()
 		return
 
-	if !_find_next_player():
-			Logger.log_text("No player worth asking found...")
-			if current_player_count()>1: showdown()
-			return
-
+	var players_available: bool = _find_next_player()
+	
 	if current_player_count() <= 1:
 		game_state=GameState.CONCLUSIVE
 		var winning_player: Player = players[current_player]
@@ -74,6 +71,22 @@ func _next_step()->void:
 		Logger.log_text("CHIPS IN POOL: "+ str(pool))
 		game_over.emit(GameState.CONCLUSIVE, winning_player)
 		return
+	
+	if !players_available:
+			Logger.log_text("No player worth asking found...")
+			Logger.log_text("Dealing remaining cards...")
+			
+			var ps: Array[Player] = players.values()
+			var p: int=0
+			while !deck.is_empty():
+				deal_cards(ps[p%ps.size()], 1)
+				p+=1
+
+			for pr in ps: 
+				hand_dealt.emit(pr)
+
+			showdown() 
+			return
 
 	if (calls_this_turn < pc_at_start_of_round-1
 	or player_bets.size() < pc_at_start_of_round): _ask_next_player()
@@ -163,7 +176,6 @@ func start_next_round()->void:
 	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
 	Logger.log_text("CHIPS IN POOL: "+ str(pool))
 	next_round.emit()
-	
 
 	for i in CARDS_PER_ROUND:
 		for p in players.values():

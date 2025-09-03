@@ -15,6 +15,7 @@ enum HandRank{
 	FourKind,
 	StraightFlush
 }
+
 func _init(hand: HandRank, cards: Array[Card.Rank]):
 	assert(cards.size()==5)
 	hand_rank=hand

@@ -25,7 +25,6 @@ enum Rank{
 	ACE
 }
 
-
 @warning_ignore("shadowed_variable")
 func _init(suit: Suit, rank: Rank ):
 	self.suit=suit

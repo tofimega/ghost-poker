@@ -16,7 +16,8 @@ func log_text(s: String)->void:
 	if mute: return
 	log_file.store_line(s)
 	log_file.flush()
-	
+
+
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_CRASH, NOTIFICATION_PREDELETE, NOTIFICATION_WM_CLOSE_REQUEST:

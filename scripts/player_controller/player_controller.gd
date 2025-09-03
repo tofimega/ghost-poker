@@ -3,13 +3,9 @@ extends Object
 
 var player: Player
 
-
-
 @warning_ignore("shadowed_variable")
 func _init(player: Player)->void:
 	self.player=player
-
-
 
 const POWER_ADD_HRANK: float= 5
 const POWER_ADD_CRANK: float= 1.2
@@ -18,8 +14,6 @@ const POWER_MULT_HSIZE: float=1
 const POWER_MULT_PLAYERS:float=1
 const POWER_MULT_AVGBET: float = 0.6
 const TIME_OFFSET: float=0.1
-
-
 
 const MIN_VAR: float=0.9
 const MAX_VAR: float=1.1
@@ -34,9 +28,7 @@ const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
 func find_odds()->float:
-
 	var hand_rank: Ranking = PokerEngine.rank_hand(player.hand)
-	
 	var rt: float=1
 	
 	# lower ranking -> smaller num
@@ -49,7 +41,6 @@ func find_odds()->float:
 	# some randomness
 	rt*=randf_range(MIN_VAR, MAX_VAR)
 	Logger.log_text("Player "+str(player.id)+"'s confidence randomized: "+str(rt))
-	
 	
 	var avg_bet: float=0
 	Logger.log_text("Player "+str(player.id)+" is considering other players' bets...")
@@ -73,7 +64,6 @@ func find_odds()->float:
 	Logger.log_text("Player "+str(player.id)+"'s confidence normalized: "+str(rt))
 	rt=ease(rt, -((PokerEngine.current_turn+TIME_OFFSET)*POWER_ADD_TIME))
 	Logger.log_text("Player "+str(player.id)+"'s confidence adjusted according to time passed: "+str(rt))
-	
 	
 	#bluff
 	if rt>=BLUFF_THRESH: return rt
@@ -103,7 +93,6 @@ func my_turn() -> void:
 	Logger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	Logger.log_text(" ")
 	
-	
 	var confidence: float = find_odds()
 	Logger.log_text("player "+str(player.id)+"'s confidence: "+ str(confidence))
 	conf_last_turn = confidence
@@ -124,18 +113,19 @@ func my_turn() -> void:
 		Logger.log_text("player "+str(player.id)+" FOLDS!")
 		PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
 		return
-		
-	
+
 	Logger.log_text("player "+str(player.id)+" considers RAISING... "+" (threshold: " + str(RAISE_THRESHOLD) + ")")
 	if confidence >= RAISE_THRESHOLD:
 		var amount: int = min(PokerEngine.highest_bet + max(player.chips*(confidence-RAISE_THRESHOLD+0.01)/10, 1), player.chips)
 		Logger.log_text("player "+str(player.id)+" tries RAISING bet to: "+ str(amount))
 		if amount == player.chips:
 			Logger.log_text("player "+str(player.id)+"'s RAISE is more than all their chips, considering going ALL IN... "+ "(threshold: " + str(RAISE_THRESHOLD*FORCED_ALL_IN_MULT) + ")")
+			
 			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: 
 				Logger.log_text("player "+str(player.id)+" goes ALL IN!")
 				PokerEngine.player_bet.emit(player.id, Bet.new(amount, Bet.Type.ALL_IN))
 				return
+				
 			Logger.log_text("player "+str(player.id)+" CALLS instead!")
 			PokerEngine.player_bet.emit(player.id, Bet.new(PokerEngine.highest_bet, Bet.Type.CALL))
 			return

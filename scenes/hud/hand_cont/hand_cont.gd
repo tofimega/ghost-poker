@@ -2,7 +2,6 @@
 class_name HandCont
 extends Container
 
-
 @export_range(0,1) var max_size: float = 1:
 	set(s):
 		max_size=s
@@ -39,11 +38,12 @@ var curve: Curve2D
 
 var children: Array
 
+enum ChildPositioning{LEFT, CENTER, RIGHT}
+
 func _ready():
 	resized.connect(queue_sort)
 	queue_sort()
 
-enum ChildPositioning{LEFT, CENTER, RIGHT}
 
 func _notification(what: int) -> void:
 	match what:
@@ -75,12 +75,10 @@ func normalize_rotation():
 	
 	for c in children:
 		c.rotation=remap(c.rotation, _min_rot, _max_rot, max(deg_to_rad(-max_rotation_deg),_min_rot), min(deg_to_rad(max_rotation_deg), _max_rot))
-	
 
 
 func _sort_left()->void:
 	if children.size()==0: return
-	
 	
 	var t: float = begin_offset
 	children[0].pivot_offset=children[0].size/2
@@ -97,11 +95,8 @@ func _sort_left()->void:
 		transform = curve.sample_baked_with_rotation(remap(_t,0,1,0,curve.get_baked_length()))
 		children[i].position=transform.origin-children[i].size/2
 		children[i].rotation=-transform.x.angle_to(Vector2.RIGHT) if _t>0 else -PI/2
-		
 		t=_t
 		i+=1
-		
-	
 
 
 func _sort_center()->void:
@@ -118,21 +113,17 @@ func _sort_center()->void:
 	while i < children.size():
 		var _t: float=t+spacing
 	
-		
 		children[i].pivot_offset=children[i].size/2
 		transform = curve.sample_baked_with_rotation(remap(_t,0,1,0,curve.get_baked_length()))
 		children[i].position=transform.origin-children[i].size/2
 		children[i].rotation=-transform.x.angle_to(Vector2.RIGHT) if _t>0 else -PI/2
-		
 		t=_t
 		i+=1
-		
 
 
 func _sort_right()->void:
 	if children.size()==0: return
-	
-	
+
 	var t: float = begin_offset
 	children[0].pivot_offset=children[0].size/2
 	var transform: Transform2D = curve.sample_baked_with_rotation(remap(t,1,0,0,curve.get_baked_length()))
@@ -148,6 +139,5 @@ func _sort_right()->void:
 		transform = curve.sample_baked_with_rotation(remap(_t,1,0,0,curve.get_baked_length()))
 		children[i].position=transform.origin-children[i].size/2
 		children[i].rotation=-transform.x.angle_to(Vector2.RIGHT) if _t<1 else -PI/2
-		
 		t=_t
 		i+=1

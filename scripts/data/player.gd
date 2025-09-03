@@ -1,12 +1,9 @@
 class_name Player
 extends Object
 
-
 var hand: Array[Card] = []
-
 var chips: int = 0:
 	set(c):
-		
 		chips=max(c, 0)
 
 var id: int =-1:
@@ -16,7 +13,6 @@ var id: int =-1:
 var in_game: bool=true
 var all_in: bool=false
 var controller: PlayerController = null
-
 
 func _notification(what: int) -> void:
 	match what:
@@ -31,7 +27,7 @@ func _notification(what: int) -> void:
 func bet()-> void:
 	if !in_game: pass
 	controller.my_turn()
-	
+
 
 func fold()->void:
 	in_game=false
