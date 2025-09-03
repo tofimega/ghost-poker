@@ -47,20 +47,37 @@ var highest_bet: int = 0
 func _ready()->void:
 	deck_empty.connect(func(): empty_deck_flag=true)
 	player_bet.connect(func (p: int, bet: Bet):
-		if p != current_player or !players[p].in_game: return
-		_handle_player_bet(p, bet)
+		if p == current_player and players[p].in_game: _handle_player_bet(p, bet)
 		await get_tree().create_timer(0.5).timeout
-		
-		if !_find_next_player():
-			Logger.log_text("No player worth asking found...")
-			if current_player_count()<=1: _ask_next_player()
-			else: showdown()
-			return
-
-		_ask_next_player(),
+		_next_step(),
 		CONNECT_DEFERRED # to prevent stack overflow, just in case
 		)
 	round_over.connect(start_next_round)
+
+
+func _next_step()->void:
+	if empty_deck_flag:
+		showdown()
+		return
+
+	if !_find_next_player():
+			Logger.log_text("No player worth asking found...")
+			if current_player_count()>1: showdown()
+			return
+
+	if current_player_count() <= 1:
+		game_state=GameState.CONCLUSIVE
+		var winning_player: Player = players[current_player]
+		Logger.log_text("GAME OVER!")
+		Logger.log_text("WINNER: "+str(winning_player.id))
+		Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
+		Logger.log_text("CHIPS IN POOL: "+ str(pool))
+		game_over.emit(GameState.CONCLUSIVE, winning_player)
+		return
+
+	if (calls_this_turn < pc_at_start_of_round-1
+	or player_bets.size() < pc_at_start_of_round): _ask_next_player()
+	else: _final_bet()
 
 
 func _find_next_player() ->bool:
@@ -136,9 +153,9 @@ func current_player_count()->int:
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
 	if game_state!=GameState.RUNNING: return
-	player_bets.clear() #TODO: maybe don't do this
+	#player_bets.clear() #TODO: maybe don't do this
 	pc_at_start_of_round = current_player_count()
-	current_player=0
+	current_player=-1
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
 	current_turn+=1
@@ -147,48 +164,33 @@ func start_next_round()->void:
 	Logger.log_text("CHIPS IN POOL: "+ str(pool))
 	next_round.emit()
 	
-	#TODO: give cards one at a time for better distribution
+
 	for i in CARDS_PER_ROUND:
 		for p in players.values():
 			if deck.size()==0: break
 			deal_cards(p, 1)
 			hand_dealt.emit(p)
-	
-	if !players[0].in_game or players[0].all_in: _find_next_player()
-	_ask_next_player()
+	_next_step()
+
 
 
 var calls_this_turn: int=0
 func _ask_next_player()->void:
+	if !players[current_player].in_game: return
 	
-	if current_player_count() <= 1:
-		game_state=GameState.CONCLUSIVE
-		var winning_player: Player = players[current_player]
-		Logger.log_text("GAME OVER!")
-		Logger.log_text("WINNER: "+str(winning_player.id))
-		Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
-		Logger.log_text("CHIPS IN POOL: "+ str(pool))
-		game_over.emit(GameState.CONCLUSIVE, winning_player)
-		return
+	var player_bets_text: Dictionary[int, String]
+	for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i])
+	Logger.log_text(" ")
+	Logger.log_text("current highest bet: "+str(highest_bet))
+	Logger.log_text("current player bets: "+str(player_bets_text))
+	Logger.log_text("players remaining: "+str(current_player_count()))
+	Logger.log_text(" ")
+	players[current_player].bet()
+	next_player.emit(current_player)
+	return
 
-	if empty_deck_flag:
-		showdown()
-		return
 
-	if calls_this_turn < pc_at_start_of_round-1 or player_bets.size() < pc_at_start_of_round:
-		if !players[current_player].in_game: return
-		
-		var player_bets_text: Dictionary[int, String]
-		for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i])
-		Logger.log_text(" ")
-		Logger.log_text("current highest bet: "+str(highest_bet))
-		Logger.log_text("current player bets: "+str(player_bets_text))
-		Logger.log_text("players remaining: "+str(current_player_count()))
-		Logger.log_text(" ")
-		players[current_player].bet()
-		next_player.emit(current_player)
-		return
-		
+func _final_bet()->void:
 	Logger.log_text("final bet: "+str(highest_bet))
 	Logger.log_text(" ")
 	for p: Player in players.values():
@@ -203,7 +205,6 @@ func _ask_next_player()->void:
 
 
 func _handle_player_bet(id: int, bet: Bet)->void:
-
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()
 		player_bets[id] = bet.type
@@ -291,14 +292,15 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 	Logger.log_text("Hand size valid")
 	var suits: Array=[]
 	Logger.log_text("Checking suits for flush...")
+
 	for s in Card.Suit:
 		var suit_hand: Array[Card] = hand.filter(func (c: Card)-> bool: return c.suit==Card.Suit[s])
 		suits.append(suit_hand)
 		Logger.log_text("\t Cards with suit "+str(s)+": "+str(suit_hand.size()))
+
 	for suit in suits:
 		if suit.size()<5: continue
 		rankings.append(_rank_hand_with_flush(suit))
-
 
 	var ranks: Array[int]
 	ranks.resize(Card.Rank.size())
@@ -306,10 +308,10 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 	for r in Card.Rank:
 		var rank: int = hand.reduce(func (count,c: Card)-> int: return (count+1 if c.rank==Card.Rank[r] else count), 0)
 		ranks[Card.Rank[r]]=rank
+	
 	ranks.reverse()
 	Logger.log_text("Card ranks sorted, checking non-flush Rankings...")
 
-	
 	var fkind_4: int=ranks.find(4)
 	var fkind_1: int=ranks.find(1)
 	if fkind_1>=0 and fkind_4>=0:
