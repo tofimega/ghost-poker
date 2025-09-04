@@ -338,6 +338,7 @@ animation = &"idle_default"
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_6t6ds"]
+switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="Curve" id="Curve_xye3f"]
@@ -348,6 +349,7 @@ point_count = 2
 xfade_curve = SubResource("Curve_xye3f")
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kclr6"]
+switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ajv5v"]
@@ -362,9 +364,11 @@ point_count = 2
 xfade_curve = SubResource("Curve_fq66f")
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_55qcu"]
+switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_h2buo"]
+states/End/position = Vector2(995, 82)
 states/RESET/node = SubResource("AnimationNodeAnimation_e5mws")
 states/RESET/position = Vector2(227, 100)
 "states/RESET 2/node" = SubResource("AnimationNodeAnimation_48iy0")
@@ -379,7 +383,7 @@ states/fold/position = Vector2(502, -83)
 states/idle_default/node = SubResource("AnimationNodeAnimation_a66qs")
 states/idle_default/position = Vector2(454, 53)
 transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_f1u55"), "RESET", "idle_default", SubResource("AnimationNodeStateMachineTransition_6t6ds"), "idle_default", "RESET 2", SubResource("AnimationNodeStateMachineTransition_fq66f"), "RESET 2", "bet", SubResource("AnimationNodeStateMachineTransition_kclr6"), "bet", "RESET", SubResource("AnimationNodeStateMachineTransition_ajv5v"), "idle_default", "RESET 3", SubResource("AnimationNodeStateMachineTransition_h2buo"), "RESET 3", "fold", SubResource("AnimationNodeStateMachineTransition_55qcu")]
-graph_offset = Vector2(-56, -154)
+graph_offset = Vector2(-88, -86)
 
 [node name="Ghost" type="Sprite2D"]
 texture = ExtResource("1_f4eol")
@@ -414,3 +418,9 @@ libraries = {
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_h2buo")
 anim_player = NodePath("../AnimationPlayer")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -18.0
+offset_top = -45.0
+offset_right = 22.0
+offset_bottom = -39.0

@@ -25,7 +25,7 @@ func _notification(what: int) -> void:
 
 @warning_ignore("shadowed_variable")
 func bet()-> void:
-	if !in_game: pass
+	if !in_game: return
 	controller.my_turn()
 
 
