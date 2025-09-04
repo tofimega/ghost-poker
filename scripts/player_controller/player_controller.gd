@@ -44,17 +44,17 @@ func find_odds()->float:
 	
 	var avg_bet: float=0
 	Logger.log_text("Player "+str(player.id)+" is considering other players' bets...")
-	for id: int in PokerEngine.player_bets:
+	for id: int in PokerEngine.player_bets_noclear:
 		if id == player.id: continue
 		
-		match PokerEngine.player_bets[id]:
+		match PokerEngine.player_bets_noclear[id]:
 			Bet.Type.CALL: avg_bet+=CALL_MULT
 			Bet.Type.RAISE: avg_bet+=RAISE_MULT
 			Bet.Type.FOLD: avg_bet+=FOLD_MULT
 			Bet.Type.ALL_IN: avg_bet+=ALL_IN_MULT
 	
-	if (PokerEngine.player_bets.size()>0 and !PokerEngine.player_bets.has(player.id)) or (PokerEngine.player_bets.size()>1):
-		avg_bet/=PokerEngine.player_bets.size()
+	if (PokerEngine.player_bets_noclear.size()>0 and !PokerEngine.player_bets_noclear.has(player.id)) or (PokerEngine.player_bets_noclear.size()>1):
+		avg_bet/=PokerEngine.player_bets_noclear.size()
 		rt*=((avg_bet-1)*POWER_MULT_AVGBET)+1
 		rt/=RAISE_MULT
 		Logger.log_text("\t Player "+str(player.id)+"'s confidence adjusted according to others' bets: "+str(rt))

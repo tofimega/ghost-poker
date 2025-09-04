@@ -41,6 +41,7 @@ var current_player: int = -1
 var empty_deck_flag: bool=false
 
 var player_bets: Dictionary[int, Bet.Type]
+var player_bets_noclear: Dictionary[int, Bet.Type]
 var highest_bet: int = 0
 
 
@@ -167,7 +168,7 @@ func current_player_count()->int:
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
 	if game_state!=GameState.RUNNING: return
-	#player_bets.clear() #TODO: maybe don't do this
+	player_bets.clear()
 	pc_at_start_of_round = current_player_count()
 	current_player=-1
 	highest_bet = MINIMUM_BET
@@ -221,6 +222,7 @@ func _handle_player_bet(id: int, bet: Bet)->void:
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()
 		player_bets[id] = bet.type
+		player_bets_noclear[id] = bet.type
 		return
 	
 	if bet.type==bet.Type.ALL_IN: players[id].all_in=true
@@ -229,6 +231,7 @@ func _handle_player_bet(id: int, bet: Bet)->void:
 	else: calls_this_turn = 0
 
 	player_bets[id] = bet.type
+	player_bets_noclear[id] = bet.type
 	highest_bet=max(bet.amount, highest_bet)
 
 
