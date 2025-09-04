@@ -14,12 +14,15 @@ script = ExtResource("1_xb203")
 position = Vector2(59, 120)
 rotation = 3.14159
 scale = Vector2(1, -1)
+id = 1
 
 [node name="Ghost2" parent="Objects" instance=ExtResource("1_72663")]
 position = Vector2(163, 109)
+id = 2
 
 [node name="Ghost3" parent="Objects" instance=ExtResource("1_72663")]
 position = Vector2(264, 121)
+id = 3
 
 [node name="Table" type="Sprite2D" parent="Objects"]
 texture = ExtResource("3_xb203")

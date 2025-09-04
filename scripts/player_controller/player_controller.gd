@@ -88,7 +88,6 @@ var conf_last_turn: float = -1325
 var forced_all_in: bool = false
 func my_turn() -> void:
 	if player == null or !player.in_game: pass
-
 	forced_all_in=false
 	Logger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	Logger.log_text(" ")

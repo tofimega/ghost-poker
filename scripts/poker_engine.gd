@@ -46,13 +46,14 @@ var highest_bet: int = 0
 
 func _ready()->void:
 	deck_empty.connect(func(): empty_deck_flag=true)
-	player_bet.connect(func (p: int, bet: Bet):
-		if p == current_player and players[p].in_game: _handle_player_bet(p, bet)
-		await get_tree().create_timer(0.5).timeout
-		_next_step(),
-		CONNECT_DEFERRED # to prevent stack overflow, just in case
-		)
+	player_bet.connect(_incoming_bet,CONNECT_DEFERRED) # defer to prevent stack overflow, just in case)
 	round_over.connect(start_next_round)
+
+
+func _incoming_bet(p: int, bet: Bet):
+	if p == current_player and players[p].in_game: _handle_player_bet(p, bet)
+	await get_tree().create_timer(1).timeout #TODO: await animation end instead
+	_next_step()
 
 
 func _next_step()->void:
