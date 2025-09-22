@@ -13,6 +13,7 @@ signal game_start
 signal next_round
 signal round_over
 signal deck_empty
+signal s_showdown(F_no_p_T_mt_d: bool)
 signal no_player_found
 @warning_ignore("unused_signal")
 signal player_out(p: int)
@@ -59,6 +60,7 @@ func _incoming_bet(p: int, bet: Bet):
 
 func _next_step()->void:
 	if empty_deck_flag:
+		s_showdown.emit(true)
 		showdown()
 		return
 
@@ -87,6 +89,7 @@ func _next_step()->void:
 			for pr in ps: 
 				hand_dealt.emit(pr)
 
+			s_showdown.emit(false)
 			showdown() 
 			return
 

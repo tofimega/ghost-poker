@@ -29,3 +29,7 @@ enum Rank{
 func _init(suit: Suit, rank: Rank ):
 	self.suit=suit
 	self.rank=rank
+
+
+func _to_string() -> String:
+	return Suit.find_key(suit)+" "+Rank.find_key(rank)

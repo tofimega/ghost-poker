@@ -175,6 +175,15 @@ layout_mode = 2
 text = "Pot: XXX chips"
 label_settings = ExtResource("2_vsynb")
 
+[node name="PanelContainer4" type="PanelContainer" parent="Info"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Deck" type="Label" parent="Info/PanelContainer4"]
+layout_mode = 2
+text = "Deck: XX"
+label_settings = ExtResource("2_vsynb")
+
 [node name="UserInput" parent="." instance=ExtResource("3_vsynb")]
 layout_mode = 2
 anchors_preset = 0
@@ -204,3 +213,24 @@ offset_left = -1.0
 offset_top = 89.0
 offset_right = 39.0
 offset_bottom = 125.0
+
+[node name="Bet" type="Label" parent="."]
+layout_mode = 0
+offset_left = 73.06
+offset_top = 75.115
+offset_right = 245.06
+offset_bottom = 97.115
+theme_override_font_sizes/font_size = 20
+text = "XXXXXXXX"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Showdown" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 33.0
+offset_right = 178.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "XXXXXXXX"
+vertical_alignment = 1

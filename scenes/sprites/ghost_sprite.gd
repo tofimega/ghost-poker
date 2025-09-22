@@ -15,7 +15,7 @@ func _ready()->void:
 	
 func play(p: int, bet: Bet)->void:
 	if p != id: return
-	label.text=bet.Type.find_key(bet.type)+" "+str(bet.amount)
+	label.text=str(bet)
 	label.visible=true
 	if bet.type ==bet.Type.FOLD: animation_tree["parameters/playback"].travel("fold")
 	else: animation_tree["parameters/playback"].travel("bet")
