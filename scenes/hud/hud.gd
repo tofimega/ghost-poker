@@ -9,7 +9,7 @@ extends Control
 @onready var round: Label = $Info/PanelContainer/Round #$GameStatus/Round
 @onready var user_input: UserInput = $UserInput
 @onready var hand: Control = $Hand
-@onready var pow: Control = $Pow_PH2
+@onready var pow: CheatProgress = $CheatProgress
 @onready var bet_label: Label = $Bet
 @onready var deck: Label = $Info/PanelContainer4/Deck
 @onready var showdown_label: Label = $Showdown
@@ -29,6 +29,7 @@ func _ready() -> void:
 	user_input.enabled=true
 
 func _display_winner(result: PokerEngine.GameState, winner)-> void:
+	_update()
 	if result == PokerEngine.GameState.TIE:
 		bet_label.text="DRAW!\n"
 		for w in winner:
@@ -55,6 +56,7 @@ func _update()-> void:
 	deck.text="Deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
+	pow.texture_progress_bar.value=PokerEngine.get_player(0).cheat.charge
 	for c in hand.get_children():
 		c.queue_free()
 	for c in PokerEngine.get_player(0).hand:
@@ -64,6 +66,8 @@ func _update()-> void:
 
 
 func _toggle_hud(enabled: bool) -> void:
+	#user_input.enabled=enabled
 	user_input.visible=enabled
 	hand.visible=enabled
 	pow.visible=enabled
+	pow.button.disabled=!enabled

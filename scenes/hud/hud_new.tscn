@@ -1,20 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://dr10kbw8kd8o3"]
+[gd_scene load_steps=6 format=3 uid="uid://dr10kbw8kd8o3"]
 
 [ext_resource type="Script" uid="uid://clnx1it0pqk0l" path="res://scenes/hud/hud.gd" id="1_5buul"]
 [ext_resource type="LabelSettings" uid="uid://bkvoxm2vminha" path="res://scenes/hud/new_label_settings.tres" id="2_vsynb"]
 [ext_resource type="PackedScene" uid="uid://difs31wlhbq6w" path="res://scenes/user_input/user_input_new.tscn" id="3_vsynb"]
 [ext_resource type="PackedScene" uid="uid://dw13hmaff8m1r" path="res://scenes/hud/hand_cont/hand_cont.tscn" id="4_ed3ik"]
+[ext_resource type="PackedScene" uid="uid://bjstq1ok5qrhe" path="res://scenes/hud/cheat_progress/cheat_progress.tscn" id="5_56bah"]
 
 [node name="HUD" type="Control" groups=["HUD"]]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 script = ExtResource("1_5buul")
 
 [node name="UI_BLOCKOUT" type="Control" parent="."]
+visible = false
 layout_mode = 2
 anchors_preset = 0
 offset_right = 320.0
@@ -127,6 +125,7 @@ rotation = -0.123837
 pivot_offset = Vector2(21, 30)
 
 [node name="Pow" type="Panel" parent="UI_BLOCKOUT/HUD"]
+visible = false
 layout_mode = 0
 offset_left = 2.0
 offset_top = 90.0
@@ -207,13 +206,6 @@ grow_horizontal = 1
 grow_vertical = 1
 max_spacing = 0.071
 
-[node name="Pow_PH2" type="Control" parent="."]
-anchors_preset = 0
-offset_left = -1.0
-offset_top = 89.0
-offset_right = 39.0
-offset_bottom = 125.0
-
 [node name="Bet" type="Label" parent="."]
 layout_mode = 0
 offset_left = 73.06
@@ -234,3 +226,16 @@ offset_bottom = 55.0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 text = "XXXXXXXX"
 vertical_alignment = 1
+
+[node name="CheatProgress" parent="." instance=ExtResource("5_56bah")]
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 1.0
+offset_top = 90.0
+offset_right = 41.0
+offset_bottom = 126.0
+grow_horizontal = 1
+grow_vertical = 1

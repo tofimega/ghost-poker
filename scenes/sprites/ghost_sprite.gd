@@ -7,12 +7,15 @@ extends Sprite2D
 @onready var label: Label = $Label
 
 
+
+
 func _ready()->void:
 	PokerEngine.player_bet.connect(play)
 	animation_tree.animation_finished.connect(func(name: String): if name=="bet" or name=="fold": label.visible=false)
 	label.visible=false
 	label.position+=global_position
 	
+
 func play(p: int, bet: Bet)->void:
 	if p != id: return
 	label.text=str(bet)

@@ -14,5 +14,9 @@ func add_user_player_interface(id: int) -> UserInput:
 	return player_input
 
 
+
+func get_selector()-> TargetSelector:
+	return get_tree().get_first_node_in_group("Selector")
+
 func get_hud() -> HUD:
 	return get_tree().get_first_node_in_group("HUD")

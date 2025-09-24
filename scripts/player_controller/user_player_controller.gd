@@ -4,7 +4,19 @@ extends PlayerController
 func _init(player: Player) -> void:
 	super(player)
 	FrontendManager.add_user_player_interface(player.id).user_bet.connect(_send_bet)
+	FrontendManager.get_hud().pow.button.pressed.connect(_select_target_for_cheat)
 
+
+func _select_target_for_cheat()->void:
+	var selector: TargetSelector = FrontendManager.get_selector()
+	selector._toggle_selection(true)
+	await selector.target_selected
+	var target: int = selector.current_target
+	selector._toggle_selection(false)
+	_use_cheat(target)
+
+func _use_cheat(target: int)->void:
+	player.cheat.user(target) 
 
 func _send_bet(bet: Bet) -> Bet:
 	FrontendManager.interfaces[player.id].enabled=false

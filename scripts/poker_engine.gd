@@ -278,7 +278,7 @@ func _init_game_state()->void:
 	pool=0
 	Logger.log_text("Pool initialized")
 	player_bets.clear()
-	for p in players.values():
+	for p: Player in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
 		hand_dealt.emit(p)
 		p.chips=STARING_CHIP_COUNT
@@ -289,6 +289,7 @@ func _init_game_state()->void:
 	for i in PLAYER_COUNT:
 	#	players[i]=Player.new()
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
+		players[i].cheat = Clairvoyance.new(i)
 	game_state=GameState.RUNNING
 	Logger.log_text("Game Opened")
 

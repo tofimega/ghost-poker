@@ -66,6 +66,10 @@ func find_odds()->float:
 	rt=ease(rt, -((PokerEngine.current_turn+TIME_OFFSET)*POWER_ADD_TIME))
 	Logger.log_text("Player "+str(player.id)+"'s confidence adjusted according to time passed: "+str(rt))
 	
+	Logger.log_text("Using cheat power...")
+	rt*=player.cheat.computer(other_bets.keys()[randi()%other_bets.keys().size()])
+	Logger.log_text("Confidence after cheat: "+str(rt))
+	rt=clamp(rt,0,1)
 	#bluff
 	if rt>=BLUFF_THRESH: return rt
 	Logger.log_text("Player "+str(player.id)+"'s confidence too low, trying to bluff...")

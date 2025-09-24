@@ -1,7 +1,15 @@
 class_name Player
 extends Object
 
+
+
+var blinded: bool = false
+
 var hand: Array[Card] = []
+
+
+var cheat: Cheat
+
 var chips: int = 0:
 	set(c):
 		chips=max(c, 0)
@@ -21,6 +29,7 @@ func _notification(what: int) -> void:
 			Logger.log_text("Player "+str(id)+": controller deleted.")
 			hand.map(func (c: Card): c.free())
 			Logger.log_text("Player "+str(id)+": cards in hand deleted.")
+			cheat.free()
 
 
 @warning_ignore("shadowed_variable")
