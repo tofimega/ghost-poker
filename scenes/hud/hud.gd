@@ -9,6 +9,9 @@ extends Control
 @onready var round: Label = $Info/PanelContainer/Round #$GameStatus/Round
 @onready var user_input: UserInput = $UserInput
 @onready var hand: Control = $Hand
+@onready var target_hand: HandCont = $TargetHand
+
+
 @onready var pow: CheatProgress = $CheatProgress
 @onready var bet_label: Label = $Bet
 @onready var deck: Label = $Info/PanelContainer4/Deck
@@ -17,6 +20,7 @@ extends Control
 const CARD_HUD = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 func _ready() -> void:
+	target_hand.visible=false
 	bet_label.visible=false
 	showdown_label.visible=false
 	PokerEngine.next_player.connect(func(a): _update())
@@ -27,6 +31,21 @@ func _ready() -> void:
 	PokerEngine.s_showdown.connect(_show_down)
 	user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
+
+
+func show_other_hand(target: int)->void:
+	for c in target_hand.get_children(): c.queue_free()
+	for c in PokerEngine.get_player(target).hand:
+		var ch: CardHUD = CARD_HUD.instantiate()
+		ch.card=c
+		target_hand.add_child(ch)
+		
+	target_hand.visible=true
+	await get_tree().create_timer(1.5).timeout
+	target_hand.visible=false
+
+
+
 
 func _display_winner(result: PokerEngine.GameState, winner)-> void:
 	_update()
@@ -63,6 +82,7 @@ func _update()-> void:
 		var ch: CardHUD = CARD_HUD.instantiate()
 		ch.card=c
 		hand.add_child(ch)
+		
 
 
 func _toggle_hud(enabled: bool) -> void:
