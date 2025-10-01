@@ -3,7 +3,7 @@ extends Object
 
 
 
-var blinded: bool = false
+var blinded: bool = true
 
 var hand: Array[Card] = []
 

@@ -5,4 +5,5 @@ extends Control
 var card: Card
 
 func _ready()->void:
-	info_ph.text="r: "+str(card.rank)+"\ns: "+str(card.suit)
+	if card:
+		info_ph.text="r: "+str(card.rank)+"\ns: "+str(card.suit)

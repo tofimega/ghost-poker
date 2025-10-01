@@ -35,11 +35,14 @@ func _ready() -> void:
 
 func show_other_hand(target: int)->void:
 	for c in target_hand.get_children(): c.queue_free()
-	for c in PokerEngine.get_player(target).hand:
-		var ch: CardHUD = CARD_HUD.instantiate()
-		ch.card=c
-		target_hand.add_child(ch)
-		
+	if PokerEngine.get_player(0).blinded:
+		target_hand.add_child(CARD_HUD.instantiate())
+	else:
+		for c in PokerEngine.get_player(target).hand:
+			var ch: CardHUD = CARD_HUD.instantiate()
+			ch.card=c
+			target_hand.add_child(ch)
+
 	target_hand.visible=true
 	await get_tree().create_timer(1.5).timeout
 	target_hand.visible=false

@@ -28,7 +28,10 @@ const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
 func find_odds()->float:
-	var hand_rank: Ranking = PokerEngine.rank_hand(player.hand)
+	var hand_rank: Ranking
+	if player.blinded: hand_rank=Ranking.new(4, [0,0,0,0,0])
+	else: hand_rank=PokerEngine.rank_hand(player.hand)
+	
 	var rt: float=1
 	
 	# lower ranking -> smaller num

@@ -9,4 +9,4 @@ script = ExtResource("1_5fnae")
 
 [node name="Info_PH" type="Label" parent="."]
 layout_mode = 2
-text = "XXXXXXXX"
+text = "???"
