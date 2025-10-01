@@ -44,7 +44,10 @@ var empty_deck_flag: bool=false
 var player_bets: Dictionary[int, Bet.Type]
 var player_bets_noclear: Dictionary[int, Bet.Type]
 var highest_bet: int = 0
+var freeze_highest_bet: int = -1
 
+
+var cheats: Array[Cheat] = [Clairvoyance.new(), WildCard.new(), Freeze.new(), Stink.new()]
 
 func _ready()->void:
 	deck_empty.connect(func(): empty_deck_flag=true)
@@ -170,6 +173,7 @@ func current_player_count()->int:
 
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
+	freeze_highest_bet=false
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
 	pc_at_start_of_round = current_player_count()
@@ -235,7 +239,7 @@ func _handle_player_bet(id: int, bet: Bet)->void:
 
 	player_bets[id] = bet.type
 	player_bets_noclear[id] = bet.type
-	highest_bet=max(bet.amount, highest_bet)
+	if freeze_highest_bet != id: highest_bet=max(bet.amount, highest_bet)
 
 
 func _clear_game_state()->void:
@@ -270,9 +274,10 @@ func _init_game_state()->void:
 	Logger.log_text("Deck created")
 	deck.shuffle()
 	Logger.log_text("Deck shuffled")
+	
+	cheats.shuffle()
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
-	#	players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 	current_player = 0
 	Logger.log_text("Players created")
 	pool=0
@@ -289,7 +294,8 @@ func _init_game_state()->void:
 	for i in PLAYER_COUNT:
 	#	players[i]=Player.new()
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
-		players[i].cheat = Clairvoyance.new(i)
+		players[i].cheat = cheats[i]
+		cheats[i].player=i
 	game_state=GameState.RUNNING
 	Logger.log_text("Game Opened")
 

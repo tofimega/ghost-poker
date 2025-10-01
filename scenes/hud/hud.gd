@@ -1,12 +1,10 @@
 class_name HUD
 extends Control
 
-@onready var pool: Label = $Info/PanelContainer3/Pot #$GameStatus/Pool
-@onready var highest_bet: Label = $Info/PanelContainer2/Bet #$GameStatus/HighestBet
-#@onready var deck: Label = $GameStatus/Deck
-#@onready var game_status: HBoxContainer = $GameStatus
-#@onready var players: HBoxContainer = $Players
-@onready var round: Label = $Info/PanelContainer/Round #$GameStatus/Round
+@onready var pool: Label = $Info/PanelContainer3/Pot
+@onready var highest_bet: Label = $Info/PanelContainer2/Bet
+
+@onready var round: Label = $Info/PanelContainer/Round
 @onready var user_input: UserInput = $UserInput
 @onready var hand: Control = $Hand
 @onready var target_hand: HandCont = $TargetHand
@@ -18,6 +16,7 @@ extends Control
 @onready var showdown_label: Label = $Showdown
 
 const CARD_HUD = preload("res://scenes/hud/card_hud/card_hud.tscn")
+
 
 func _ready() -> void:
 	target_hand.visible=false
@@ -34,20 +33,10 @@ func _ready() -> void:
 
 
 func show_other_hand(target: int)->void:
-	for c in target_hand.get_children(): c.queue_free()
-	if PokerEngine.get_player(0).blinded:
-		target_hand.add_child(CARD_HUD.instantiate())
-	else:
-		for c in PokerEngine.get_player(target).hand:
-			var ch: CardHUD = CARD_HUD.instantiate()
-			ch.card=c
-			target_hand.add_child(ch)
-
+	_show_hand(target_hand, target)
 	target_hand.visible=true
 	await get_tree().create_timer(1.5).timeout
 	target_hand.visible=false
-
-
 
 
 func _display_winner(result: PokerEngine.GameState, winner)-> void:
@@ -59,12 +48,14 @@ func _display_winner(result: PokerEngine.GameState, winner)-> void:
 	elif result == PokerEngine.GameState.CONCLUSIVE:
 		bet_label.text="GAME OVER!\n"+"Winner: Player "+str(winner.id)+"\n"+str(PokerEngine.rank_hand(winner.hand))
 	bet_label.visible=true
-	
+
+
 func _show_down(cause: bool)->void:
 	showdown_label.text="SHOWDOWN!\n"
 	if cause: showdown_label.text+="Deck empty"
 	else: showdown_label.text+="Nobody can bet"
 	showdown_label.visible=true
+
 
 func _show_bet(p: int, bet: Bet)->void:
 	if p != 0: return
@@ -73,19 +64,26 @@ func _show_bet(p: int, bet: Bet)->void:
 	await get_tree().create_timer(1).timeout
 	bet_label.visible=false
 
+
 func _update()-> void:
 	pool.text="Pot: "+str(PokerEngine.pool)
 	deck.text="Deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.texture_progress_bar.value=PokerEngine.get_player(0).cheat.charge
+	_show_hand(hand, 0)
+
+
+func _show_hand(hand: HandCont, player: int)->void:
 	for c in hand.get_children():
 		c.queue_free()
-	for c in PokerEngine.get_player(0).hand:
+	if PokerEngine.get_player(0).blinded:
+		hand.add_child(CARD_HUD.instantiate())
+		return
+	for c in PokerEngine.get_player(player).hand:
 		var ch: CardHUD = CARD_HUD.instantiate()
 		ch.card=c
 		hand.add_child(ch)
-		
 
 
 func _toggle_hud(enabled: bool) -> void:

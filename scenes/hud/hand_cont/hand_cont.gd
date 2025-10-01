@@ -58,7 +58,6 @@ func _notification(what: int) -> void:
 			curve.add_point(p3,Vector2(0,p2.y-p3.y))
 			curve.bake_interval=1
 			
-			
 			if children.size()==1:
 				match child_positioning:
 					ChildPositioning.LEFT:
@@ -79,8 +78,6 @@ func _notification(what: int) -> void:
 						var transform: Transform2D = curve.sample_baked_with_rotation(remap(t,1,0,0,curve.get_baked_length()))
 						children[0].position=transform.origin-children[0].size/2
 						children[0].rotation=-transform.x.angle_to(Vector2.RIGHT) if t<1 else -PI/2
-				
-				
 				return
 			
 			match child_positioning:

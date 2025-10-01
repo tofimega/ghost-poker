@@ -3,7 +3,10 @@ extends Object
 
 
 
-var blinded: bool = true
+var blinded: int = 0:
+	set(b):
+		if blinded!=0 and b>blinded: return
+		blinded=clamp(b,0,Stink.length)
 
 var hand: Array[Card] = []
 
@@ -35,6 +38,7 @@ func _notification(what: int) -> void:
 @warning_ignore("shadowed_variable")
 func bet()-> void:
 	if !in_game: return
+	blinded-=1
 	controller.my_turn()
 
 

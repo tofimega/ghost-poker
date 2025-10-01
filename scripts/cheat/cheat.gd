@@ -3,10 +3,8 @@ extends Object
 
 
 var charge: float = 1.1 #TODO: reset to 0
-var player: int = -1
+var player: int = -1 #TODO: increase charge on bets, etc. (through signal connections in setter)
 
-func _init(p: int) -> void:
-	player=p #TODO: increase charge on bets, etc. 
 
 
 func computer(target: int)->float:

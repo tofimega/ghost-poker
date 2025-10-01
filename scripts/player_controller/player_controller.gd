@@ -70,9 +70,11 @@ func find_odds()->float:
 	Logger.log_text("Player "+str(player.id)+"'s confidence adjusted according to time passed: "+str(rt))
 	
 	Logger.log_text("Using cheat power...")
-	rt*=player.cheat.computer(other_bets.keys()[randi()%other_bets.keys().size()])
+	var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
+	rt*=player.cheat.computer(in_players[randi()%in_players.size()])
 	Logger.log_text("Confidence after cheat: "+str(rt))
 	rt=clamp(rt,0,1)
+	
 	#bluff
 	if rt>=BLUFF_THRESH: return rt
 	Logger.log_text("Player "+str(player.id)+"'s confidence too low, trying to bluff...")
@@ -94,6 +96,8 @@ const ALL_IN_THRESHOLD: float = 0.9/MAX_VAR
 var conf_last_turn: float = -1325
 
 var forced_all_in: bool = false
+
+
 func my_turn() -> void:
 	if player == null or !player.in_game: return
 	
