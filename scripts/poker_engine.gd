@@ -63,7 +63,7 @@ func _incoming_bet(p: int, bet: Bet):
 
 
 func _next_step()->void:
-	if empty_deck_flag:
+	if empty_deck_flag or !players.keys().any(_can_player_move):
 		s_showdown.emit(true)
 		showdown()
 		return
@@ -97,7 +97,7 @@ func _next_step()->void:
 			showdown() 
 			return
 
-	if !player_bets.values().all(func(b: Bet): return b.type==Bet.Type.FOLD or b.amount==highest_bet): _ask_next_player()
+	if player_bets.size()<pc_at_start_of_round or player_bets.values().any(func(b: Bet): return b.type!=Bet.Type.FOLD and b.amount<highest_bet): _ask_next_player()
 	else: _final_bet()
 
 func _can_player_move(id: int)->bool:
@@ -108,7 +108,7 @@ func _find_next_player() ->bool:
 	var id: int = current_player+1
 	id%=players.size()
 	var counter: int = 0
-	while (!_can_player_move(id) or player_bets[id].amount==highest_bet) and counter<players.size():
+	while (!_can_player_move(id) or (player_bets.has(id) and player_bets[id].amount==highest_bet)) and counter<players.size():
 		counter+=1
 		id+=1
 		id%=players.size()
@@ -203,7 +203,7 @@ func _ask_next_player()->void:
 	if !players[current_player].in_game: return
 	
 	var player_bets_text: Dictionary[int, String]
-	for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i])
+	for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i].type)
 	Logger.log_text(" ")
 	Logger.log_text("current highest bet: "+str(highest_bet))
 	Logger.log_text("current player bets: "+str(player_bets_text))
