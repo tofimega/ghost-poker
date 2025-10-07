@@ -14,6 +14,7 @@ func _init()->void:
 
 func log_text(s: String)->void:
 	if mute: return
+	
 	log_file.store_line(s)
 	log_file.flush()
 

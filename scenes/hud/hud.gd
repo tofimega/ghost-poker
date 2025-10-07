@@ -15,7 +15,7 @@ extends Control
 @onready var deck: Label = $Info/PanelContainer4/Deck
 @onready var showdown_label: Label = $Showdown
 
-const CARD_HUD = preload("res://scenes/hud/card_hud/card_hud.tscn")
+const CARD_HUD: PackedScene = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 
 func _ready() -> void:

@@ -29,6 +29,7 @@ const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 const MINIMUM_BET: int = 3
 
+
 var players: Dictionary[int, Player] = {}
 
 var deck: Array[Card] = []
@@ -41,13 +42,13 @@ var current_turn: int=-1
 var current_player: int = -1
 var empty_deck_flag: bool=false
 
-var player_bets: Dictionary[int, Bet.Type]
-var player_bets_noclear: Dictionary[int, Bet.Type]
+var player_bets: Dictionary[int, Bet]
+var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
 var freeze_highest_bet: int = -1
 
 
-var cheats: Array[Cheat] = [Clairvoyance.new(), WildCard.new(), Freeze.new(), Stink.new()]
+var cheats: Array[Cheat] = []
 
 func _ready()->void:
 	deck_empty.connect(func(): empty_deck_flag=true)
@@ -96,23 +97,25 @@ func _next_step()->void:
 			showdown() 
 			return
 
-	if (calls_this_turn < pc_at_start_of_round-1
-	or player_bets.size() < pc_at_start_of_round): _ask_next_player()
+	if !player_bets.values().all(func(b: Bet): return b.type==Bet.Type.FOLD or b.amount==highest_bet): _ask_next_player()
 	else: _final_bet()
+
+func _can_player_move(id: int)->bool:
+	return players[id].in_game or players[id].all_in or players[id].chips==0
 
 
 func _find_next_player() ->bool:
 	var id: int = current_player+1
 	id%=players.size()
 	var counter: int = 0
-	while (!players[id].in_game or players[id].all_in or players[id].chips==0) and counter<players.size():
+	while (!_can_player_move(id) or player_bets[id].amount==highest_bet) and counter<players.size():
 		counter+=1
 		id+=1
 		id%=players.size()
 
 	if counter==players.size():
 		no_player_found.emit()
-		return false
+		return players.keys().any(_can_player_move)
 	current_player=id
 	return true
 
@@ -228,8 +231,9 @@ func _final_bet()->void:
 func _handle_player_bet(id: int, bet: Bet)->void:
 	if bet.type == bet.Type.FOLD:
 		players[id].fold()
-		player_bets[id] = bet.type
-		player_bets_noclear[id] = bet.type
+		bet.amount=-1
+		player_bets[id] = bet
+		player_bets_noclear[id] = bet
 		return
 	
 	if bet.type==bet.Type.ALL_IN: players[id].all_in=true
@@ -237,8 +241,8 @@ func _handle_player_bet(id: int, bet: Bet)->void:
 	if bet.amount <= highest_bet: calls_this_turn+=1
 	else: calls_this_turn = 0
 
-	player_bets[id] = bet.type
-	player_bets_noclear[id] = bet.type
+	player_bets[id] = bet
+	player_bets_noclear[id] = bet
 	if freeze_highest_bet != id: highest_bet=max(bet.amount, highest_bet)
 
 
@@ -256,6 +260,7 @@ func _clear_game_state()->void:
 		p.free()
 		return null)
 	deck.clear()
+	cheats.clear()
 	Logger.log_text("Cards in deck deleted.")
 	pool=0
 	current_turn=-1
@@ -274,7 +279,7 @@ func _init_game_state()->void:
 	Logger.log_text("Deck created")
 	deck.shuffle()
 	Logger.log_text("Deck shuffled")
-	
+	cheats=[Clairvoyance.new(), WildCard.new(), Freeze.new(), Stink.new()]
 	cheats.shuffle()
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()

@@ -11,15 +11,15 @@ config_version=5
 [application]
 
 config/name="ghost poker"
-run/main_scene="uid://7vhkgdhoemv3"
+run/main_scene="uid://cuiyvcl7aun50"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
+FrontendManager="*res://scripts/frontend_manager.gd"
 PokerEngine="*res://scripts/poker_engine.gd"
 Logger="*res://scripts/logger.gd"
-FrontendManager="*res://scripts/frontend_manager.gd"
 
 [debug]
 

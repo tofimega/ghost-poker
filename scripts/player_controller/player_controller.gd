@@ -46,12 +46,12 @@ func find_odds()->float:
 	Logger.log_text("Player "+str(player.id)+"'s confidence randomized: "+str(rt))
 	
 	var avg_bet: float=0
-	var other_bets: Dictionary[int, Bet.Type] = PokerEngine.player_bets_noclear.duplicate()
+	var other_bets: Dictionary[int, Bet] = PokerEngine.player_bets_noclear.duplicate()
 	other_bets.erase(player.id)
 	Logger.log_text("Player "+str(player.id)+" is considering other players' bets: "+str(other_bets))
 	
 	for id: int in other_bets:
-		match other_bets[id]:
+		match other_bets[id].type:
 			Bet.Type.CALL: avg_bet+=CALL_MULT
 			Bet.Type.RAISE: avg_bet+=RAISE_MULT
 			Bet.Type.FOLD: avg_bet+=FOLD_MULT
@@ -71,7 +71,8 @@ func find_odds()->float:
 	
 	Logger.log_text("Using cheat power...")
 	var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
-	rt*=player.cheat.computer(in_players[randi()%in_players.size()])
+	if in_players.size()==0: Logger.log_text("No available targets...")
+	else: rt*=player.cheat.computer(in_players[randi()%in_players.size()])
 	Logger.log_text("Confidence after cheat: "+str(rt))
 	rt=clamp(rt,0,1)
 	

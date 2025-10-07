@@ -15,6 +15,9 @@ func _ready() -> void:
 	target_selector.toggle_selection.connect(_highlight_all)
 	target_selector.target_hovered.connect(_toggle_highlight.bind(true))
 	target_selector.target_out.connect(_toggle_highlight.bind(false))
+	PokerEngine.game_over.connect(func(a,v): 
+		await get_tree().create_timer(3).timeout
+		get_tree().change_scene_to_file("res://scenes/title_menu/hud/title_menu_hud.tscn"))
 
 
 func _highlight_all(on: bool)->void:
