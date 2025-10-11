@@ -29,9 +29,9 @@ func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_PREDELETE:
 			controller.free()
-			Logger.log_text("Player "+str(id)+": controller deleted.")
+			GlobalLogger.log_text("Player "+str(id)+": controller deleted.")
 			hand.map(func (c: Card): c.free())
-			Logger.log_text("Player "+str(id)+": cards in hand deleted.")
+			GlobalLogger.log_text("Player "+str(id)+": cards in hand deleted.")
 			cheat.free()
 
 

@@ -63,7 +63,7 @@ func _incoming_bet(p: int, bet: Bet):
 
 
 func _next_step()->void:
-	if empty_deck_flag or !players.keys().any(_can_player_move):
+	if empty_deck_flag:
 		s_showdown.emit(true)
 		showdown()
 		return
@@ -73,16 +73,16 @@ func _next_step()->void:
 	if current_player_count() <= 1:
 		game_state=GameState.CONCLUSIVE
 		var winning_player: Player = players[current_player]
-		Logger.log_text("GAME OVER!")
-		Logger.log_text("WINNER: "+str(winning_player.id))
-		Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
-		Logger.log_text("CHIPS IN POOL: "+ str(pool))
+		GlobalLogger.log_text("GAME OVER!")
+		GlobalLogger.log_text("WINNER: "+str(winning_player.id))
+		GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
+		GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
 		game_over.emit(GameState.CONCLUSIVE, winning_player)
 		return
 	
 	if !players_available:
-			Logger.log_text("No player worth asking found...")
-			Logger.log_text("Dealing remaining cards...")
+			GlobalLogger.log_text("No player worth asking found...")
+			GlobalLogger.log_text("Dealing remaining cards...")
 			
 			var ps: Array[Player] = players.values()
 			var p: int=0
@@ -100,23 +100,27 @@ func _next_step()->void:
 	if player_bets.size()<pc_at_start_of_round or player_bets.values().any(func(b: Bet): return b.type!=Bet.Type.FOLD and b.amount<highest_bet): _ask_next_player()
 	else: _final_bet()
 
+
 func _can_player_move(id: int)->bool:
-	return players[id].in_game or players[id].all_in or players[id].chips==0
+	return players[id].in_game and !players[id].all_in and !players[id].chips==0
 
 
 func _find_next_player() ->bool:
 	var id: int = current_player+1
 	id%=players.size()
 	var counter: int = 0
-	while (!_can_player_move(id) or (player_bets.has(id) and player_bets[id].amount==highest_bet)) and counter<players.size():
+	while counter<players.size():
+		if _can_player_move(id): break
 		counter+=1
 		id+=1
 		id%=players.size()
 
+	current_player=id
+
 	if counter==players.size():
 		no_player_found.emit()
-		return players.keys().any(_can_player_move)
-	current_player=id
+		return _can_player_move(id)
+
 	return true
 
 
@@ -126,7 +130,7 @@ func get_player(id: int)->Player:
 
 @warning_ignore_start("int_as_enum_without_cast")
 func showdown()->void:
-	Logger.log_text("Showdown!")
+	GlobalLogger.log_text("Showdown!")
 	var winning_hand: Ranking = players.values().reduce(func(acc: Ranking, player: Player):
 		if !player.in_game: return acc
 		var rank: Ranking=rank_hand(player.hand)
@@ -148,11 +152,11 @@ func showdown()->void:
 	if winners.size()==1:
 		game_state=GameState.CONCLUSIVE
 		game_over.emit(GameState.CONCLUSIVE, winners[0])
-		Logger.log_text("WINNER: "+str(winners[0].id))
+		GlobalLogger.log_text("WINNER: "+str(winners[0].id))
 	else:
 		game_state=GameState.TIE
 		game_over.emit(GameState.TIE, winners)
-		Logger.log_text("TIE! "+str(winners.map(func(p: Player): return p.id)))
+		GlobalLogger.log_text("TIE! "+str(winners.map(func(p: Player): return p.id)))
 
 
 func deal_cards(player: Player, count: int)->void:
@@ -184,9 +188,9 @@ func start_next_round()->void:
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
 	current_turn+=1
-	Logger.log_text("CURRENT TURN: " + str(current_turn))
-	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
-	Logger.log_text("CHIPS IN POOL: "+ str(pool))
+	GlobalLogger.log_text("CURRENT TURN: " + str(current_turn))
+	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
+	GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
 	next_round.emit()
 
 	for i in CARDS_PER_ROUND:
@@ -204,27 +208,27 @@ func _ask_next_player()->void:
 	
 	var player_bets_text: Dictionary[int, String]
 	for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i].type)
-	Logger.log_text(" ")
-	Logger.log_text("current highest bet: "+str(highest_bet))
-	Logger.log_text("current player bets: "+str(player_bets_text))
-	Logger.log_text("players remaining: "+str(current_player_count()))
-	Logger.log_text(" ")
+	GlobalLogger.log_text(" ")
+	GlobalLogger.log_text("current highest bet: "+str(highest_bet))
+	GlobalLogger.log_text("current player bets: "+str(player_bets_text))
+	GlobalLogger.log_text("players remaining: "+str(current_player_count()))
+	GlobalLogger.log_text(" ")
 	players[current_player].bet()
 	next_player.emit(current_player)
 	return
 
 
 func _final_bet()->void:
-	Logger.log_text("final bet: "+str(highest_bet))
-	Logger.log_text(" ")
+	GlobalLogger.log_text("final bet: "+str(highest_bet))
+	GlobalLogger.log_text(" ")
 	for p: Player in players.values():
 		if !p.in_game: continue
 		var bet: int = min(highest_bet, p.chips)
 		p.chips-=bet
 		pool+=bet
 		
-	Logger.log_text("CARDS IN DECK: "+ str(deck.size()))
-	Logger.log_text("CHIPS IN POOL: "+ str(pool))
+	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
+	GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
 	round_over.emit()
 
 
@@ -247,46 +251,46 @@ func _handle_player_bet(id: int, bet: Bet)->void:
 
 
 func _clear_game_state()->void:
-	Logger.log_text("Clearing game state...")
+	GlobalLogger.log_text("Clearing game state...")
 	
 	players.values().map(func(p:Player):
 		p.free()
 		return null)
 	players.clear()
-	Logger.log_text("Players deleted.")
+	GlobalLogger.log_text("Players deleted.")
 	player_bets.clear()
-	Logger.log_text("Bets deleted.")
+	GlobalLogger.log_text("Bets deleted.")
 	deck.map(func(p:Card):
 		p.free()
 		return null)
 	deck.clear()
 	cheats.clear()
-	Logger.log_text("Cards in deck deleted.")
+	GlobalLogger.log_text("Cards in deck deleted.")
 	pool=0
 	current_turn=-1
 	game_state=GameState.CLOSED
-	Logger.log_text("Game state reset.")
+	GlobalLogger.log_text("Game state reset.")
 
 
 func _init_game_state()->void:
-	Logger.log_text("Initializing game state...")
+	GlobalLogger.log_text("Initializing game state...")
 	current_turn=0
-	Logger.log_text("Turn count initialized")
+	GlobalLogger.log_text("Turn count initialized")
 	for i in Card.Suit.size():
 		for j in Card.Rank.size():
 			deck.append(Card.new(i,j))
 	empty_deck_flag=false
-	Logger.log_text("Deck created")
+	GlobalLogger.log_text("Deck created")
 	deck.shuffle()
-	Logger.log_text("Deck shuffled")
+	GlobalLogger.log_text("Deck shuffled")
 	cheats=[Clairvoyance.new(), WildCard.new(), Freeze.new(), Stink.new()]
 	cheats.shuffle()
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
 	current_player = 0
-	Logger.log_text("Players created")
+	GlobalLogger.log_text("Players created")
 	pool=0
-	Logger.log_text("Pool initialized")
+	GlobalLogger.log_text("Pool initialized")
 	player_bets.clear()
 	for p: Player in players.values():
 		deal_cards(p, STARING_HAND_SIZE)
@@ -294,7 +298,7 @@ func _init_game_state()->void:
 		p.chips=STARING_CHIP_COUNT
 		p.chips-=STARTING_ANTE
 		pool+=STARTING_ANTE
-	Logger.log_text("Cards, chips dealt")
+	GlobalLogger.log_text("Cards, chips dealt")
 	
 	for i in PLAYER_COUNT:
 	#	players[i]=Player.new()
@@ -302,12 +306,12 @@ func _init_game_state()->void:
 		players[i].cheat = cheats[i]
 		cheats[i].player=i
 	game_state=GameState.RUNNING
-	Logger.log_text("Game Opened")
+	GlobalLogger.log_text("Game Opened")
 
 
 func new_game()->void:
-	Logger.log_text(" ")
-	Logger.log_text("Beginning new game...")
+	GlobalLogger.log_text(" ")
+	GlobalLogger.log_text("Beginning new game...")
 	_clear_game_state()
 	_init_game_state()
 	game_start.emit()
@@ -315,19 +319,19 @@ func new_game()->void:
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:
-	Logger.log_text("Ranking hand: "+str(hand.map(func(c: Card): return [Card.Suit.find_key(c.suit), Card.Rank.find_key(c.rank)])))
+	GlobalLogger.log_text("Ranking hand: "+str(hand.map(func(c: Card): return [Card.Suit.find_key(c.suit), Card.Rank.find_key(c.rank)])))
 	assert(hand.size()>=5)
 	var rankings: Array[Ranking] = []
 
 	if hand.size()<5: return Ranking.new(0,[0,0,0,0,0])
-	Logger.log_text("Hand size valid")
+	GlobalLogger.log_text("Hand size valid")
 	var suits: Array=[]
-	Logger.log_text("Checking suits for flush...")
+	GlobalLogger.log_text("Checking suits for flush...")
 
 	for s in Card.Suit:
 		var suit_hand: Array[Card] = hand.filter(func (c: Card)-> bool: return c.suit==Card.Suit[s])
 		suits.append(suit_hand)
-		Logger.log_text("\t Cards with suit "+str(s)+": "+str(suit_hand.size()))
+		GlobalLogger.log_text("\t Cards with suit "+str(s)+": "+str(suit_hand.size()))
 
 	for suit in suits:
 		if suit.size()<5: continue
@@ -341,13 +345,13 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 		ranks[Card.Rank[r]]=rank
 	
 	ranks.reverse()
-	Logger.log_text("Card ranks sorted, checking non-flush Rankings...")
+	GlobalLogger.log_text("Card ranks sorted, checking non-flush Rankings...")
 
 	var fkind_4: int=ranks.find(4)
 	var fkind_1: int=ranks.find(1)
 	if fkind_1>=0 and fkind_4>=0:
 		@warning_ignore_start("confusable_local_declaration")
-		Logger.log_text("\t FOURKIND!")
+		GlobalLogger.log_text("\t FOURKIND!")
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
 		for i in 4: card_ranks[i]=(ranks.size()-fkind_4)-1
@@ -357,7 +361,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 	var fhouse_3: int=ranks.find(3)
 	var fhouse_2: int=ranks.find(2)
 	if fhouse_3>=0 and fhouse_2>=0:
-		Logger.log_text("\t FULLHOUSE!")
+		GlobalLogger.log_text("\t FULLHOUSE!")
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
 		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)-1
@@ -371,7 +375,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 			ranks[i+3]>0 and
 			ranks[i+4]>0):
 				
-			Logger.log_text("\t STRAIGHT!")
+			GlobalLogger.log_text("\t STRAIGHT!")
 			var card_ranks: Array[Card.Rank] = [(ranks.size()-i)-1,
 				(ranks.size()-(i+1))-1,
 				(ranks.size()-(i+2))-1,
@@ -382,7 +386,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 
 	var tkind_1=ranks.find(1, fkind_1+1)
 	if tkind_1>=0 and fkind_1>=0 and fhouse_3>=0:
-		Logger.log_text("\t THREEKIND!")
+		GlobalLogger.log_text("\t THREEKIND!")
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
 		for i in 3: card_ranks[i]=(ranks.size()-fhouse_3)-1
@@ -392,7 +396,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 
 	var tpair_2: int=ranks.find(2,fhouse_2+1)
 	if tpair_2>=0 and fkind_1>=0 and fhouse_2>=0:
-		Logger.log_text("\t TWOPAIR!")
+		GlobalLogger.log_text("\t TWOPAIR!")
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
 		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)-1
@@ -402,7 +406,7 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 
 	var pair_1: int=ranks.find(1, tkind_1+1)
 	if pair_1>=0 and fkind_1>=0 and tkind_1>=0 and fhouse_2>=0:
-		Logger.log_text("\t PAIR!")
+		GlobalLogger.log_text("\t PAIR!")
 		var card_ranks: Array[Card.Rank]
 		card_ranks.resize(5)
 		for i in 2: card_ranks[i]=(ranks.size()-fhouse_2)-1
@@ -420,13 +424,13 @@ func rank_hand(hand: Array[Card]) -> Ranking:
 	rankings.append(Ranking.new(Ranking.HandRank.HighCard, card_ranks))
 
 	rankings.sort_custom(func (left: Ranking, right: Ranking): return compare_rankings(left, right)>0)
-	Logger.log_text("Final Ranking: "+ str(Ranking.HandRank.find_key(rankings[0].hand_rank))+ " "+ str(rankings[0].cards_rank))
-	Logger.log_text(" ")
+	GlobalLogger.log_text("Final Ranking: "+ str(Ranking.HandRank.find_key(rankings[0].hand_rank))+ " "+ str(rankings[0].cards_rank))
+	GlobalLogger.log_text(" ")
 	return rankings[0]
 
 
 func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
-	Logger.log_text("\t Ranking suit hand: "+str(hand.map(func(c: Card): return [Card.Suit.find_key(c.suit), Card.Rank.find_key(c.rank)])))
+	GlobalLogger.log_text("\t Ranking suit hand: "+str(hand.map(func(c: Card): return [Card.Suit.find_key(c.suit), Card.Rank.find_key(c.rank)])))
 	hand.sort_custom(func (left: Card, right: Card)->bool: return left.rank-right.rank>0)
 	var card_rank: Array[Card.Rank]
 	card_rank.resize(hand.size())
@@ -440,7 +444,7 @@ func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
 			card_rank[i+2]==card_rank[i]-2 and
 			card_rank[i+3]==card_rank[i]-3 and
 			card_rank[i+4]==card_rank[i]-4):
-				Logger.log_text("\t STRAIGHT FLUSH!")
+				GlobalLogger.log_text("\t STRAIGHT FLUSH!")
 				return Ranking.new(Ranking.HandRank.StraightFlush, [card_rank[i],
 					card_rank[i+1],
 					card_rank[i+2],
@@ -448,7 +452,7 @@ func _rank_hand_with_flush(hand: Array[Card]) -> Ranking:
 					card_rank[i+4]])
 	var a=card_rank.duplicate()
 	a.resize(5)
-	Logger.log_text("\t FLUSH!")
+	GlobalLogger.log_text("\t FLUSH!")
 	return Ranking.new(Ranking.HandRank.Flush,a)
 
 

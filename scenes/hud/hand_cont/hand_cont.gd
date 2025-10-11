@@ -101,11 +101,11 @@ func normalize_rotation():
 
 func _sort(t: float, transform: Transform2D, lt1: bool)->void:
 	var i: int = 1
-	
+	var spacing: float = min(1.0/(children.size()-1), max_spacing)
 	var begin: int=1 if lt1 else 0
 	var end: int=(begin+1) % 2
 	while i < children.size():
-		var _t: float=float(i)/(children.size()-1)+begin_offset
+		var _t: float=t+spacing
 		if _t-t>max_spacing: _t=t+max_spacing
 		
 		children[i].pivot_offset=children[i].size/2

@@ -21,13 +21,13 @@ func _use_cheat(target: int)->void:
 func _send_bet(bet: Bet) -> Bet:
 	FrontendManager.interfaces[player.id].enabled=false
 	# send bet
-	Logger.log_text("Player "+str(player.id)+" made bet: "+bet.Type.find_key(bet.type)+" "+str(bet.amount))
+	GlobalLogger.log_text("Player "+str(player.id)+" made bet: "+bet.Type.find_key(bet.type)+" "+str(bet.amount))
 	PokerEngine.player_bet.emit(player.id, bet)
 	return bet
 
 
 func my_turn() -> void:
-	Logger.log_text("Player "+str(player.id)+": waiting for user input...")
+	GlobalLogger.log_text("Player "+str(player.id)+": waiting for user input...")
 	FrontendManager.interfaces[player.id].enabled=true
 
 

@@ -3,8 +3,8 @@ extends Cheat
 
 
 func _computer(target: int)->float:
-	Logger.log_text("\tFREEZE")
-	Logger.log_text("\tPLAYER "+str(target)+"'s bet won't increase highest")
+	GlobalLogger.log_text("\tFREEZE")
+	GlobalLogger.log_text("\tPLAYER "+str(target)+"'s bet won't increase highest")
 	_user(target)
 	return 1.06
 
