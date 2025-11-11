@@ -33,6 +33,7 @@ func _notification(what: int) -> void:
 			hand.map(func (c: Card): c.free())
 			GlobalLogger.log_text("Player "+str(id)+": cards in hand deleted.")
 			cheat.free()
+			GlobalLogger.log_text("Player "+str(id)+": cheat deleted.")
 
 
 @warning_ignore("shadowed_variable")

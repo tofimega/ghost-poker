@@ -1,10 +1,10 @@
 [gd_scene load_steps=27 format=3 uid="uid://bati8d7pq1ysj"]
 
-[ext_resource type="Texture2D" uid="uid://bhda8wpkkkepd" path="res://assets/images/ghost body.png" id="1_f4eol"]
-[ext_resource type="Texture2D" uid="uid://bdi58ybx3rufc" path="res://assets/images/cards.png" id="2_48iy0"]
+[ext_resource type="Texture2D" uid="uid://bhda8wpkkkepd" path="res://assets/images/ghost_sprite/ghost body.png" id="1_f4eol"]
+[ext_resource type="Texture2D" uid="uid://bdi58ybx3rufc" path="res://assets/images/ghost_sprite/cards.png" id="2_48iy0"]
 [ext_resource type="Script" uid="uid://bwd5ehpj8i5vi" path="res://scenes/sprites/ghost_sprite.gd" id="2_e5mws"]
-[ext_resource type="Texture2D" uid="uid://dn4bl0nvld30y" path="res://assets/images/ghost hand.png" id="2_efg5g"]
-[ext_resource type="Texture2D" uid="uid://sjjsyx4q2vav" path="res://assets/images/ghost eyes.png" id="3_48iy0"]
+[ext_resource type="Texture2D" uid="uid://dn4bl0nvld30y" path="res://assets/images/ghost_sprite/ghost hand.png" id="2_efg5g"]
+[ext_resource type="Texture2D" uid="uid://sjjsyx4q2vav" path="res://assets/images/ghost_sprite/ghost eyes.png" id="3_48iy0"]
 
 [sub_resource type="Animation" id="Animation_48iy0"]
 length = 0.001
@@ -450,3 +450,5 @@ offset_left = -18.0
 offset_top = -45.0
 offset_right = 22.0
 offset_bottom = -39.0
+
+[connection signal="animation_finished" from="AnimationTree" to="." method="_on_animation_tree_animation_finished"]

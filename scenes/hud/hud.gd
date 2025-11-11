@@ -63,6 +63,8 @@ func _show_bet(p: int, bet: Bet)->void:
 	bet_label.visible=true
 	await get_tree().create_timer(1).timeout
 	bet_label.visible=false
+	PokerEngine.cont.emit()
+
 
 
 func _update()-> void:

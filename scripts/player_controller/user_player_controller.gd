@@ -7,7 +7,12 @@ func _init(player: Player) -> void:
 	FrontendManager.get_hud().pow.button.pressed.connect(_select_target_for_cheat)
 
 
+func use_early_cheat()->void:
+	return #User can't do this
+
+
 func _select_target_for_cheat()->void:
+	if player.cheat.charge<1: return
 	var selector: TargetSelector = FrontendManager.get_selector()
 	selector._toggle_selection(true)
 	await selector.target_selected

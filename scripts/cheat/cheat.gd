@@ -2,10 +2,22 @@ class_name Cheat
 extends Object
 
 
-var charge: float = 1.1 #TODO: reset to 0
-var player: int = -1 #TODO: increase charge on bets, etc. (through signal connections in setter)
+var charge: float = 0:
+	set(c):
+		charge=clamp(c,0,1.1)
 
+var player: int = -1:
+	set(p):
+		assert(p in PokerEngine.players.keys())
+		PokerEngine.player_bet.connect(_boost_charge)
+		player=p
+		
 
+func _boost_charge(p: int, bet: Bet)->void:
+	if p!=player: return
+	if bet.type==Bet.Type.FOLD: return
+	charge+=.4
+	
 
 func computer(target: int)->float:
 	if charge <1 : return 1

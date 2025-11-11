@@ -13,7 +13,6 @@ script = ExtResource("1_5buul")
 
 [node name="UI_BLOCKOUT" type="Control" parent="."]
 visible = false
-layout_mode = 2
 anchors_preset = 0
 offset_right = 320.0
 offset_bottom = 180.0
@@ -184,7 +183,7 @@ text = "Deck: XX"
 label_settings = ExtResource("2_vsynb")
 
 [node name="UserInput" parent="." instance=ExtResource("3_vsynb")]
-layout_mode = 2
+layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
@@ -192,19 +191,21 @@ offset_left = 2.0
 offset_top = 125.0
 offset_right = 76.0
 offset_bottom = 179.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="Hand" parent="." instance=ExtResource("4_ed3ik")]
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 79.0
-offset_top = 120.0
-offset_right = 312.0
-offset_bottom = 173.0
+offset_left = 120.0
+offset_top = 170.0
+offset_right = 265.0
+offset_bottom = 195.0
 grow_horizontal = 1
 grow_vertical = 1
-max_spacing = 0.071
+max_spacing = 0.11
 
 [node name="TargetHand" parent="." instance=ExtResource("4_ed3ik")]
 visible = false

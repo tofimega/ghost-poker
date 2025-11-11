@@ -10,4 +10,4 @@ func _computer(target: int)->float:
 
 
 func _user(target: int)->void:
-	PokerEngine.freeze_highest_bet=target
+	PokerEngine.freeze_highest_bet=target 

@@ -24,3 +24,8 @@ func play(p: int, bet: Bet)->void:
 	else: animation_tree["parameters/playback"].travel("bet")
 	
 	
+
+
+func _on_animation_tree_animation_finished(anim_name: StringName) -> void:
+	if anim_name=="fold" or anim_name=="bet":
+		PokerEngine.cont.emit()

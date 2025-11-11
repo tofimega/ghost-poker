@@ -27,6 +27,19 @@ const CALL_MULT: float = 1.1
 const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
+
+var early_result: float=0
+func use_early_cheat()->void:
+	if !player.in_game: return
+	if player.cheat.charge<1:  return
+	var others: Array[int] = PokerEngine.players.keys()
+	others.erase(player.id)
+	others.shuffle() 
+	early_result = player.cheat.computer(others[0])
+
+
+
+
 func find_odds()->float:
 	var hand_rank: Ranking
 	if player.blinded: hand_rank=Ranking.new(4, [0,0,0,0,0])
@@ -69,11 +82,17 @@ func find_odds()->float:
 	rt=ease(rt, -((PokerEngine.current_turn+TIME_OFFSET)*POWER_ADD_TIME))
 	GlobalLogger.log_text("Player "+str(player.id)+"'s confidence adjusted according to time passed: "+str(rt))
 	
-	GlobalLogger.log_text("Using cheat power...")
-	var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
-	if in_players.size()==0: GlobalLogger.log_text("No available targets...")
-	else: rt*=player.cheat.computer(in_players[randi()%in_players.size()])
-	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
+	if early_result!=0:
+		GlobalLogger.log_text("Cheat already used")
+		rt*=early_result
+		early_result=0
+	else:
+		GlobalLogger.log_text("Using cheat power...")
+		var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
+		if in_players.size()==0: GlobalLogger.log_text("No available targets...")
+		else: rt*=player.cheat.computer(in_players[randi()%in_players.size()])
+		GlobalLogger.log_text("Confidence after cheat: "+str(rt))
+
 	rt=clamp(rt,0,1)
 	
 	#bluff

@@ -13,6 +13,7 @@ signal game_start
 signal next_round
 signal round_over
 signal deck_empty
+signal cont
 signal s_showdown(F_no_p_T_mt_d: bool)
 signal no_player_found
 @warning_ignore("unused_signal")
@@ -58,11 +59,12 @@ func _ready()->void:
 
 func _incoming_bet(p: int, bet: Bet):
 	if p == current_player and players[p].in_game: _handle_player_bet(p, bet)
-	await get_tree().create_timer(1).timeout #TODO: await animation end instead
+	await cont
 	_next_step()
 
 
 func _next_step()->void:
+	assert(current_player_count()>0)
 	if empty_deck_flag:
 		s_showdown.emit(true)
 		showdown()
@@ -72,7 +74,7 @@ func _next_step()->void:
 	
 	if current_player_count() <= 1:
 		game_state=GameState.CONCLUSIVE
-		var winning_player: Player = players[current_player]
+		var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
 		GlobalLogger.log_text("GAME OVER!")
 		GlobalLogger.log_text("WINNER: "+str(winning_player.id))
 		GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
@@ -180,7 +182,7 @@ func current_player_count()->int:
 
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
-	freeze_highest_bet=false
+	freeze_highest_bet=-1
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
 	pc_at_start_of_round = current_player_count()
@@ -194,10 +196,16 @@ func start_next_round()->void:
 	next_round.emit()
 
 	for i in CARDS_PER_ROUND:
-		for p in players.values():
+		for p: Player in players.values():
 			if deck.size()==0: break
 			deal_cards(p, 1)
 			hand_dealt.emit(p)
+
+	for id: int in players.keys():
+		var p: Player = players[id]
+		if !p.in_game or p.controller.is_human(): continue
+		p.controller.use_early_cheat()
+		
 	_next_step()
 
 
@@ -221,9 +229,10 @@ func _ask_next_player()->void:
 func _final_bet()->void:
 	GlobalLogger.log_text("final bet: "+str(highest_bet))
 	GlobalLogger.log_text(" ")
-	for p: Player in players.values():
+	for id: int in players:
+		var p: Player = players[id]
 		if !p.in_game: continue
-		var bet: int = min(highest_bet, p.chips)
+		var bet: int = mini(player_bets[id].amount, p.chips)
 		p.chips-=bet
 		pool+=bet
 		

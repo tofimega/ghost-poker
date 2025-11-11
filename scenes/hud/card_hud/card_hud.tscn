@@ -1,12 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://cidgo3ak3tk4f"]
+[gd_scene load_steps=4 format=3 uid="uid://cidgo3ak3tk4f"]
 
 [ext_resource type="Script" uid="uid://ba1bk2mwwjjxv" path="res://scenes/hud/card_hud/card_hud.gd" id="1_5fnae"]
+[ext_resource type="Texture2D" uid="uid://de6xbulsnipp4" path="res://assets/images/card_face/card_face_PH.png" id="1_v7nw5"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4iqos"]
+texture = ExtResource("1_v7nw5")
 
 [node name="CardHUD" type="PanelContainer"]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -29.0
+offset_top = -44.0
+offset_right = 29.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_4iqos")
 script = ExtResource("1_5fnae")
 
 [node name="Info_PH" type="Label" parent="."]
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "???"
