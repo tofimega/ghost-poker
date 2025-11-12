@@ -43,7 +43,6 @@ window/size/viewport_height=180
 window/size/mode=4
 window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
-window/size/mode.editor=0
 window/stretch/scale.editor=3.0
 window/size/viewport_width.editor=960
 window/size/viewport_height.editor=540

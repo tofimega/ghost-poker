@@ -5,7 +5,7 @@ extends Container
 
 @export_range(0,1) var max_size: float = 1:
 	set(s):
-		max_size=s
+		max_size=s #TODO: implement this
 		queue_sort()
 
 @export_range(0,1) var max_spacing: float = 1:
@@ -55,7 +55,7 @@ func _draw() -> void:
 	if !curve: return
 	draw_polyline(curve.get_baked_points(), Color.BLUE_VIOLET, 2.0)
 
-
+#TODO: adjust rotation
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_SORT_CHILDREN:

@@ -91,7 +91,7 @@ func find_odds()->float:
 		var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
 		if in_players.size()==0: GlobalLogger.log_text("No available targets...")
 		else: rt*=player.cheat.computer(in_players[randi()%in_players.size()])
-		GlobalLogger.log_text("Confidence after cheat: "+str(rt))
+	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)
 	
@@ -120,13 +120,12 @@ var forced_all_in: bool = false
 
 func my_turn() -> void:
 	if player == null or !player.in_game: return
-	
-	
 	forced_all_in=false
 	GlobalLogger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	GlobalLogger.log_text(" ")
 	
 	var confidence: float = find_odds()
+	
 	GlobalLogger.log_text("player "+str(player.id)+"'s confidence: "+ str(confidence))
 	conf_last_turn = confidence
 	

@@ -200,12 +200,14 @@ anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 120.0
-offset_top = 170.0
+offset_top = 171.0
 offset_right = 265.0
-offset_bottom = 195.0
+offset_bottom = 184.0
 grow_horizontal = 1
 grow_vertical = 1
-max_spacing = 0.11
+max_size = 0.215
+max_spacing = 1.0
+max_rotation_deg = 20.0
 
 [node name="TargetHand" parent="." instance=ExtResource("4_ed3ik")]
 visible = false
@@ -219,7 +221,9 @@ offset_right = 302.0
 offset_bottom = 106.0
 grow_horizontal = 1
 grow_vertical = 1
-max_spacing = 0.071
+max_size = 0.215
+max_spacing = 1.0
+max_rotation_deg = 0.0
 
 [node name="Bet" type="Label" parent="."]
 layout_mode = 0
