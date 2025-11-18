@@ -22,14 +22,14 @@ func _boost_charge(p: int, bet: Bet)->void:
 func computer(target: int)->float:
 	if charge <1 : return 1
 	GlobalLogger.log_text("\tSufficient charge")
-	#charge=0
+	charge=0
 	return _computer(target)
 
 
 func user(target: int)->void:
 	if charge <1: return
 	GlobalLogger.log_text("\tSufficient charge")
-	#charge=0
+	charge=0
 	_user(target)
 
 

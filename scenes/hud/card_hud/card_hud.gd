@@ -12,10 +12,10 @@ static func _static_init() -> void:
 
 const base_path: StringName = "res://assets/images/card_face"
 
-const suits: Dictionary[Card.Suit, StringName] = {
+const suits: Dictionary[Card.Suit, StringName] = { #TODO: replace with real paths
 	Card.Suit.HEART   : "hearts",
-	Card.Suit.SPADE   : "spades",
-	Card.Suit.CLUB    : "clubs",
+	Card.Suit.SPADE   : "hearts",
+	Card.Suit.CLUB    : "hearts",
 	Card.Suit.DIAMOND : "diamonds"
 }
 
@@ -39,4 +39,4 @@ const ranks: Dictionary[Card.Rank, StringName] = {
 
 func _ready()->void:
 	if card:
-		texture_rect.texture=load(base_path+"/"+suits[Card.Suit.HEART]+"/"+ranks[card.rank]+".png")
+		texture_rect.texture=load(base_path+"/"+suits[card.suit]+"/"+ranks[card.rank]+".png")

@@ -19,9 +19,11 @@ func _select_target_for_cheat()->void:
 	var target: int = selector.current_target
 	selector._toggle_selection(false)
 	_use_cheat(target)
+	FrontendManager.get_hud()._update()
 
 func _use_cheat(target: int)->void:
 	player.cheat.user(target) 
+	
 
 func _send_bet(bet: Bet) -> Bet:
 	FrontendManager.interfaces[player.id].enabled=false

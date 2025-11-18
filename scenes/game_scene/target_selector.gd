@@ -52,4 +52,5 @@ func _toggle_selection(on: bool)->void:
 	
 	FrontendManager.get_hud()._toggle_hud(!on)
 	
+	
 	toggle_selection.emit(selection_on)
