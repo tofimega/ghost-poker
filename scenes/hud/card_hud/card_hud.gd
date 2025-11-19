@@ -14,7 +14,7 @@ const base_path: StringName = "res://assets/images/card_face"
 
 const suits: Dictionary[Card.Suit, StringName] = { #TODO: replace with real paths
 	Card.Suit.HEART   : "hearts",
-	Card.Suit.SPADE   : "hearts",
+	Card.Suit.SPADE   : "spades",
 	Card.Suit.CLUB    : "hearts",
 	Card.Suit.DIAMOND : "diamonds"
 }
