@@ -12,10 +12,10 @@ static func _static_init() -> void:
 
 const base_path: StringName = "res://assets/images/card_face"
 
-const suits: Dictionary[Card.Suit, StringName] = { #TODO: replace with real paths
+const suits: Dictionary[Card.Suit, StringName] = {
 	Card.Suit.HEART   : "hearts",
 	Card.Suit.SPADE   : "spades",
-	Card.Suit.CLUB    : "hearts",
+	Card.Suit.CLUB    : "clubs",
 	Card.Suit.DIAMOND : "diamonds"
 }
 
