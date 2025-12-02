@@ -50,7 +50,7 @@ func _toggle_selection(on: bool)->void:
 	button2.disabled=!on
 	button3.disabled=!on
 	
-	FrontendManager.get_hud()._toggle_hud(!on)
+	FrontendManager.get_hud().toggle_hud(!on)
 	
 	
 	toggle_selection.emit(selection_on)

@@ -9,6 +9,7 @@ extends Control
 @onready var hand: Control = $Hand
 @onready var target_hand: HandCont = $TargetHand
 
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
 @onready var pow: CheatProgress = $CheatProgress
 @onready var bet_label: Label = $Bet
@@ -19,16 +20,17 @@ const CARD_HUD: PackedScene = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 
 func _ready() -> void:
+	animation_player.play("RESET")
 	target_hand.visible=false
 	bet_label.visible=false
 	showdown_label.visible=false
-	PokerEngine.next_player.connect(func(a): _update())
-	PokerEngine.round_over.connect(_update)
+	PokerEngine.next_player.connect(func(a): update())
+	PokerEngine.round_over.connect(update)
 	PokerEngine.game_over.connect(_display_winner)
-	PokerEngine.deck_empty.connect(_update)
+	PokerEngine.deck_empty.connect(update)
 	PokerEngine.player_bet.connect(_show_bet)
 	PokerEngine.s_showdown.connect(_show_down)
-	user_input.input_enabled.connect(_toggle_hud)
+	#user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
 
 
@@ -40,7 +42,7 @@ func show_other_hand(target: int)->void:
 
 
 func _display_winner(result: PokerEngine.GameState, winner)-> void:
-	_update()
+	update()
 	if result == PokerEngine.GameState.TIE:
 		bet_label.text="DRAW!\n"
 		for w in winner:
@@ -67,12 +69,13 @@ func _show_bet(p: int, bet: Bet)->void:
 
 
 
-func _update()-> void:
+func update()-> void:
 	pool.text="Pot: "+str(PokerEngine.pool)
 	deck.text="Deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
-	pow.texture_progress_bar.value=PokerEngine.get_player(0).cheat.charge
+	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)
+	
 	_show_hand(hand, 0)
 
 
@@ -88,9 +91,17 @@ func _show_hand(hand: HandCont, player: int)->void:
 		hand.add_child(ch)
 
 
-func _toggle_hud(enabled: bool) -> void:
-	#user_input.enabled=enabled
-	user_input.visible=enabled
-	hand.visible=enabled
-	pow.visible=enabled
+const PLAYER_HAND_ON_POSITION: Vector2 = Vector2(120, 171)
+const INPUT_PANEL_ON_POSITION: Vector2 = Vector2(2, 125)
+
+var _hud_enabled: bool =true
+
+func toggle_hud(enabled: bool) -> void:
+	user_input.enabled=enabled
+	#user_input.visible=enabled
+	#hand.visible=enabled
+	if enabled and !_hud_enabled: animation_player.play_backwards("HUD-out")
+	elif !enabled:  animation_player.play("HUD-out")
+	pow.enabled=enabled
 	pow.button.disabled=!enabled
+	_hud_enabled=enabled

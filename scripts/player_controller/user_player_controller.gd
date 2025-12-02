@@ -19,23 +19,24 @@ func _select_target_for_cheat()->void:
 	var target: int = selector.current_target
 	selector._toggle_selection(false)
 	_use_cheat(target)
-	FrontendManager.get_hud()._update()
+	FrontendManager.get_hud().update()
 
 func _use_cheat(target: int)->void:
 	player.cheat.user(target) 
 	
 
 func _send_bet(bet: Bet) -> Bet:
-	FrontendManager.interfaces[player.id].enabled=false
+	FrontendManager.get_hud().toggle_hud(false)
 	# send bet
 	GlobalLogger.log_text("Player "+str(player.id)+" made bet: "+bet.Type.find_key(bet.type)+" "+str(bet.amount))
 	PokerEngine.player_bet.emit(player.id, bet)
+	FrontendManager.get_hud().update()
 	return bet
 
 
 func my_turn() -> void:
 	GlobalLogger.log_text("Player "+str(player.id)+": waiting for user input...")
-	FrontendManager.interfaces[player.id].enabled=true
+	FrontendManager.get_hud().toggle_hud(true)
 
 
 func is_human()->bool:

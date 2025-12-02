@@ -11,7 +11,7 @@ extends Node2D
 
 func _ready() -> void:
 	PokerEngine.new_game()
-	hud._update()
+	hud.update()
 	target_selector.toggle_selection.connect(_highlight_all)
 	target_selector.target_hovered.connect(_toggle_highlight.bind(true))
 	target_selector.target_out.connect(_toggle_highlight.bind(false))

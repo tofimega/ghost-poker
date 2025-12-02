@@ -1,10 +1,123 @@
-[gd_scene load_steps=6 format=3 uid="uid://dr10kbw8kd8o3"]
+[gd_scene load_steps=10 format=3 uid="uid://dr10kbw8kd8o3"]
 
 [ext_resource type="Script" uid="uid://clnx1it0pqk0l" path="res://scenes/hud/hud.gd" id="1_5buul"]
 [ext_resource type="LabelSettings" uid="uid://bkvoxm2vminha" path="res://scenes/hud/new_label_settings.tres" id="2_vsynb"]
 [ext_resource type="PackedScene" uid="uid://difs31wlhbq6w" path="res://scenes/user_input/user_input_new.tscn" id="3_vsynb"]
 [ext_resource type="PackedScene" uid="uid://dw13hmaff8m1r" path="res://scenes/hud/hand_cont/hand_cont.tscn" id="4_ed3ik"]
 [ext_resource type="PackedScene" uid="uid://bjstq1ok5qrhe" path="res://scenes/hud/cheat_progress/cheat_progress.tscn" id="5_56bah"]
+
+[sub_resource type="Animation" id="Animation_56bah"]
+resource_name = "HUD-in"
+
+[sub_resource type="Animation" id="Animation_3bv37"]
+resource_name = "HUD-out"
+length = 0.205
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.17000003),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(120, 171), Vector2(120, 186.265)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("UserInput:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(2, 125), Vector2(-118.545, 125)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hand:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.16930905),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.446777, 0.44677705, 0.44677705, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CheatProgress:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.16653349),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.446777, 0.44677705, 0.44677705, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_4lel5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hand:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(120, 171)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("UserInput:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(2, 125)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hand:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CheatProgress:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6aewg"]
+_data = {
+&"HUD-in": SubResource("Animation_56bah"),
+&"HUD-out": SubResource("Animation_3bv37"),
+&"RESET": SubResource("Animation_4lel5")
+}
 
 [node name="HUD" type="Control" groups=["HUD"]]
 layout_mode = 3
@@ -202,7 +315,7 @@ anchor_bottom = 0.0
 offset_left = 120.0
 offset_top = 171.0
 offset_right = 265.0
-offset_bottom = 184.0
+offset_bottom = 184.00002
 grow_horizontal = 1
 grow_vertical = 1
 max_size = 0.215
@@ -210,7 +323,6 @@ max_spacing = 1.0
 max_rotation_deg = 20.0
 
 [node name="TargetHand" parent="." instance=ExtResource("4_ed3ik")]
-visible = false
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -258,3 +370,8 @@ offset_right = 41.0
 offset_bottom = 126.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6aewg")
+}

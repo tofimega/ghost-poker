@@ -17,7 +17,7 @@ script = ExtResource("1_18dfn")
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 layout_mode = 2
 max_value = 1.0
-step = 0.1
+step = 0.01
 fill_mode = 4
 radial_initial_angle = 210.0
 radial_fill_degrees = 300.0
