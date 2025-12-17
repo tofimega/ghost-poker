@@ -35,10 +35,9 @@ func use_early_cheat()->void:
 	var others: Array[int] = PokerEngine.players.keys()
 	others.erase(player.id)
 	others.shuffle() 
-	early_result = player.cheat.computer(others[0])
-
-
-
+	early_result =  await player.cheat.computer(others[0])
+	await PokerEngine.cont_cheat
+	
 
 func find_odds()->float:
 	var hand_rank: Ranking
@@ -90,7 +89,7 @@ func find_odds()->float:
 		GlobalLogger.log_text("Using cheat power...")
 		var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
 		if in_players.size()==0: GlobalLogger.log_text("No available targets...")
-		else: rt*=player.cheat.computer(in_players[randi()%in_players.size()])
+		else: rt*= await player.cheat.computer(in_players[randi()%in_players.size()])
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)
@@ -124,7 +123,7 @@ func my_turn() -> void:
 	GlobalLogger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	GlobalLogger.log_text(" ")
 	
-	var confidence: float = find_odds()
+	var confidence: float = await find_odds()
 	
 	GlobalLogger.log_text("player "+str(player.id)+"'s confidence: "+ str(confidence))
 	conf_last_turn = confidence

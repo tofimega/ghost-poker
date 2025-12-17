@@ -2,6 +2,8 @@ class_name Clairvoyance
 extends Cheat
 
 
+func _init()->void:
+	_name= "Clairvoyance"
 
 func _computer(target: int)->float:
 	GlobalLogger.log_text("\tCLAIRVOYANCE")

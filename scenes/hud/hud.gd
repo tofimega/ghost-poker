@@ -15,6 +15,7 @@ extends Control
 @onready var bet_label: Label = $Bet
 @onready var deck: Label = $Info/PanelContainer4/Deck
 @onready var showdown_label: Label = $Showdown
+@onready var ph_cheat_name: Label = $PH_CheatName
 
 const CARD_HUD: PackedScene = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
@@ -30,9 +31,17 @@ func _ready() -> void:
 	PokerEngine.deck_empty.connect(update)
 	PokerEngine.player_bet.connect(_show_bet)
 	PokerEngine.s_showdown.connect(_show_down)
+	PokerEngine.start_flinch.connect(flinch)
 	#user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
 
+func flinch(t: int)->void:
+	if t!=0: return
+	bet_label.text="ow"
+	bet_label.visible=true
+	await get_tree().create_timer(1).timeout
+	bet_label.visible=false
+	PokerEngine.cont_cheat.emit()
 
 func show_other_hand(target: int)->void:
 	_show_hand(target_hand, target)
@@ -75,7 +84,7 @@ func update()-> void:
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)
-	
+	ph_cheat_name.text=PokerEngine.get_player(0).cheat._name
 	_show_hand(hand, 0)
 
 

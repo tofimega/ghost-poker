@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bati8d7pq1ysj"]
+[gd_scene load_steps=35 format=3 uid="uid://bati8d7pq1ysj"]
 
 [ext_resource type="Texture2D" uid="uid://bhda8wpkkkepd" path="res://assets/images/ghost_sprite/ghost body.png" id="1_f4eol"]
 [ext_resource type="Texture2D" uid="uid://bdi58ybx3rufc" path="res://assets/images/ghost_sprite/cards.png" id="2_48iy0"]
@@ -139,6 +139,18 @@ tracks/10/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [false]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath(".:offset")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_e5mws"]
@@ -332,10 +344,25 @@ tracks/10/keys = {
 "values": [false, true, false, true, false]
 }
 
+[sub_resource type="Animation" id="Animation_a66qs"]
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23, 0.32, 0.59, 0.69, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-7.42, 0), Vector2(2.89, 0), Vector2(-2.325, 0), Vector2(1.225, 0), Vector2(0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e5mws"]
 _data = {
 &"RESET": SubResource("Animation_48iy0"),
 &"bet": SubResource("Animation_e5mws"),
+&"flinch": SubResource("Animation_a66qs"),
 &"fold": SubResource("Animation_satjj"),
 &"idle_default": SubResource("Animation_efg5g")
 }
@@ -346,11 +373,20 @@ animation = &"RESET"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f1u55"]
 animation = &"RESET"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xye3f"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fq66f"]
+animation = &"RESET"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_e5mws"]
 animation = &"RESET"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_satjj"]
 animation = &"bet"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kclr6"]
+animation = &"flinch"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6t6ds"]
 animation = &"fold"
@@ -392,6 +428,20 @@ xfade_curve = SubResource("Curve_fq66f")
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fudoy"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5k4if"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_lvgxd"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_nuhx5"]
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_h2buo"]
 states/End/position = Vector2(995, 82)
 states/RESET/node = SubResource("AnimationNodeAnimation_e5mws")
@@ -400,15 +450,21 @@ states/RESET/position = Vector2(227, 100)
 "states/RESET 2/position" = Vector2(684, 114)
 "states/RESET 3/node" = SubResource("AnimationNodeAnimation_f1u55")
 "states/RESET 3/position" = Vector2(292, -98)
+"states/RESET 4/node" = SubResource("AnimationNodeAnimation_xye3f")
+"states/RESET 4/position" = Vector2(597, 1)
+"states/RESET 5/node" = SubResource("AnimationNodeAnimation_fq66f")
+"states/RESET 5/position" = Vector2(862, 61)
 states/Start/position = Vector2(102, 107)
 states/bet/node = SubResource("AnimationNodeAnimation_satjj")
 states/bet/position = Vector2(474, 204)
+states/flinch/node = SubResource("AnimationNodeAnimation_kclr6")
+states/flinch/position = Vector2(880, -26)
 states/fold/node = SubResource("AnimationNodeAnimation_6t6ds")
 states/fold/position = Vector2(502, -83)
 states/idle_default/node = SubResource("AnimationNodeAnimation_a66qs")
 states/idle_default/position = Vector2(454, 53)
-transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_f1u55"), "RESET", "idle_default", SubResource("AnimationNodeStateMachineTransition_6t6ds"), "idle_default", "RESET 2", SubResource("AnimationNodeStateMachineTransition_fq66f"), "RESET 2", "bet", SubResource("AnimationNodeStateMachineTransition_kclr6"), "bet", "RESET", SubResource("AnimationNodeStateMachineTransition_ajv5v"), "idle_default", "RESET 3", SubResource("AnimationNodeStateMachineTransition_h2buo"), "RESET 3", "fold", SubResource("AnimationNodeStateMachineTransition_55qcu")]
-graph_offset = Vector2(-178, -187)
+transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_f1u55"), "RESET", "idle_default", SubResource("AnimationNodeStateMachineTransition_6t6ds"), "idle_default", "RESET 2", SubResource("AnimationNodeStateMachineTransition_fq66f"), "RESET 2", "bet", SubResource("AnimationNodeStateMachineTransition_kclr6"), "bet", "RESET", SubResource("AnimationNodeStateMachineTransition_ajv5v"), "idle_default", "RESET 3", SubResource("AnimationNodeStateMachineTransition_h2buo"), "RESET 3", "fold", SubResource("AnimationNodeStateMachineTransition_55qcu"), "RESET 4", "flinch", SubResource("AnimationNodeStateMachineTransition_fudoy"), "flinch", "RESET 5", SubResource("AnimationNodeStateMachineTransition_5k4if"), "RESET 5", "idle_default", SubResource("AnimationNodeStateMachineTransition_lvgxd"), "idle_default", "RESET 4", SubResource("AnimationNodeStateMachineTransition_nuhx5")]
+graph_offset = Vector2(23, -135)
 
 [node name="Ghost" type="Sprite2D"]
 texture = ExtResource("1_f4eol")

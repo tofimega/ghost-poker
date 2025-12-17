@@ -20,6 +20,13 @@ signal no_player_found
 signal player_out(p: int)
 signal game_over(result: GameState, winner)
 
+signal player_cheat(player: int, target: int, cheat_name: String)
+
+signal cheat_anim_finished
+signal start_flinch(target: int)
+signal cont_cheat
+
+
 signal player_bet(p: int, bet: Bet)
 signal next_player(p: int)
 
@@ -204,7 +211,9 @@ func start_next_round()->void:
 	for id: int in players.keys():
 		var p: Player = players[id]
 		if !p.in_game or p.controller.is_human(): continue
-		p.controller.use_early_cheat()
+		await p.controller.use_early_cheat()
+		
+		
 		
 	_next_step()
 

@@ -18,11 +18,12 @@ func _select_target_for_cheat()->void:
 	await selector.target_selected
 	var target: int = selector.current_target
 	selector._toggle_selection(false)
-	_use_cheat(target)
+	PokerEngine.start_flinch.emit(target)
+	await _use_cheat(target)
 	FrontendManager.get_hud().update()
 
 func _use_cheat(target: int)->void:
-	player.cheat.user(target) 
+	await player.cheat.user(target) 
 	
 
 func _send_bet(bet: Bet) -> Bet:

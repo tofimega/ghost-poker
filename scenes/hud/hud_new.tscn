@@ -358,6 +358,13 @@ theme_override_colors/font_color = Color(1, 0, 0, 1)
 text = "XXXXXXXX"
 vertical_alignment = 1
 
+[node name="PH_CheatName" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 83.0
+offset_right = 41.0
+offset_bottom = 89.0
+
 [node name="CheatProgress" parent="." instance=ExtResource("5_56bah")]
 custom_minimum_size = Vector2(40, 36)
 layout_mode = 0

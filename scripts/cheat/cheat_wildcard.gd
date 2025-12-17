@@ -2,6 +2,12 @@ class_name WildCard
 extends Cheat
 
 
+
+func _init()->void:
+	_name= "WildCard"
+
+
+
 func _computer(target: int)->float:
 	GlobalLogger.log_text("\tWILDCARD")
 	var p: Player = PokerEngine.get_player(player)

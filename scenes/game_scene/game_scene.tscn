@@ -27,7 +27,7 @@ disabled = true
 flat = true
 
 [node name="Ghost2" parent="Objects" instance=ExtResource("1_72663")]
-position = Vector2(163, 109)
+position = Vector2(163, 110)
 id = 2
 
 [node name="Button" type="Button" parent="Objects/Ghost2"]
@@ -40,7 +40,7 @@ disabled = true
 flat = true
 
 [node name="Ghost3" parent="Objects" instance=ExtResource("1_72663")]
-position = Vector2(264, 121)
+position = Vector2(263, 123)
 id = 3
 
 [node name="Button" type="Button" parent="Objects/Ghost3"]
