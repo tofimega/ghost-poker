@@ -13,14 +13,18 @@ func use_early_cheat()->void:
 
 func _select_target_for_cheat()->void:
 	if player.cheat.charge<1: return
-	var selector: TargetSelector = FrontendManager.get_selector()
-	selector._toggle_selection(true)
-	await selector.target_selected
-	var target: int = selector.current_target
-	selector._toggle_selection(false)
+	var target: int = -1
+	if player.cheat.offense:
+		var selector: TargetSelector = FrontendManager.get_selector()
+		selector._toggle_selection(true)
+		await selector.target_selected
+		target = selector.current_target
+		selector._toggle_selection(false)
+
+	_use_cheat(target)
 	PokerEngine.start_flinch.emit(target)
-	await _use_cheat(target)
 	FrontendManager.get_hud().update()
+	
 
 func _use_cheat(target: int)->void:
 	await player.cheat.user(target) 

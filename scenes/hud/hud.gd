@@ -37,10 +37,7 @@ func _ready() -> void:
 
 func flinch(t: int)->void:
 	if t!=0: return
-	bet_label.text="ow"
-	bet_label.visible=true
-	await get_tree().create_timer(1).timeout
-	bet_label.visible=false
+	await display_info("ow")
 	PokerEngine.cont_cheat.emit()
 
 func show_other_hand(target: int)->void:
@@ -68,12 +65,17 @@ func _show_down(cause: bool)->void:
 	showdown_label.visible=true
 
 
+func display_info(message: String, time: float = 1)->void:
+	bet_label.text=message
+	bet_label.visible=true
+	await get_tree().create_timer(time).timeout
+	bet_label.visible=false
+	
+
+
 func _show_bet(p: int, bet: Bet)->void:
 	if p != 0: return
-	bet_label.text=str(bet)
-	bet_label.visible=true
-	await get_tree().create_timer(1).timeout
-	bet_label.visible=false
+	await display_info(str(bet))
 	PokerEngine.cont.emit()
 
 

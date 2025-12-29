@@ -189,6 +189,7 @@ func current_player_count()->int:
 
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
+	await FrontendManager.get_hud().display_info("Round "+str(current_turn+1))
 	freeze_highest_bet=-1
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()

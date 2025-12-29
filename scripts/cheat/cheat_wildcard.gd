@@ -5,6 +5,7 @@ extends Cheat
 
 func _init()->void:
 	_name= "WildCard"
+	offense=false
 
 
 

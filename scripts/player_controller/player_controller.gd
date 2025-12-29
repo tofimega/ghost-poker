@@ -36,8 +36,7 @@ func use_early_cheat()->void:
 	others.erase(player.id)
 	others.shuffle() 
 	early_result =  await player.cheat.computer(others[0])
-	await PokerEngine.cont_cheat
-	
+
 
 func find_odds()->float:
 	var hand_rank: Ranking

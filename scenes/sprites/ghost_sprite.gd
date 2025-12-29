@@ -30,8 +30,8 @@ func play(p: int, bet: Bet)->void:
 	label.visible=true
 	if bet.type ==bet.Type.FOLD: animation_tree["parameters/playback"].travel("fold")
 	else: animation_tree["parameters/playback"].travel("bet")
-	
-	
+
+
 func cheat(p: int, t: int, n: String) ->void:
 	if p!=id: return
 	label.text=n
