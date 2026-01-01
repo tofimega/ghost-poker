@@ -1,12 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://7vhkgdhoemv3"]
+[gd_scene load_steps=7 format=3 uid="uid://7vhkgdhoemv3"]
 
 [ext_resource type="PackedScene" uid="uid://bati8d7pq1ysj" path="res://scenes/sprites/ghost.tscn" id="1_72663"]
 [ext_resource type="Script" uid="uid://bfqexwjnmrsef" path="res://scenes/game_scene/game_scene.gd" id="1_xb203"]
 [ext_resource type="Texture2D" uid="uid://2stb2d4ddd5w" path="res://assets/images/table_render.png" id="3_xb203"]
 [ext_resource type="PackedScene" uid="uid://dr10kbw8kd8o3" path="res://scenes/hud/hud_new.tscn" id="4_xb203"]
 [ext_resource type="Script" uid="uid://damck7f6rvxoa" path="res://scenes/game_scene/target_selector.gd" id="5_ducuf"]
+[ext_resource type="Texture2D" uid="uid://dhddu3mvgj0jg" path="res://assets/images/card_back/card_back_small.png" id="6_j8flk"]
 
-[node name="GameScene" type="Node2D"]
+[node name="GameScene" type="Node2D" groups=["GameScene"]]
 script = ExtResource("1_xb203")
 
 [node name="Objects" type="Node2D" parent="."]
@@ -60,3 +61,19 @@ centered = false
 
 [node name="TargetSelector" type="Node" parent="." groups=["Selector"]]
 script = ExtResource("5_ducuf")
+
+[node name="CardBack" type="Sprite2D" parent="."]
+position = Vector2(157, 140)
+texture = ExtResource("6_j8flk")
+
+[node name="P0" type="Marker2D" parent="."]
+position = Vector2(169, 172)
+
+[node name="P1" type="Marker2D" parent="."]
+position = Vector2(60, 114)
+
+[node name="P2" type="Marker2D" parent="."]
+position = Vector2(162, 97)
+
+[node name="P3" type="Marker2D" parent="."]
+position = Vector2(256, 118)

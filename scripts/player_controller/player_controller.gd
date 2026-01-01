@@ -27,7 +27,7 @@ const CALL_MULT: float = 1.1
 const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
-
+#TODO: make players randomly chhose to not cheat
 var early_result: float=0
 func use_early_cheat()->void:
 	if !player.in_game: return

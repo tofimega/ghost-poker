@@ -1,6 +1,7 @@
 class_name Cheat
 extends Object
 
+#TODO: allow cheats to be "hidden" so that animation doesn't play
 
 var charge: float = 0:
 	set(c):

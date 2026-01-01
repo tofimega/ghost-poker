@@ -22,6 +22,7 @@ const CARD_HUD: PackedScene = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
 func _ready() -> void:
 	animation_player.play("RESET")
+	toggle_hud(false)
 	target_hand.visible=false
 	bet_label.visible=false
 	showdown_label.visible=false

@@ -73,7 +73,7 @@ func _incoming_bet(p: int, bet: Bet):
 func _next_step()->void:
 	assert(current_player_count()>0)
 	if empty_deck_flag:
-		s_showdown.emit(true)
+		s_showdown.emit(true) #TODO: renew deck instead
 		showdown()
 		return
 
@@ -92,17 +92,18 @@ func _next_step()->void:
 	if !players_available:
 			GlobalLogger.log_text("No player worth asking found...")
 			GlobalLogger.log_text("Dealing remaining cards...")
+			s_showdown.emit(false)
 			
 			var ps: Array[Player] = players.values()
 			var p: int=0
+			
 			while !deck.is_empty():
-				deal_cards(ps[p%ps.size()], 1)
+				await deal_cards(ps[p%ps.size()], 1)
 				p+=1
 
 			for pr in ps: 
 				hand_dealt.emit(pr)
 
-			s_showdown.emit(false)
 			showdown() 
 			return
 
@@ -175,6 +176,7 @@ func deal_cards(player: Player, count: int)->void:
 			deck_empty.emit()
 			return
 		player.hand.append(deck.pop_back())
+		await FrontendManager.get_game_scene().anim_deal_card(player.id)
 	
 	if deck.is_empty():
 		deck_empty.emit()
@@ -206,7 +208,7 @@ func start_next_round()->void:
 	for i in CARDS_PER_ROUND:
 		for p: Player in players.values():
 			if deck.size()==0: break
-			deal_cards(p, 1)
+			await deal_cards(p, 1)
 			hand_dealt.emit(p)
 
 	for id: int in players.keys():
@@ -311,19 +313,19 @@ func _init_game_state()->void:
 	pool=0
 	GlobalLogger.log_text("Pool initialized")
 	player_bets.clear()
+	for i in PLAYER_COUNT:
+	#	players[i]=Player.new()
+		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
+		players[i].cheat = cheats[i]
+		cheats[i].player=i
 	for p: Player in players.values():
-		deal_cards(p, STARING_HAND_SIZE)
+		await deal_cards(p, STARING_HAND_SIZE)
 		hand_dealt.emit(p)
 		p.chips=STARING_CHIP_COUNT
 		p.chips-=STARTING_ANTE
 		pool+=STARTING_ANTE
 	GlobalLogger.log_text("Cards, chips dealt")
 	
-	for i in PLAYER_COUNT:
-	#	players[i]=Player.new()
-		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
-		players[i].cheat = cheats[i]
-		cheats[i].player=i
 	game_state=GameState.RUNNING
 	GlobalLogger.log_text("Game Opened")
 
@@ -332,9 +334,9 @@ func new_game()->void:
 	GlobalLogger.log_text(" ")
 	GlobalLogger.log_text("Beginning new game...")
 	_clear_game_state()
-	_init_game_state()
+	await _init_game_state()
 	game_start.emit()
-	start_next_round()
+	await start_next_round()
 
 
 func rank_hand(hand: Array[Card]) -> Ranking:

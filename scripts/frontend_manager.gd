@@ -20,3 +20,6 @@ func get_selector()-> TargetSelector:
 
 func get_hud() -> HUD:
 	return get_tree().get_first_node_in_group("HUD")
+
+func get_game_scene() -> GameScene:
+	return get_tree().get_first_node_in_group("GameScene")

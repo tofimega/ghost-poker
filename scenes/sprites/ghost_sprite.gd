@@ -27,6 +27,7 @@ func flinch(t: int)->void:
 func play(p: int, bet: Bet)->void:
 	if p != id: return
 	label.text=str(bet)
+	label.label_settings.font_color = Color.CADET_BLUE if PokerEngine.freeze_highest_bet==id else Color.WHITE
 	label.visible=true
 	if bet.type ==bet.Type.FOLD: animation_tree["parameters/playback"].travel("fold")
 	else: animation_tree["parameters/playback"].travel("bet")
@@ -35,6 +36,7 @@ func play(p: int, bet: Bet)->void:
 func cheat(p: int, t: int, n: String) ->void:
 	if p!=id: return
 	label.text=n
+	label.label_settings.font_color = Color.WHITE
 	label.visible=true
 	await get_tree().create_timer(.7).timeout
 	label.visible=false

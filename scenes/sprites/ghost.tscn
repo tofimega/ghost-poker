@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://bati8d7pq1ysj"]
+[gd_scene load_steps=36 format=3 uid="uid://bati8d7pq1ysj"]
 
 [ext_resource type="Texture2D" uid="uid://bhda8wpkkkepd" path="res://assets/images/ghost_sprite/ghost body.png" id="1_f4eol"]
 [ext_resource type="Texture2D" uid="uid://bdi58ybx3rufc" path="res://assets/images/ghost_sprite/cards.png" id="2_48iy0"]
@@ -180,6 +180,20 @@ tracks/1/keys = {
 "values": [Vector2(-1, -1), Vector2(1, -1)]
 }
 
+[sub_resource type="Animation" id="Animation_a66qs"]
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:offset")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.23, 0.32, 0.59, 0.69, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-7.42, 0), Vector2(2.89, 0), Vector2(-2.325, 0), Vector2(1.225, 0), Vector2(0, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_satjj"]
 resource_name = "fold"
 tracks/0/type = "value"
@@ -344,20 +358,6 @@ tracks/10/keys = {
 "values": [false, true, false, true, false]
 }
 
-[sub_resource type="Animation" id="Animation_a66qs"]
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:offset")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.23, 0.32, 0.59, 0.69, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(-7.42, 0), Vector2(2.89, 0), Vector2(-2.325, 0), Vector2(1.225, 0), Vector2(0, 0)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e5mws"]
 _data = {
 &"RESET": SubResource("Animation_48iy0"),
@@ -466,6 +466,9 @@ states/idle_default/position = Vector2(454, 53)
 transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_f1u55"), "RESET", "idle_default", SubResource("AnimationNodeStateMachineTransition_6t6ds"), "idle_default", "RESET 2", SubResource("AnimationNodeStateMachineTransition_fq66f"), "RESET 2", "bet", SubResource("AnimationNodeStateMachineTransition_kclr6"), "bet", "RESET", SubResource("AnimationNodeStateMachineTransition_ajv5v"), "idle_default", "RESET 3", SubResource("AnimationNodeStateMachineTransition_h2buo"), "RESET 3", "fold", SubResource("AnimationNodeStateMachineTransition_55qcu"), "RESET 4", "flinch", SubResource("AnimationNodeStateMachineTransition_fudoy"), "flinch", "RESET 5", SubResource("AnimationNodeStateMachineTransition_5k4if"), "RESET 5", "idle_default", SubResource("AnimationNodeStateMachineTransition_lvgxd"), "idle_default", "RESET 4", SubResource("AnimationNodeStateMachineTransition_nuhx5")]
 graph_offset = Vector2(23, -135)
 
+[sub_resource type="LabelSettings" id="LabelSettings_48iy0"]
+font_size = 7
+
 [node name="Ghost" type="Sprite2D"]
 texture = ExtResource("1_f4eol")
 script = ExtResource("2_e5mws")
@@ -503,8 +506,10 @@ anim_player = NodePath("../AnimationPlayer")
 [node name="Label" type="Label" parent="."]
 top_level = true
 offset_left = -18.0
-offset_top = -45.0
+offset_top = -46.0
 offset_right = 22.0
-offset_bottom = -39.0
+offset_bottom = -38.0
+label_settings = SubResource("LabelSettings_48iy0")
+horizontal_alignment = 1
 
 [connection signal="animation_finished" from="AnimationTree" to="." method="_on_animation_tree_animation_finished"]
