@@ -1,6 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+# My stuff
 log.txt
 out/
+misc_nonsense/
+# VSCode
 .vscode/
