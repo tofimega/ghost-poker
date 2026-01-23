@@ -95,7 +95,8 @@ func _show_hand(hand: HandCont, player: int)->void:
 	for c in hand.get_children():
 		c.queue_free()
 	if PokerEngine.get_player(0).blinded:
-		hand.add_child(CARD_HUD.instantiate())
+		for i in PokerEngine.get_player(0).hand.size():
+			hand.add_child(CARD_HUD.instantiate())
 		return
 	for c in PokerEngine.get_player(player).hand:
 		var ch: CardHUD = CARD_HUD.instantiate()

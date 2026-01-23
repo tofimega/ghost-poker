@@ -14,6 +14,10 @@ var card_back_pos: Vector2
 
 
 func _ready() -> void:
+	
+	for s: int in Card.Suit.values():
+		for r: int in Card.Rank.values():
+			CardHUD.get_texture(s,r)
 	hud.toggle_hud(false)
 	card_back.visible=false
 	card_back_pos=card_back.global_position
@@ -24,6 +28,7 @@ func _ready() -> void:
 	target_selector.target_out.connect(_toggle_highlight.bind(false))
 	PokerEngine.game_over.connect(func(a,v): 
 		await get_tree().create_timer(3).timeout
+		CardHUD.unload_textures()
 		get_tree().change_scene_to_file("res://scenes/title_menu/hud/title_menu_hud.tscn"))
 
 

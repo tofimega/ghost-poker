@@ -1,13 +1,12 @@
 class_name CardHUD
 extends Control
 
+
 @onready var texture_rect: TextureRect = $TextureRect
 
-var card: Card
 
-static func _static_init() -> void:
-	suits.make_read_only()
-	ranks.make_read_only()
+
+var card: Card
 
 
 const base_path: StringName = "res://assets/images/card_face"
@@ -35,8 +34,19 @@ const ranks: Dictionary[Card.Rank, StringName] = {
 	Card.Rank.ACE   : "ace"
 }
 
+static var _textures: Dictionary[String, CompressedTexture2D] = {}
+
+static func get_texture(suit: Card.Suit, rank: Card.Rank)->CompressedTexture2D:
+	var path: String = base_path+"/"+suits[suit]+"/"+ranks[rank]+".png"
+	if _textures.has(path): return _textures[path]
+	var tex: CompressedTexture2D = load(path)
+	_textures[path] = tex
+	return tex
+
+static func unload_textures()->void:
+	_textures.clear()
 
 
 func _ready()->void:
 	if card:
-		texture_rect.texture=load(base_path+"/"+suits[card.suit]+"/"+ranks[card.rank]+".png")
+		texture_rect.texture=get_texture(card.suit, card.rank)

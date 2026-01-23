@@ -6,6 +6,5 @@ extends Control
 
 const GAME_SCENE: PackedScene = preload("res://scenes/game_scene/game_scene.tscn")
 
-
 func _on_button_pressed() -> void:
 	get_tree().change_scene_to_packed(GAME_SCENE)

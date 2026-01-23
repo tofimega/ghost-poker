@@ -53,14 +53,14 @@ var empty_deck_flag: bool=false
 var player_bets: Dictionary[int, Bet]
 var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
-var freeze_highest_bet: int = -1
+var freeze_highest_bet: int = -1  #TODO: replace with flag inside Player class
 
 
 var cheats: Array[Cheat] = []
 
 func _ready()->void:
 	deck_empty.connect(func(): empty_deck_flag=true)
-	player_bet.connect(_incoming_bet,CONNECT_DEFERRED) # defer to prevent stack overflow, just in case)
+	player_bet.connect(_incoming_bet, CONNECT_DEFERRED) # defer to prevent stack overflow, just in case
 	round_over.connect(start_next_round)
 
 
