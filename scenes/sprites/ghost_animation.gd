@@ -21,14 +21,13 @@ var current_state: AnimationState = AnimationState.IDLE_STATIC
 
 func _reinit_nodes()->void:
 	timer.stop()
-	#label.visible=false
 	stop()
 	play("RESET")
 
 
 var _no_interrupts_please: bool = false
 func switch_to(state: AnimationState)->void:
-	if _no_interrupts_please: return #prevent interrupting states with signals
+	if _no_interrupts_please: return # prevent interrupting states with signals
 		
 	current_state = state
 	_reinit_nodes()

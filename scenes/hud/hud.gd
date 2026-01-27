@@ -33,7 +33,6 @@ func _ready() -> void:
 	PokerEngine.player_bet.connect(_show_bet)
 	PokerEngine.s_showdown.connect(_show_down)
 	PokerEngine.start_flinch.connect(flinch)
-	#user_input.input_enabled.connect(_toggle_hud)
 	user_input.enabled=true
 
 func flinch(t: int)->void:
@@ -111,8 +110,6 @@ var _hud_enabled: bool =true
 
 func toggle_hud(enabled: bool) -> void:
 	user_input.enabled=enabled
-	#user_input.visible=enabled
-	#hand.visible=enabled
 	if enabled and !_hud_enabled: animation_player.play_backwards("HUD-out")
 	elif !enabled:  animation_player.play("HUD-out")
 	pow.enabled=enabled

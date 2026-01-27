@@ -40,7 +40,6 @@ func _ready()->void:
 	button2.pressed.connect(func()->void:target_selected.emit(2))
 	button3.pressed.connect(func()->void:target_selected.emit(3))
 	
-	#FrontendManager.get_hud().pow.button.pressed.connect(_toggle_selection.bind(true))
 	
 	
 	

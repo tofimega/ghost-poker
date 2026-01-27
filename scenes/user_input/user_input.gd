@@ -8,7 +8,7 @@ signal user_bet(bet: Bet)
 @onready var remaining_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/RemainingChips
 @onready var bet_type: Label = $VBoxContainer/HBoxContainer/VBoxContainer/BetType
 
-# interaactive
+# interactive
 @onready var fold: Button = $VBoxContainer/HBoxContainer/VBoxContainer/Fold
 @onready var bet_amount: SpinBox = $VBoxContainer/HBoxContainer2/BetAmount
 @onready var bet: Button = $VBoxContainer/HBoxContainer2/Bet

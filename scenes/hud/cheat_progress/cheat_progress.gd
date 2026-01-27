@@ -17,6 +17,5 @@ func _process(delta: float) -> void:
 
 var origin_mod: Color
 func modulate_progress(progress: float)->void:
-	#texture_progress_bar.value=progress
 	var prog_tween: Tween = create_tween()
 	prog_tween.tween_property(texture_progress_bar, "value", progress, 0.2).set_trans(Tween.TRANS_CIRC)

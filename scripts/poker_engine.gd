@@ -54,7 +54,7 @@ var empty_deck_flag: bool=false
 var player_bets: Dictionary[int, Bet]
 var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
-#var freeze_highest_bet: int = -1  #TODO: replace with flag inside Player class
+
 
 
 var cheats: Array[Cheat] = []
@@ -180,11 +180,9 @@ func current_player_count()->int:
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
 	await FrontendManager.get_hud().display_info("Round "+str(current_turn+1))
-	#freeze_highest_bet=-1
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
 	pc_at_start_of_round = current_player_count()
-	#current_player=-1
 	_turn_queue = [players[0], players[1], players[2], players[3]]
 	_turn_queue = _turn_queue.filter(_can_player_move)
 	highest_bet = MINIMUM_BET
@@ -314,7 +312,6 @@ func _init_game_state()->void:
 	GlobalLogger.log_text("Pool initialized")
 	player_bets.clear()
 	for i in PLAYER_COUNT:
-	#	players[i]=Player.new()
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 		players[i].cheat = cheats[i]
 		cheats[i].player=i

@@ -93,7 +93,7 @@ func find_odds()->float:
 
 	rt=clamp(rt,0,1)
 	
-	#bluff
+	# bluff
 	if rt>=BLUFF_THRESH: return rt
 	GlobalLogger.log_text("Player "+str(player.id)+"'s confidence too low, trying to bluff...")
 	for i in randi()%BLUFF_COUNT:
