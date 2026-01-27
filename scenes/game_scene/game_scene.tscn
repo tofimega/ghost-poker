@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://7vhkgdhoemv3"]
+[gd_scene format=3 uid="uid://7vhkgdhoemv3"]
 
 [ext_resource type="PackedScene" uid="uid://bati8d7pq1ysj" path="res://scenes/sprites/ghost.tscn" id="1_72663"]
 [ext_resource type="Script" uid="uid://bfqexwjnmrsef" path="res://scenes/game_scene/game_scene.gd" id="1_xb203"]
@@ -7,18 +7,18 @@
 [ext_resource type="Script" uid="uid://damck7f6rvxoa" path="res://scenes/game_scene/target_selector.gd" id="5_ducuf"]
 [ext_resource type="Texture2D" uid="uid://dhddu3mvgj0jg" path="res://assets/images/card_back/card_back_small.png" id="6_j8flk"]
 
-[node name="GameScene" type="Node2D" groups=["GameScene"]]
+[node name="GameScene" type="Node2D" unique_id=710174886 groups=["GameScene"]]
 script = ExtResource("1_xb203")
 
-[node name="Objects" type="Node2D" parent="."]
+[node name="Objects" type="Node2D" parent="." unique_id=552008243]
 
-[node name="Ghost" parent="Objects" instance=ExtResource("1_72663")]
+[node name="Ghost" parent="Objects" unique_id=1107475710 instance=ExtResource("1_72663")]
 position = Vector2(59, 120)
 rotation = 3.14159
 scale = Vector2(1, -1)
 id = 1
 
-[node name="Button" type="Button" parent="Objects/Ghost"]
+[node name="Button" type="Button" parent="Objects/Ghost" unique_id=1330323062]
 top_level = true
 offset_left = 43.0
 offset_top = 83.0
@@ -27,11 +27,11 @@ offset_bottom = 128.0
 disabled = true
 flat = true
 
-[node name="Ghost2" parent="Objects" instance=ExtResource("1_72663")]
+[node name="Ghost2" parent="Objects" unique_id=278175455 instance=ExtResource("1_72663")]
 position = Vector2(163, 110)
 id = 2
 
-[node name="Button" type="Button" parent="Objects/Ghost2"]
+[node name="Button" type="Button" parent="Objects/Ghost2" unique_id=466632478]
 top_level = true
 offset_left = 147.0
 offset_top = 74.0
@@ -40,11 +40,11 @@ offset_bottom = 119.0
 disabled = true
 flat = true
 
-[node name="Ghost3" parent="Objects" instance=ExtResource("1_72663")]
+[node name="Ghost3" parent="Objects" unique_id=1932221670 instance=ExtResource("1_72663")]
 position = Vector2(263, 123)
 id = 3
 
-[node name="Button" type="Button" parent="Objects/Ghost3"]
+[node name="Button" type="Button" parent="Objects/Ghost3" unique_id=462224418]
 top_level = true
 offset_left = 247.0
 offset_top = 86.0
@@ -53,27 +53,27 @@ offset_bottom = 131.0
 disabled = true
 flat = true
 
-[node name="Table" type="Sprite2D" parent="Objects"]
+[node name="Table" type="Sprite2D" parent="Objects" unique_id=1648443699]
 texture = ExtResource("3_xb203")
 centered = false
 
-[node name="HUD" parent="." instance=ExtResource("4_xb203")]
+[node name="HUD" parent="." unique_id=1136677696 instance=ExtResource("4_xb203")]
 
-[node name="TargetSelector" type="Node" parent="." groups=["Selector"]]
+[node name="TargetSelector" type="Node" parent="." unique_id=992957995 groups=["Selector"]]
 script = ExtResource("5_ducuf")
 
-[node name="CardBack" type="Sprite2D" parent="."]
+[node name="CardBack" type="Sprite2D" parent="." unique_id=1253119289]
 position = Vector2(157, 140)
 texture = ExtResource("6_j8flk")
 
-[node name="P0" type="Marker2D" parent="."]
+[node name="P0" type="Marker2D" parent="." unique_id=713272880]
 position = Vector2(169, 172)
 
-[node name="P1" type="Marker2D" parent="."]
+[node name="P1" type="Marker2D" parent="." unique_id=1863989478]
 position = Vector2(60, 114)
 
-[node name="P2" type="Marker2D" parent="."]
+[node name="P2" type="Marker2D" parent="." unique_id=1854096341]
 position = Vector2(162, 97)
 
-[node name="P3" type="Marker2D" parent="."]
+[node name="P3" type="Marker2D" parent="." unique_id=1270837561]
 position = Vector2(256, 118)

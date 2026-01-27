@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cis17oxtlrrqp"]
+[gd_scene format=3 uid="uid://cis17oxtlrrqp"]
 
 [ext_resource type="Script" uid="uid://dixxg7a4v60g7" path="res://scenes/debug_frontend/player_status/player_status.gd" id="1_7asm8"]
 
-[node name="PlayerStatus" type="PanelContainer"]
+[node name="PlayerStatus" type="PanelContainer" unique_id=1393887686]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,58 +12,58 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_7asm8")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1720472730]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PlayerID" type="Label" parent="VBoxContainer"]
+[node name="PlayerID" type="Label" parent="VBoxContainer" unique_id=1639262376]
 layout_mode = 2
 text = "Player ID: "
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=1215723022]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Chips" type="Label" parent="VBoxContainer"]
+[node name="Chips" type="Label" parent="VBoxContainer" unique_id=1095436849]
 layout_mode = 2
 text = "Chips: "
 
-[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer" unique_id=609872503]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="CrardsTittle2" type="Label" parent="VBoxContainer"]
+[node name="CrardsTittle2" type="Label" parent="VBoxContainer" unique_id=668214016]
 layout_mode = 2
 text = "Hand:"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=906074815]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Cards" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+[node name="Cards" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=752950497]
 layout_mode = 2
 
-[node name="HSeparator3" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer" unique_id=1079615871]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Rank" type="Label" parent="VBoxContainer"]
+[node name="Rank" type="Label" parent="VBoxContainer" unique_id=1202113364]
 layout_mode = 2
 text = "Rank: "
 
-[node name="HSeparator4" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator4" type="HSeparator" parent="VBoxContainer" unique_id=518453679]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Conf" type="Label" parent="VBoxContainer"]
+[node name="Conf" type="Label" parent="VBoxContainer" unique_id=1096131934]
 layout_mode = 2
 text = "Conf: "
 
-[node name="HSeparator5" type="HSeparator" parent="VBoxContainer"]
+[node name="HSeparator5" type="HSeparator" parent="VBoxContainer" unique_id=573728489]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Bet" type="Label" parent="VBoxContainer"]
+[node name="Bet" type="Label" parent="VBoxContainer" unique_id=866614443]
 layout_mode = 2
 text = "Bet: "

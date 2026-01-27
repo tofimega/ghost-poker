@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dr10kbw8kd8o3"]
+[gd_scene format=3 uid="uid://dr10kbw8kd8o3"]
 
 [ext_resource type="Script" uid="uid://clnx1it0pqk0l" path="res://scenes/hud/hud.gd" id="1_5buul"]
 [ext_resource type="LabelSettings" uid="uid://bkvoxm2vminha" path="res://scenes/hud/new_label_settings.tres" id="2_vsynb"]
@@ -119,12 +119,12 @@ _data = {
 &"RESET": SubResource("Animation_4lel5")
 }
 
-[node name="HUD" type="Control" groups=["HUD"]]
+[node name="HUD" type="Control" unique_id=1158361475 groups=["HUD"]]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_5buul")
 
-[node name="UI_BLOCKOUT" type="Control" parent="."]
+[node name="UI_BLOCKOUT" type="Control" parent="." unique_id=1685456828]
 visible = false
 anchors_preset = 0
 offset_right = 320.0
@@ -132,7 +132,7 @@ offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Imfo" type="Control" parent="UI_BLOCKOUT"]
+[node name="Imfo" type="Control" parent="UI_BLOCKOUT" unique_id=2031381246]
 visible = false
 anchors_preset = 0
 offset_left = -2.0
@@ -140,28 +140,28 @@ offset_top = -2.0
 offset_right = 38.0
 offset_bottom = 38.0
 
-[node name="Info1" type="Panel" parent="UI_BLOCKOUT/Imfo"]
+[node name="Info1" type="Panel" parent="UI_BLOCKOUT/Imfo" unique_id=1028404697]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 54.0
 offset_bottom = 25.0
 
-[node name="Info2" type="Panel" parent="UI_BLOCKOUT/Imfo"]
+[node name="Info2" type="Panel" parent="UI_BLOCKOUT/Imfo" unique_id=1310343776]
 layout_mode = 0
 offset_left = 55.0
 offset_top = 4.0
 offset_right = 105.0
 offset_bottom = 25.0
 
-[node name="Info3" type="Panel" parent="UI_BLOCKOUT/Imfo"]
+[node name="Info3" type="Panel" parent="UI_BLOCKOUT/Imfo" unique_id=1654833738]
 layout_mode = 0
 offset_left = 106.0
 offset_top = 4.0
 offset_right = 156.0
 offset_bottom = 25.0
 
-[node name="HUD" type="Control" parent="UI_BLOCKOUT"]
+[node name="HUD" type="Control" parent="UI_BLOCKOUT" unique_id=236224331]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,7 +169,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Hand" type="ReferenceRect" parent="UI_BLOCKOUT/HUD"]
+[node name="Hand" type="ReferenceRect" parent="UI_BLOCKOUT/HUD" unique_id=1796240625]
 visible = false
 layout_mode = 0
 offset_left = 79.0
@@ -177,14 +177,14 @@ offset_top = 120.0
 offset_right = 312.47
 offset_bottom = 173.0
 
-[node name="Control" type="Control" parent="UI_BLOCKOUT/HUD/Hand"]
+[node name="Control" type="Control" parent="UI_BLOCKOUT/HUD/Hand" unique_id=2101544739]
 anchors_preset = 0
 offset_left = -57.0
 offset_top = -120.0
 offset_right = -17.0
 offset_bottom = -80.0
 
-[node name="card" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control"]
+[node name="card" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control" unique_id=2037225174]
 layout_mode = 0
 offset_left = 96.0
 offset_top = 131.0
@@ -193,7 +193,7 @@ offset_bottom = 191.0
 rotation = -0.276237
 pivot_offset = Vector2(21, 30)
 
-[node name="card2" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control"]
+[node name="card2" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control" unique_id=12332222]
 layout_mode = 0
 offset_left = 128.0
 offset_top = 124.0
@@ -202,7 +202,7 @@ offset_bottom = 184.0
 rotation = -0.123837
 pivot_offset = Vector2(21, 30)
 
-[node name="card3" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control"]
+[node name="card3" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control" unique_id=2033188394]
 layout_mode = 0
 offset_left = 161.0
 offset_top = 122.0
@@ -210,7 +210,7 @@ offset_right = 203.0
 offset_bottom = 182.0
 pivot_offset = Vector2(21, 30)
 
-[node name="Control2" type="Control" parent="UI_BLOCKOUT/HUD/Hand"]
+[node name="Control2" type="Control" parent="UI_BLOCKOUT/HUD/Hand" unique_id=790964713]
 anchors_preset = 0
 offset_left = 307.0
 offset_top = -120.0
@@ -218,7 +218,7 @@ offset_right = 347.0
 offset_bottom = -80.0
 scale = Vector2(-1, 1)
 
-[node name="card" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control2"]
+[node name="card" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control2" unique_id=299100437]
 layout_mode = 0
 offset_left = 96.0
 offset_top = 131.0
@@ -227,7 +227,7 @@ offset_bottom = 191.0
 rotation = -0.276237
 pivot_offset = Vector2(21, 30)
 
-[node name="card2" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control2"]
+[node name="card2" type="Panel" parent="UI_BLOCKOUT/HUD/Hand/Control2" unique_id=967954771]
 layout_mode = 0
 offset_left = 128.0
 offset_top = 124.0
@@ -236,7 +236,7 @@ offset_bottom = 184.0
 rotation = -0.123837
 pivot_offset = Vector2(21, 30)
 
-[node name="Pow" type="Panel" parent="UI_BLOCKOUT/HUD"]
+[node name="Pow" type="Panel" parent="UI_BLOCKOUT/HUD" unique_id=1737030924]
 visible = false
 layout_mode = 0
 offset_left = 2.0
@@ -244,7 +244,7 @@ offset_top = 90.0
 offset_right = 37.0
 offset_bottom = 124.0
 
-[node name="Bet" type="Panel" parent="UI_BLOCKOUT/HUD"]
+[node name="Bet" type="Panel" parent="UI_BLOCKOUT/HUD" unique_id=680582596]
 visible = false
 layout_mode = 0
 offset_left = 2.0
@@ -252,50 +252,50 @@ offset_top = 125.0
 offset_right = 76.0
 offset_bottom = 179.0
 
-[node name="Info" type="HBoxContainer" parent="."]
+[node name="Info" type="HBoxContainer" parent="." unique_id=215901720]
 layout_mode = 1
 offset_left = 2.0
 offset_top = 2.0
 offset_right = 212.0
 offset_bottom = 27.0
 
-[node name="PanelContainer" type="PanelContainer" parent="Info"]
+[node name="PanelContainer" type="PanelContainer" parent="Info" unique_id=420491415]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Round" type="Label" parent="Info/PanelContainer"]
+[node name="Round" type="Label" parent="Info/PanelContainer" unique_id=1198067601]
 layout_mode = 2
 text = "Round X"
 label_settings = ExtResource("2_vsynb")
 
-[node name="PanelContainer2" type="PanelContainer" parent="Info"]
+[node name="PanelContainer2" type="PanelContainer" parent="Info" unique_id=1075322703]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Bet" type="Label" parent="Info/PanelContainer2"]
+[node name="Bet" type="Label" parent="Info/PanelContainer2" unique_id=322205928]
 layout_mode = 2
 text = "Bet: XXX chips"
 label_settings = ExtResource("2_vsynb")
 
-[node name="PanelContainer3" type="PanelContainer" parent="Info"]
+[node name="PanelContainer3" type="PanelContainer" parent="Info" unique_id=423489054]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Pot" type="Label" parent="Info/PanelContainer3"]
+[node name="Pot" type="Label" parent="Info/PanelContainer3" unique_id=1180462307]
 layout_mode = 2
 text = "Pot: XXX chips"
 label_settings = ExtResource("2_vsynb")
 
-[node name="PanelContainer4" type="PanelContainer" parent="Info"]
+[node name="PanelContainer4" type="PanelContainer" parent="Info" unique_id=746827749]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Deck" type="Label" parent="Info/PanelContainer4"]
+[node name="Deck" type="Label" parent="Info/PanelContainer4" unique_id=1693762443]
 layout_mode = 2
 text = "Deck: XX"
 label_settings = ExtResource("2_vsynb")
 
-[node name="UserInput" parent="." instance=ExtResource("3_vsynb")]
+[node name="UserInput" parent="." unique_id=2142737741 instance=ExtResource("3_vsynb")]
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -307,7 +307,7 @@ offset_bottom = 179.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="Hand" parent="." instance=ExtResource("4_ed3ik")]
+[node name="Hand" parent="." unique_id=1427562305 instance=ExtResource("4_ed3ik")]
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -322,7 +322,7 @@ max_size = 0.215
 max_spacing = 1.0
 max_rotation_deg = 20.0
 
-[node name="TargetHand" parent="." instance=ExtResource("4_ed3ik")]
+[node name="TargetHand" parent="." unique_id=1980974242 instance=ExtResource("4_ed3ik")]
 layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
@@ -337,7 +337,7 @@ max_size = 0.215
 max_spacing = 1.0
 max_rotation_deg = 20.0
 
-[node name="Bet" type="Label" parent="."]
+[node name="Bet" type="Label" parent="." unique_id=1555897250]
 layout_mode = 0
 offset_left = 73.06
 offset_top = 75.115
@@ -348,7 +348,7 @@ text = "XXXXXXXX"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Showdown" type="Label" parent="."]
+[node name="Showdown" type="Label" parent="." unique_id=802741447]
 layout_mode = 0
 offset_left = 6.0
 offset_top = 33.0
@@ -358,14 +358,14 @@ theme_override_colors/font_color = Color(1, 0, 0, 1)
 text = "XXXXXXXX"
 vertical_alignment = 1
 
-[node name="PH_CheatName" type="Label" parent="."]
+[node name="PH_CheatName" type="Label" parent="." unique_id=1704162787]
 layout_mode = 0
 offset_left = 1.0
 offset_top = 83.0
 offset_right = 41.0
 offset_bottom = 89.0
 
-[node name="CheatProgress" parent="." instance=ExtResource("5_56bah")]
+[node name="CheatProgress" parent="." unique_id=1978858574 instance=ExtResource("5_56bah")]
 custom_minimum_size = Vector2(40, 36)
 layout_mode = 0
 anchors_preset = 0
@@ -378,7 +378,5 @@ offset_bottom = 126.0
 grow_horizontal = 1
 grow_vertical = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_6aewg")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1893665932]
+libraries/ = SubResource("AnimationLibrary_6aewg")

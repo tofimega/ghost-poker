@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cah3d0viyesfg"]
+[gd_scene format=3 uid="uid://cah3d0viyesfg"]
 
 [ext_resource type="Script" uid="uid://clnx1it0pqk0l" path="res://scenes/hud/hud.gd" id="1_48c2t"]
 
-[node name="HUD" type="VBoxContainer" groups=["HUD"]]
+[node name="HUD" type="VBoxContainer" unique_id=816498641 groups=["HUD"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -10,30 +10,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_48c2t")
 
-[node name="GameStatus" type="HBoxContainer" parent="."]
+[node name="GameStatus" type="HBoxContainer" parent="." unique_id=822955598]
 layout_mode = 2
 
-[node name="Pool" type="Label" parent="GameStatus"]
+[node name="Pool" type="Label" parent="GameStatus" unique_id=613628486]
 layout_mode = 2
 
-[node name="VSeparator" type="VSeparator" parent="GameStatus"]
+[node name="VSeparator" type="VSeparator" parent="GameStatus" unique_id=1154566860]
 layout_mode = 2
 
-[node name="HighestBet" type="Label" parent="GameStatus"]
+[node name="HighestBet" type="Label" parent="GameStatus" unique_id=1403461901]
 layout_mode = 2
 
-[node name="VSeparator4" type="VSeparator" parent="GameStatus"]
+[node name="VSeparator4" type="VSeparator" parent="GameStatus" unique_id=1186855673]
 layout_mode = 2
 
-[node name="Deck" type="Label" parent="GameStatus"]
+[node name="Deck" type="Label" parent="GameStatus" unique_id=191753078]
 layout_mode = 2
 
-[node name="VSeparator5" type="VSeparator" parent="GameStatus"]
+[node name="VSeparator5" type="VSeparator" parent="GameStatus" unique_id=992720646]
 layout_mode = 2
 
-[node name="Round" type="Label" parent="GameStatus"]
+[node name="Round" type="Label" parent="GameStatus" unique_id=924004517]
 layout_mode = 2
 
-[node name="Players" type="HBoxContainer" parent="."]
+[node name="Players" type="HBoxContainer" parent="." unique_id=1436497394]
 layout_mode = 2
 size_flags_vertical = 3

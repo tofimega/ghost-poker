@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmq57livjq4vk"]
+[gd_scene format=3 uid="uid://bmq57livjq4vk"]
 
 [ext_resource type="Script" uid="uid://7f5amhs80h05" path="res://scenes/debug_frontend/debug_frontend.gd" id="1_f0kku"]
 
-[node name="DebugFrontend" type="VBoxContainer"]
+[node name="DebugFrontend" type="VBoxContainer" unique_id=1607037575]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,40 +12,40 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_f0kku")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=503466247]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="Pool" type="Label" parent="HBoxContainer"]
+[node name="Pool" type="Label" parent="HBoxContainer" unique_id=197388338]
 layout_mode = 2
 
-[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=503593865]
 layout_mode = 2
 
-[node name="HIghestBet" type="Label" parent="HBoxContainer"]
+[node name="HIghestBet" type="Label" parent="HBoxContainer" unique_id=1203470929]
 layout_mode = 2
 
-[node name="VSeparator4" type="VSeparator" parent="HBoxContainer"]
+[node name="VSeparator4" type="VSeparator" parent="HBoxContainer" unique_id=215292367]
 layout_mode = 2
 
-[node name="Deck" type="Label" parent="HBoxContainer"]
+[node name="Deck" type="Label" parent="HBoxContainer" unique_id=1478964353]
 layout_mode = 2
 
-[node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer" unique_id=1318615717]
 layout_mode = 2
 
-[node name="NextRound" type="Button" parent="HBoxContainer"]
+[node name="NextRound" type="Button" parent="HBoxContainer" unique_id=848811206]
 layout_mode = 2
 text = "Next Round"
 
-[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer" unique_id=612040925]
 layout_mode = 2
 
-[node name="NewGame" type="Button" parent="HBoxContainer"]
+[node name="NewGame" type="Button" parent="HBoxContainer" unique_id=1637254199]
 layout_mode = 2
 text = "New Game"
 
-[node name="Players" type="HBoxContainer" parent="."]
+[node name="Players" type="HBoxContainer" parent="." unique_id=2139107371]
 layout_mode = 2
 size_flags_vertical = 3
 

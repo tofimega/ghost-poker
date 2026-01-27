@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cuiyvcl7aun50"]
+[gd_scene format=3 uid="uid://cuiyvcl7aun50"]
 
 [ext_resource type="Script" uid="uid://dkubdsnvxhwxc" path="res://scenes/title_menu/hud/title_menu_hud.gd" id="1_fqi88"]
 
-[node name="TitleMenuHUD" type="Control"]
+[node name="TitleMenuHUD" type="Control" unique_id=1827398426]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fqi88")
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1846739523]
 layout_mode = 0
 offset_left = 139.0
 offset_top = 84.0

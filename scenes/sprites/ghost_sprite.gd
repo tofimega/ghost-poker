@@ -19,7 +19,7 @@ func _ready()->void:
 
 func play(p: int, bet: Bet)->void:
 	if p != id: return
-	display_info(str(bet), Color.CADET_BLUE if PokerEngine.freeze_highest_bet==id else Color.WHITE)
+	display_info(str(bet), Color.CADET_BLUE if PokerEngine.players[id].frozen else Color.WHITE)
 	
 
 func cheat(p: int, t: int, n: String) ->void:

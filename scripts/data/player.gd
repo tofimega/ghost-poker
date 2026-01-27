@@ -10,6 +10,7 @@ var blinded: int = 0:
 
 var hand: Array[Card] = []
 
+var frozen: bool = false
 
 var cheat: Cheat
 

@@ -1,16 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://cidgo3ak3tk4f"]
+[gd_scene format=3 uid="uid://cidgo3ak3tk4f"]
 
 [ext_resource type="Script" uid="uid://ba1bk2mwwjjxv" path="res://scenes/hud/card_hud/card_hud.gd" id="1_5fnae"]
 [ext_resource type="Texture2D" uid="uid://de6xbulsnipp4" path="res://assets/images/card_face/card_face_PH.png" id="1_v7nw5"]
 
-[node name="CardHUD" type="Container"]
+[node name="CardHUD" type="Container" unique_id=1233451135]
 offset_left = -29.0
 offset_top = -44.0
 offset_right = 29.0
 offset_bottom = 44.0
 script = ExtResource("1_5fnae")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1819619190]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

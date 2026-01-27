@@ -47,13 +47,14 @@ var pool: int=0
 var game_state: GameState=GameState.CLOSED
 var current_turn: int=-1
 
-var current_player: int = -1
+var current_player: Player = null
+var _turn_queue: Array[Player] = []
 var empty_deck_flag: bool=false
 
 var player_bets: Dictionary[int, Bet]
 var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
-var freeze_highest_bet: int = -1  #TODO: replace with flag inside Player class
+#var freeze_highest_bet: int = -1  #TODO: replace with flag inside Player class
 
 
 var cheats: Array[Cheat] = []
@@ -65,7 +66,8 @@ func _ready()->void:
 
 
 func _incoming_bet(p: int, bet: Bet):
-	if p == current_player and players[p].in_game: _handle_player_bet(p, bet)
+	assert(current_player!=null)
+	if p == current_player.id and current_player.in_game: _handle_player_bet(current_player, bet)
 	await cont
 	_next_step()
 
@@ -107,31 +109,17 @@ func _next_step()->void:
 			showdown() 
 			return
 
-	if player_bets.size()<pc_at_start_of_round or player_bets.values().any(func(b: Bet): return b.type!=Bet.Type.FOLD and b.amount<highest_bet): _ask_next_player()
+	if current_player!=null: _ask_next_player()
 	else: _final_bet()
 
 
-func _can_player_move(id: int)->bool:
-	return players[id].in_game and !players[id].all_in and !players[id].chips==0
+func _can_player_move(p: Player)->bool:
+	return p.in_game and !p.all_in and !p.chips<=0
 
 
 func _find_next_player() ->bool:
-	var id: int = current_player+1
-	id%=players.size()
-	var counter: int = 0
-	while counter<players.size():
-		if _can_player_move(id): break
-		counter+=1
-		id+=1
-		id%=players.size()
-
-	current_player=id
-
-	if counter==players.size():
-		no_player_found.emit()
-		return _can_player_move(id)
-
-	return true
+	current_player=_turn_queue.pop_front()
+	return players.values().any(_can_player_move)
 
 
 func get_player(id: int)->Player:
@@ -192,11 +180,13 @@ func current_player_count()->int:
 var pc_at_start_of_round: int = 0
 func start_next_round()->void:
 	await FrontendManager.get_hud().display_info("Round "+str(current_turn+1))
-	freeze_highest_bet=-1
+	#freeze_highest_bet=-1
 	if game_state!=GameState.RUNNING: return
 	player_bets.clear()
 	pc_at_start_of_round = current_player_count()
-	current_player=-1
+	#current_player=-1
+	_turn_queue = [players[0], players[1], players[2], players[3]]
+	_turn_queue = _turn_queue.filter(_can_player_move)
 	highest_bet = MINIMUM_BET
 	calls_this_turn = 0
 	current_turn+=1
@@ -224,7 +214,7 @@ func start_next_round()->void:
 
 var calls_this_turn: int=0
 func _ask_next_player()->void:
-	if !players[current_player].in_game: return
+	if !current_player.in_game: return
 	
 	var player_bets_text: Dictionary[int, String]
 	for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i].type)
@@ -233,12 +223,14 @@ func _ask_next_player()->void:
 	GlobalLogger.log_text("current player bets: "+str(player_bets_text))
 	GlobalLogger.log_text("players remaining: "+str(current_player_count()))
 	GlobalLogger.log_text(" ")
-	players[current_player].bet()
+	current_player.bet()
 	next_player.emit(current_player)
 	return
 
 
 func _final_bet()->void:
+	assert(current_player==null)
+	assert(_turn_queue.is_empty())
 	GlobalLogger.log_text("final bet: "+str(highest_bet))
 	GlobalLogger.log_text(" ")
 	for id: int in players:
@@ -253,22 +245,31 @@ func _final_bet()->void:
 	round_over.emit()
 
 
-func _handle_player_bet(id: int, bet: Bet)->void:
+func _handle_player_bet(p: Player, bet: Bet)->void:
+	var id: int = p.id
 	if bet.type == bet.Type.FOLD:
-		players[id].fold()
+		p.fold()
 		bet.amount=-1
 		player_bets[id] = bet
 		player_bets_noclear[id] = bet
 		return
 	
-	if bet.type==bet.Type.ALL_IN: players[id].all_in=true
+	if bet.type==bet.Type.ALL_IN: p.all_in=true
 	
 	if bet.amount <= highest_bet: calls_this_turn+=1
 	else: calls_this_turn = 0
 
 	player_bets[id] = bet
 	player_bets_noclear[id] = bet
-	if freeze_highest_bet != id: highest_bet=max(bet.amount, highest_bet)
+	var prev_highest: int = highest_bet
+	if !p.frozen: highest_bet=max(bet.amount, highest_bet)
+	else: p.frozen=false
+	
+	if highest_bet>prev_highest:
+		var players: Array[Player] = [players[0], players[1], players[2], players[3]]
+		players.erase(p)
+		players.filter(_can_player_move)
+		_turn_queue.append_array(players)
 
 
 func _clear_game_state()->void:
@@ -308,7 +309,6 @@ func _init_game_state()->void:
 	cheats.shuffle()
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
-	current_player = 0
 	GlobalLogger.log_text("Players created")
 	pool=0
 	GlobalLogger.log_text("Pool initialized")

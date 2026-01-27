@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://difs31wlhbq6w"]
+[gd_scene format=3 uid="uid://difs31wlhbq6w"]
 
 [ext_resource type="Script" uid="uid://bc2fsea0bt042" path="res://scenes/user_input/user_input.gd" id="1_es1le"]
 
-[node name="UserInput" type="PanelContainer"]
+[node name="UserInput" type="PanelContainer" unique_id=720746595]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,18 +15,18 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.43
 script = ExtResource("1_es1le")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2058383830]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1150179490]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ChipCount" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+[node name="ChipCount" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=238670139]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CurrentChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
+[node name="CurrentChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount" unique_id=818980619]
 layout_mode = 2
 size_flags_vertical = 3
 text = "XXX chips"
@@ -34,11 +34,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="PlaceholderArrow" type="ReferenceRect" parent="VBoxContainer/HBoxContainer/ChipCount"]
+[node name="PlaceholderArrow" type="ReferenceRect" parent="VBoxContainer/HBoxContainer/ChipCount" unique_id=716734219]
 layout_mode = 2
 editor_only = false
 
-[node name="RemainingChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount"]
+[node name="RemainingChips" type="Label" parent="VBoxContainer/HBoxContainer/ChipCount" unique_id=321182082]
 layout_mode = 2
 size_flags_vertical = 3
 text = "XXX chips"
@@ -46,10 +46,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=958404782]
 layout_mode = 2
 
-[node name="BetType" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="BetType" type="Label" parent="VBoxContainer/HBoxContainer/VBoxContainer" unique_id=279645876]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 20.0
@@ -57,26 +57,26 @@ text = "ALL IN"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Fold" type="Button" parent="VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="Fold" type="Button" parent="VBoxContainer/HBoxContainer/VBoxContainer" unique_id=44362917]
 layout_mode = 2
 size_flags_vertical = 3
 disabled = true
 text = "FOLD
 "
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=1233841658]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.15
 
-[node name="BetAmount" type="SpinBox" parent="VBoxContainer/HBoxContainer2"]
+[node name="BetAmount" type="SpinBox" parent="VBoxContainer/HBoxContainer2" unique_id=1965012780]
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
 editable = false
 select_all_on_focus = true
 
-[node name="Bet" type="Button" parent="VBoxContainer/HBoxContainer2"]
+[node name="Bet" type="Button" parent="VBoxContainer/HBoxContainer2" unique_id=1202084462]
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
