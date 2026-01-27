@@ -119,6 +119,8 @@ func _can_player_move(p: Player)->bool:
 
 func _find_next_player() ->bool:
 	current_player=_turn_queue.pop_front()
+	GlobalLogger.log_text("CURRENT PLAYER: "+str(current_player))
+	GlobalLogger.log_text("TURN QUEUE: "+str(_turn_queue))
 	return players.values().any(_can_player_move)
 
 
@@ -185,8 +187,8 @@ func start_next_round()->void:
 	pc_at_start_of_round = current_player_count()
 	_turn_queue = [players[0], players[1], players[2], players[3]]
 	_turn_queue = _turn_queue.filter(_can_player_move)
+	GlobalLogger.log_text("TURN QUEUE INITIALIZED: "+str(_turn_queue))
 	highest_bet = MINIMUM_BET
-	calls_this_turn = 0
 	current_turn+=1
 	GlobalLogger.log_text("CURRENT TURN: " + str(current_turn))
 	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
@@ -209,8 +211,6 @@ func start_next_round()->void:
 	_next_step()
 
 
-
-var calls_this_turn: int=0
 func _ask_next_player()->void:
 	if !current_player.in_game: return
 	
@@ -234,6 +234,8 @@ func _final_bet()->void:
 	for id: int in players:
 		var p: Player = players[id]
 		if !p.in_game: continue
+		if p.chips==0: continue
+		if !player_bets.has(id): continue
 		var bet: int = mini(player_bets[id].amount, p.chips)
 		p.chips-=bet
 		pool+=bet
@@ -253,9 +255,6 @@ func _handle_player_bet(p: Player, bet: Bet)->void:
 		return
 	
 	if bet.type==bet.Type.ALL_IN: p.all_in=true
-	
-	if bet.amount <= highest_bet: calls_this_turn+=1
-	else: calls_this_turn = 0
 
 	player_bets[id] = bet
 	player_bets_noclear[id] = bet
@@ -266,7 +265,8 @@ func _handle_player_bet(p: Player, bet: Bet)->void:
 	if highest_bet>prev_highest:
 		var players: Array[Player] = [players[0], players[1], players[2], players[3]]
 		players.erase(p)
-		players.filter(_can_player_move)
+		players = players.filter(_can_player_move)
+		players = players.filter(func (f: Player): return f not in _turn_queue) # alternatively: erase if f.id >= p.id
 		_turn_queue.append_array(players)
 
 

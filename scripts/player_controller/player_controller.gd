@@ -27,15 +27,23 @@ const CALL_MULT: float = 1.1
 const RAISE_MULT: float = 0.99
 const ALL_IN_MULT: float = 0.7
 
-#TODO: make players randomly chhose to not cheat
+
+func _select_target()->int:
+	var others: Array[int] = PokerEngine.players.keys()
+	others.erase(player.id)
+	others = others.filter(func (id: int): return PokerEngine._can_player_move(PokerEngine.players[id]))
+	if others.is_empty(): return -1
+	others.shuffle()
+	return others[0]
+
+#TODO: make players randomly choose to not cheat
 var early_result: float=0
 func use_early_cheat()->void:
 	if !player.in_game: return
 	if player.cheat.charge<1:  return
-	var others: Array[int] = PokerEngine.players.keys()
-	others.erase(player.id)
-	others.shuffle() 
-	early_result =  await player.cheat.computer(others[0])
+	var target: int = _select_target()
+	if target <0: return
+	early_result =  await player.cheat.computer(target)
 
 
 func find_odds()->float:
@@ -86,9 +94,9 @@ func find_odds()->float:
 		early_result=0
 	else:
 		GlobalLogger.log_text("Using cheat power...")
-		var in_players: Array[int]=other_bets.keys().filter(func(p: int): return PokerEngine.get_player(p).in_game)
-		if in_players.size()==0: GlobalLogger.log_text("No available targets...")
-		else: rt*= await player.cheat.computer(in_players[randi()%in_players.size()])
+		var target: int = _select_target()
+		if target <0: GlobalLogger.log_text("No available targets...")
+		else: rt*= await player.cheat.computer(target)
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)

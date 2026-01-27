@@ -47,3 +47,7 @@ func bet()-> void:
 func fold()->void:
 	in_game=false
 	PokerEngine.player_out.emit(id)
+	
+	
+func _to_string() -> String:
+	return str("Player "+str(id))

@@ -8,7 +8,7 @@ func _init(player: Player) -> void:
 
 
 func use_early_cheat()->void:
-	return #User can't do this
+	return # User can't do this
 
 
 func _select_target_for_cheat()->void:
