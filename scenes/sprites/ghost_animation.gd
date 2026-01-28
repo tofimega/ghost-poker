@@ -78,14 +78,23 @@ func _on_timer_timeout() -> void:
 		AnimationState.FLINCH: pass
 
 
+var incoming_queue: Array[AnimationState] = []
 func _on_animation_finished(anim_name: StringName) -> void:
 	if anim_name=="RESET": return
 	GlobalLogger.log_text("Sprite "+str(id)+": ANIMATION OVER! IN STATE: "+AnimationState.find_key(current_state))
 	if !states.is_empty():
 		GlobalLogger.log_text("Sprite "+str(id)+": QUEUED STATES FOUND! CHEWING THROUGH THEM FIRST...")
-		_no_interrupts_please=false
+		incoming_queue.push_back(current_state) # defer processing this transition until all previous ones are processed
+		_no_interrupts_please=false # the only case where forcing this variable wouldn't be okay is if _can_player_move return false, but they shouldn't receive animation commands in that state anyway
 		switch_to(states.pop_front())
 		return
+
+	if !incoming_queue.is_empty():
+		var old_state: AnimationState = current_state
+		current_state=incoming_queue.pop_back() # pop_back because stack + call stack = queue
+		_on_animation_finished("")
+		current_state = old_state
+		# fall through to process them all (also this is garbage)
 
 	match current_state:
 		AnimationState.IDLE_STATIC: pass
