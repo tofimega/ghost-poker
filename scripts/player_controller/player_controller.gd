@@ -38,12 +38,13 @@ func _select_target()->int:
 
 #TODO: make players randomly choose to not cheat
 var early_result: float=0
-func use_early_cheat()->void:
-	if !player.in_game: return
-	if player.cheat.charge<1:  return
+func use_early_cheat()->bool:
+	if !PokerEngine._can_player_move(player): return false
+	if player.cheat.charge<1:  return false
 	var target: int = _select_target()
-	if target <0: return
-	early_result =  await player.cheat.computer(target)
+	if target <0: return false
+	early_result = player.cheat.computer(target)
+	return true
 
 
 func find_odds()->float:
@@ -96,7 +97,7 @@ func find_odds()->float:
 		GlobalLogger.log_text("Using cheat power...")
 		var target: int = _select_target()
 		if target <0: GlobalLogger.log_text("No available targets...")
-		else: rt*= await player.cheat.computer(target)
+		else: rt*= player.cheat.computer(target)
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)

@@ -7,8 +7,8 @@ func _init(player: Player) -> void:
 	FrontendManager.get_hud().pow.button.pressed.connect(_select_target_for_cheat)
 
 
-func use_early_cheat()->void:
-	return # User can't do this
+func use_early_cheat()->bool:
+	return false # User can't do this
 
 
 func _select_target_for_cheat()->void:
@@ -27,7 +27,7 @@ func _select_target_for_cheat()->void:
 	
 
 func _use_cheat(target: int)->void:
-	await player.cheat.user(target) 
+	player.cheat.user(target) 
 	
 
 func _send_bet(bet: Bet) -> Bet:

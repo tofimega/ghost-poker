@@ -18,9 +18,7 @@ var chips: int = 0:
 	set(c):
 		chips=max(c, 0)
 
-var id: int =-1:
-	get:
-		return PokerEngine.players.find_key(self)
+var id: int =-1
 
 var in_game: bool=true
 var all_in: bool=false

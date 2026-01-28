@@ -27,15 +27,12 @@ func _boost_charge(p: int, bet: Bet)->void:
 func play_anim(target: int=-1)->void:
 	if !offense: target = -1
 	PokerEngine.player_cheat.emit(player, target, _name)
-	if !offense:
-		await PokerEngine.start_flinch
-		PokerEngine.cont_cheat.emit()
-	else: await PokerEngine.cont_cheat
+
 
 func computer(target: int)->float:
 	if charge <1 : return 1
 	charge=0
-	await play_anim(target)
+	play_anim(target)
 	GlobalLogger.log_text("\tSufficient charge")
 	return _computer(target)
 
@@ -43,7 +40,7 @@ func computer(target: int)->float:
 func user(target: int)->void:
 	if charge <1: return
 	charge=0
-	await play_anim(target)
+	play_anim(target)
 	GlobalLogger.log_text("\tSufficient charge")
 	_user(target)
 

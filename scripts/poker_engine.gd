@@ -204,8 +204,8 @@ func start_next_round()->void:
 	for id: int in players.keys():
 		var p: Player = players[id]
 		if !p.in_game or p.controller.is_human(): continue
-		await p.controller.use_early_cheat()
-		
+		if !p.controller.use_early_cheat(): continue
+		await cont_cheat
 		
 		
 	_next_step()
@@ -263,11 +263,18 @@ func _handle_player_bet(p: Player, bet: Bet)->void:
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest:
-		var players: Array[Player] = [players[0], players[1], players[2], players[3]]
-		players.erase(p)
-		players = players.filter(_can_player_move)
-		players = players.filter(func (f: Player): return f not in _turn_queue) # alternatively: erase if f.id >= p.id
-		_turn_queue.append_array(players)
+		var more_players: Array[Player] = [players[0], players[1], players[2], players[3]]
+		more_players.erase(p)
+		more_players = more_players.filter(_can_player_move)
+		more_players = more_players.filter(func (f: Player): return f not in _turn_queue)
+
+		# edge case: player n raises, but player w/ id n+1 is not in the queue (because they raised earlier)
+		# if such a player exists, they need to be added to the beginning instead of the end
+		var priority_players: Array[Player] = more_players.filter(func(f: Player): return f.id > id)
+		for r: Player in priority_players: more_players.erase(r)
+		while !priority_players.is_empty(): _turn_queue.push_front(priority_players.pop_back())
+
+		_turn_queue.append_array(more_players)
 
 
 func _clear_game_state()->void:
@@ -307,6 +314,7 @@ func _init_game_state()->void:
 	cheats.shuffle()
 	for i in PLAYER_COUNT:
 		players[i]=Player.new()
+		players[i].id=i
 	GlobalLogger.log_text("Players created")
 	pool=0
 	GlobalLogger.log_text("Pool initialized")

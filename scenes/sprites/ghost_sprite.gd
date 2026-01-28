@@ -25,7 +25,6 @@ func play(p: int, bet: Bet)->void:
 func cheat(p: int, t: int, n: String) ->void:
 	if p!=id: return
 	display_info(n)
-	animation_player.switch_to(GhostAnim.AnimationState.CHEAT)
 
 
 func display_info(text:String, color: Color = Color.WHITE, time: float=0.7)->void:
