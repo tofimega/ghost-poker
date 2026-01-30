@@ -8,16 +8,15 @@ var id: int = -1
 var target: int = -1
 
 enum AnimationState {
-	IDLE_STATIC,
-	IDLE_DEFAULT,
-	IDLE_ALL_IN,
-	IDLE_CHEAT,
-	BET,
-	ALL_IN,
-	FOLD,
-	CHEAT,
-	FLINCH
+	IDLE,
+	ACTION
 }
+
+signal action_finished
+
+func do_idle(idle_mode: IdleMode)
+func do_action(action: Action)
+
 
 var states: Array[AnimationState] = []
 var current_state: AnimationState = AnimationState.IDLE_STATIC

@@ -2,6 +2,7 @@ class_name Player
 extends Object
 
 
+var last_bet: Bet = null
 
 var blinded: int = 0:
 	set(b):
@@ -36,10 +37,11 @@ func _notification(what: int) -> void:
 
 
 @warning_ignore("shadowed_variable")
-func bet()-> void:
+func my_turn()-> Bet:
 	if !in_game: return
 	blinded-=1
-	controller.my_turn()
+	last_bet = controller.bet()
+	return last_bet
 
 
 func fold()->void:

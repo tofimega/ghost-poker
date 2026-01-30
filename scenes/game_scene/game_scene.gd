@@ -21,7 +21,7 @@ func _ready() -> void:
 	hud.toggle_hud(false)
 	card_back.visible=false
 	card_back_pos=card_back.global_position
-	await PokerEngine.new_game()
+	 PokerEngine.new_game()
 	hud.update()
 	target_selector.toggle_selection.connect(_highlight_all)
 	target_selector.target_hovered.connect(_toggle_highlight.bind(true))
@@ -60,6 +60,6 @@ func anim_deal_card(player: int)->void:
 	move_tween.tween_property(card_back, "global_position", markers[player].global_position, duration)\
 	.set_ease(ease_type).set_trans(transition_type)
 	
-	await move_tween.finished
+	 move_tween.finished
 	hud.update()
 	card_back.visible=false

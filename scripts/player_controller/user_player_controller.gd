@@ -17,7 +17,7 @@ func _select_target_for_cheat()->void:
 	if player.cheat.offense:
 		var selector: TargetSelector = FrontendManager.get_selector()
 		selector._toggle_selection(true)
-		await selector.target_selected
+		selector.target_selected
 		target = selector.current_target
 		selector._toggle_selection(false)
 
@@ -39,10 +39,9 @@ func _send_bet(bet: Bet) -> Bet:
 	return bet
 
 
-func my_turn() -> void:
-	GlobalLogger.log_text("Player "+str(player.id)+": waiting for user input...")
-	FrontendManager.get_hud().toggle_hud(true)
 
+func bet() -> Bet:
+	return player.last_bet
 
 func is_human()->bool:
 	return true

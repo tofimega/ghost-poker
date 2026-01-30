@@ -37,7 +37,7 @@ func _ready() -> void:
 
 func flinch(t: int)->void:
 	if t!=0: return
-	await display_info("ow")
+	display_info("ow")
 	PokerEngine.cont_cheat.emit()
 
 func show_other_hand(target: int)->void:
@@ -47,13 +47,13 @@ func show_other_hand(target: int)->void:
 	target_hand.visible=false
 
 
-func _display_winner(result: PokerEngine.GameState, winner)-> void:
+func _display_winner(result: GameResult, winner)-> void:
 	update()
-	if result == PokerEngine.GameState.TIE:
+	if result.result_type == GameResult.ResultType.TIE:
 		bet_label.text="DRAW!\n"
 		for w in winner:
 			bet_label.text+="Player "+str(w.id)+" "+str(PokerEngine.rank_hand(w.hand))
-	elif result == PokerEngine.GameState.CONCLUSIVE:
+	elif result.result_type == GameResult.ResultType.CONCLUSIVE:
 		bet_label.text="GAME OVER!\n"+"Winner: Player "+str(winner.id)+"\n"+str(PokerEngine.rank_hand(winner.hand))
 	bet_label.visible=true
 
@@ -75,7 +75,7 @@ func display_info(message: String, time: float = 1)->void:
 
 func _show_bet(p: int, bet: Bet)->void:
 	if p != 0: return
-	await display_info(str(bet))
+	display_info(str(bet))
 	PokerEngine.cont.emit()
 
 
