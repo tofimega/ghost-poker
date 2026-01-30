@@ -95,7 +95,9 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		_on_animation_finished("")
 		current_state = old_state
 		# fall through to process them all (also this is garbage)
-
+		#TODO: if the state the one we just popped off transitions into has a signal to emit, we get stuck, as we never process that state
+		# so basically this is stupid, it doesn't work, just use a normal queue system instead (why am I into queues so much recently?)
+	
 	match current_state:
 		AnimationState.IDLE_STATIC: pass
 		AnimationState.IDLE_DEFAULT: switch_to(AnimationState.IDLE_STATIC)

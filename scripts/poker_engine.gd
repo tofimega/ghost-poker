@@ -259,7 +259,7 @@ func _handle_player_bet(p: Player, bet: Bet)->void:
 	player_bets[id] = bet
 	player_bets_noclear[id] = bet
 	var prev_highest: int = highest_bet
-	if !p.frozen: highest_bet=max(bet.amount, highest_bet)
+	if !p.frozen: highest_bet=maxi(bet.amount, highest_bet)
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest:
@@ -492,8 +492,7 @@ func compare_rankings(left_rank: Ranking, right_rank: Ranking) -> int:
 	if left_rank.hand_rank>right_rank.hand_rank: return 1
 	if right_rank.hand_rank>left_rank.hand_rank: return -1
 
-	for i in 5:
-		if left_rank.cards_rank>right_rank.cards_rank: return 1
-		if right_rank.cards_rank>left_rank.cards_rank: return -1
+	if left_rank.cards_rank>right_rank.cards_rank: return 1
+	if right_rank.cards_rank>left_rank.cards_rank: return -1
 
 	return 0
