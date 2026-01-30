@@ -2,6 +2,8 @@ extends Node
 
 signal user_player_added(id: int)
 
+signal front_end_updated
+
 var interfaces: Dictionary[int, UserInput]={} # player id, UI instance
 
 const UI_PACKED: PackedScene = preload("res://scenes/user_input/user_input.tscn") 
@@ -11,7 +13,6 @@ func add_user_player_interface(id: int) -> UserInput:
 	player_input.player_id=id
 	interfaces[id] = player_input
 	return player_input
-
 
 
 func get_selector()-> TargetSelector:

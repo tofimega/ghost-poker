@@ -15,7 +15,7 @@ enum AnimationState {
 signal action_finished
 
 func do_idle(idle_mode: IdleMode)
-func do_action(action: Action)
+func do_action(action: ActionMode)
 
 
 var states: Array[AnimationState] = []

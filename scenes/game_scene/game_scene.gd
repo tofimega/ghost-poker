@@ -21,7 +21,7 @@ func _ready() -> void:
 	hud.toggle_hud(false)
 	card_back.visible=false
 	card_back_pos=card_back.global_position
-	 PokerEngine.new_game()
+	PokerEngine.new_game()
 	hud.update()
 	target_selector.toggle_selection.connect(_highlight_all)
 	target_selector.target_hovered.connect(_toggle_highlight.bind(true))
@@ -49,6 +49,32 @@ func _toggle_highlight(target: int,on: bool)->void:
 	target_sprite.modulate=mod_color
 
 
+
+func update_scene_state(changes: Array[LoggedAction])->void:
+	var anim_queue: Array[GhostAnim.ActionMode] =[]
+	var string_queue: Array[String] = [] # to be dosplayed in sprite's label
+	while !changes.is_empty():
+		var change: LoggedAction = changes.pop_back()
+		match change.type():
+			LoggedAction.Type.Bet:
+				change = change as LBetAction
+				match change.bet.type: # add bet anim, account for frozen, all_in(_idle), fold_idle
+					_:pass
+			LoggedAction.Type.Cheat: pass # add cheat anim + target's hit anim
+	anim_queue.reverse()
+	string_queue.reverse()
+	_playback_actions(anim_queue, string_queue)
+
+func _playback_actions(actions: Array[GhostAnim.ActionMode], strings: Array[String])->void:
+	#while actions.pop
+		#match action
+			#bet: do_bet + display strings.pop ...
+			#all_in: do_all_in + idle_all_in
+			#...
+		#await finished
+	pass
+
+
 func anim_deal_card(player: int)->void:
 	card_back.global_position=card_back_pos
 	var move_tween: Tween = create_tween()
@@ -60,6 +86,6 @@ func anim_deal_card(player: int)->void:
 	move_tween.tween_property(card_back, "global_position", markers[player].global_position, duration)\
 	.set_ease(ease_type).set_trans(transition_type)
 	
-	 move_tween.finished
+	await move_tween.finished
 	hud.update()
 	card_back.visible=false

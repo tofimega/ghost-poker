@@ -51,6 +51,8 @@ var highest_bet: int = 0
 
 var cheats: Array[Cheat] = []
 
+var action_log: Array[LoggedAction] = []
+
 func _ready()->void:
 	pass #deck_empty.connect(func(): empty_deck_flag=true)
 
@@ -194,12 +196,13 @@ func start_next_round()->void:
 func _process_round()->void:
 	while !_turn_queue.is_empty():
 		_process_queue()
-		action_log #TODO: make this next
 		_update_front_end()
-		await front_end_updated
+		await FrontendManager.front_end_updated
 
 
 func _update_front_end()->void:
+	action_log.reverse()
+	FrontendManager.get_game_scene().update_scene_state(action_log)
 
 func handle_user_input(user_actions: Array[Action])->void:
 	for a: Action in user_actions: a.do_action()
@@ -323,6 +326,7 @@ func _init_game_state()->void:
 		for j in Card.Rank.size():
 			deck.append(Card.new(i,j))
 	empty_deck_flag=false
+	action_log.clear()
 	GlobalLogger.log_text("Deck created")
 	deck.shuffle()
 	GlobalLogger.log_text("Deck shuffled")
