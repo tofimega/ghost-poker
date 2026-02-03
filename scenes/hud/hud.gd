@@ -26,19 +26,21 @@ func _ready() -> void:
 	target_hand.visible=false
 	bet_label.visible=false
 	showdown_label.visible=false
-	PokerEngine.next_player.connect(func(a): update())
-	PokerEngine.round_over.connect(update)
-	PokerEngine.game_over.connect(_display_winner)
-	PokerEngine.deck_empty.connect(update)
-	PokerEngine.player_bet.connect(_show_bet)
-	PokerEngine.s_showdown.connect(_show_down)
-	PokerEngine.start_flinch.connect(flinch)
+	#PokerEngine.next_player.connect(func(a): update())
+	#PokerEngine.round_over.connect(update)
+	#PokerEngine.game_over.connect(_display_winner)
+	#PokerEngine.deck_empty.connect(update)
+	#PokerEngine.player_bet.connect(_show_bet)
+	#PokerEngine.s_showdown.connect(_show_down)
+	#PokerEngine.start_flinch.connect(flinch)
 	user_input.enabled=true
+
 
 func flinch(t: int)->void:
 	if t!=0: return
 	display_info("ow")
 	PokerEngine.cont_cheat.emit()
+
 
 func show_other_hand(target: int)->void:
 	_show_hand(target_hand, target)
@@ -86,7 +88,7 @@ func update()-> void:
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)
-	ph_cheat_name.text=PokerEngine.get_player(0).cheat._name
+	ph_cheat_name.text=PokerEngine.get_player(0).cheat.name()
 	_show_hand(hand, 0)
 
 

@@ -1,7 +1,7 @@
 class_name UserInput
 extends Control
 
-signal user_bet(bet: Bet)
+signal user_action(action: Action)
 
 # show-only
 @onready var current_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/CurrentChips
@@ -35,7 +35,7 @@ func _ready()->void:
 
 
 func _on_fold_pressed() -> void:
-	user_bet.emit(Bet.new(0,Bet.Type.FOLD))
+	user_action.emit(BetAction.new(Bet.new(0, Bet.Type.FOLD)))
 
 
 func _on_bet_pressed() -> void:
@@ -49,7 +49,8 @@ func _on_bet_pressed() -> void:
 	if bet==PokerEngine.players[player_id].chips: rt = Bet.new(bet, Bet.Type.ALL_IN)
 	elif bet > PokerEngine.highest_bet: rt = Bet.new(bet, Bet.Type.RAISE)
 	else: rt = Bet.new(bet, Bet.Type.CALL)
-	user_bet.emit(rt)
+	
+	user_action.emit(BetAction.new(rt))
 
 
 func _on_bet_amount_value_changed(value: float) -> void:

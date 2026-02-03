@@ -194,10 +194,12 @@ func start_next_round()->void:
 	_process_round()
 
 func _process_round()->void:
-	while !_turn_queue.is_empty():
-		_process_queue()
+	_process_queue()
+	if _turn_queue.is_empty():
 		FrontendManager.get_game_scene().update_scene_state(action_log)
-		await FrontendManager.front_end_updated
+		return #TODO: round over, begin next round...
+	FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
+	FrontendManager.get_game_scene().update_scene_state(action_log)
 
 
 func handle_user_input(user_actions: Array[Action])->void:
@@ -276,6 +278,7 @@ func _handle_player_bet(p: Player)->void:
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest: _expand_turn_queue(p)
+	action_log.push_back(LBetAction.new(id, bet, p.frozen))
 
 
 func _expand_turn_queue(exclude: Player)->void: 

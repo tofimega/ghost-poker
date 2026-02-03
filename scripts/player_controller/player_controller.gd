@@ -98,7 +98,7 @@ func find_odds()->float:
 		GlobalLogger.log_text("Using cheat power...")
 		var target: int = _select_target()
 		if target <0: GlobalLogger.log_text("No available targets...")
-		else: rt*= player.cheat.computer(target)
+		else: rt*= player.cheat.execute(target)
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)

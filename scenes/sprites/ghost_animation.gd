@@ -36,7 +36,12 @@ signal action_finished
 func do_action(action: ActionMode)->void:
 	current_state = AnimationState.ACTION
 	match action:
-		_:pass
+		ActionMode.BET_DEFAULT: play("bet")
+		ActionMode.BET_ALL_IN: play("all_in")
+		ActionMode.BET_FOLD: play("fold")
+		ActionMode.CHEAT: play("bet")
+		ActionMode.HURT: play("flinch")
+		_:return
 
 
 func _on_animation_finished(anim_name: StringName) -> void:
@@ -46,7 +51,13 @@ func _on_animation_finished(anim_name: StringName) -> void:
 
 	if idle_mode == IdleMode.FOLD: return
 	if anim_name == "idle_all_in_start": return
-	timer.start(randf_range(1.5, 6))
+	_back_to_idle()
+
+func _back_to_idle()->void:
+	match idle_mode:
+		IdleMode.DEFAULT: timer.start(randf_range(1.5, 6))
+		IdleMode.ALL_IN: play("idle_all_in_start")
+		IdleMode.FOLD: return
 
 
 func _on_timer_timeout() -> void:
@@ -54,8 +65,9 @@ func _on_timer_timeout() -> void:
 
 	match idle_mode:
 		IdleMode.DEFAULT:
-			play("idle_default") if randi_range(0,1) else play("idle_"+PokerEngine.get_player(id).cheat.name().to_lower())
-		IdleMode.ALL_IN: play("idle_all_in_start")
+			if randi_range(0,1): play("idle_default")
+			else: play("idle_"+PokerEngine.get_player(id).cheat.name().to_lower())
+
 
 func _ready() -> void:
 	timer.start(randf_range(1.5, 6))

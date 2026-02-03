@@ -7,24 +7,11 @@ extends Sprite2D
 @export var id: int=-1
 @onready var label: Label = %Label
 
-var unique_anim_flag: bool = false
 
 func _ready()->void:
-	PokerEngine.player_bet.connect(play)
-	PokerEngine.player_cheat.connect(cheat)
 	animation_player.id=id
 	label.visible=false
 	label.position+=global_position
-
-
-func play(p: int, bet: Bet)->void:
-	if p != id: return
-	display_info(str(bet), Color.CADET_BLUE if PokerEngine.players[id].frozen else Color.WHITE)
-	
-
-func cheat(p: int, t: int, n: String) ->void:
-	if p!=id: return
-	display_info(n)
 
 
 func display_info(text:String, color: Color = Color.WHITE, time: float=0.7)->void:
