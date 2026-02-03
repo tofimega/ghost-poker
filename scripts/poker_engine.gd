@@ -196,13 +196,9 @@ func start_next_round()->void:
 func _process_round()->void:
 	while !_turn_queue.is_empty():
 		_process_queue()
-		_update_front_end()
+		FrontendManager.get_game_scene().update_scene_state(action_log)
 		await FrontendManager.front_end_updated
 
-
-func _update_front_end()->void:
-	action_log.reverse()
-	FrontendManager.get_game_scene().update_scene_state(action_log)
 
 func handle_user_input(user_actions: Array[Action])->void:
 	for a: Action in user_actions: a.do_action()

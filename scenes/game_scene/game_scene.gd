@@ -1,6 +1,10 @@
 class_name GameScene
 extends Node2D
 
+
+signal _next_action
+
+
 @onready var hud: HUD = $HUD
 @onready var ghost: GhostSprite = $Objects/Ghost
 @onready var ghost_2: GhostSprite = $Objects/Ghost2
@@ -49,30 +53,74 @@ func _toggle_highlight(target: int,on: bool)->void:
 	target_sprite.modulate=mod_color
 
 
+var _changes: Array[LoggedAction] = []
 
 func update_scene_state(changes: Array[LoggedAction])->void:
-	var anim_queue: Array[GhostAnim.ActionMode] =[]
-	var string_queue: Array[String] = [] # to be dosplayed in sprite's label
-	while !changes.is_empty():
-		var change: LoggedAction = changes.pop_back()
-		match change.type():
-			LoggedAction.Type.Bet:
-				change = change as LBetAction
-				match change.bet.type: # add bet anim, account for frozen, all_in(_idle), fold_idle
-					_:pass
-			LoggedAction.Type.Cheat: pass # add cheat anim + target's hit anim
-	anim_queue.reverse()
-	string_queue.reverse()
-	_playback_actions(anim_queue, string_queue)
+	assert(_changes.is_empty())
+	_changes = changes
+	_changes.reverse()
+	_next_action.connect(_update_scene_state)
+	_update_scene_state()
 
-func _playback_actions(actions: Array[GhostAnim.ActionMode], strings: Array[String])->void:
-	#while actions.pop
-		#match action
-			#bet: do_bet + display strings.pop ...
-			#all_in: do_all_in + idle_all_in
-			#...
-		#await finished
-	pass
+
+func _update_scene_state()->void:
+	if _changes.is_empty():
+		_next_action.disconnect(_update_scene_state)
+		return #TODO: enable HUD, receive & process player actions, disable HUD, front_end_updated
+
+	var change: LoggedAction = _changes.pop_back()
+	_playback_action(change)
+
+
+func _playback_action(action: LoggedAction)->void:
+	match action.type():
+		LoggedAction.Type.Bet: _playback_bet(action as LBetAction)
+		LoggedAction.Type.Cheat: _playback_cheat(action as LCheatAction)
+
+
+func _playback_bet(action: LBetAction)->void:
+	var sprite: GhostSprite = get_sprite(action.player)
+	sprite.display_info(str(action.bet), Color.CADET_BLUE if action.frozen else Color.WHITE)
+	var bet_mode: GhostAnim.ActionMode
+	match action.bet.type:
+		Bet.Type.ALL_IN:
+			sprite.animation_player.idle_mode=GhostAnim.IdleMode.ALL_IN
+			bet_mode = GhostAnim.ActionMode.BET_ALL_IN
+		Bet.Type.FOLD:
+			sprite.animation_player.idle_mode=GhostAnim.IdleMode.FOLD
+			bet_mode = GhostAnim.ActionMode.BET_FOLD
+		_:
+			sprite.animation_player.idle_mode=GhostAnim.IdleMode.DEFAULT
+			bet_mode = GhostAnim.ActionMode.BET_DEFAULT
+	sprite.animation_player.do_action(GhostAnim.ActionMode.BET_FROZEN if action.frozen else bet_mode)
+	sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
+
+
+func _playback_cheat(action: LCheatAction)->void:
+	var sprite: GhostSprite = get_sprite(action.player)
+	sprite.display_info(action.name)
+	sprite.animation_player.do_action(GhostAnim.ActionMode.CHEAT)
+	sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
+
+
+func _playback_hurt(action: LCheatAction)->void:
+	match action.name:
+		"clairvayance", "stink":
+			if action.target == 0:
+				await hud.display_info("ow")
+				_next_action.emit()
+			else:
+				var sprite: GhostSprite = get_sprite(action.target)
+				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT)
+				sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
+		_: _next_action.emit()
+
+func get_sprite(player: int)->GhostSprite:
+	match player:
+		1: return ghost
+		2: return ghost_2
+		3: return ghost_3
+		_: return null
 
 
 func anim_deal_card(player: int)->void:
