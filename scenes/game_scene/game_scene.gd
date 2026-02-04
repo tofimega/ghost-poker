@@ -46,6 +46,7 @@ func _end_user_turn()->void:
 	else: rt = Bet.new(bet, Bet.Type.CALL)
 
 	PokerEngine.handle_user_input(rt)
+	FrontendManager.new_info.emit()
 	FrontendManager.front_end_updated.emit()
 
 func _game_over()->void:
@@ -167,9 +168,12 @@ func anim_deal_card(player: int)->void:
 
 func _select_target_for_cheat()->void:
 	if player.cheat.charge<1: return
-	if player.cheat.offense:
+	if player.cheat.offense():
 		target_selector._toggle_selection(true)
 		target_selector.target_selected.connect(target_selected, CONNECT_ONE_SHOT)
+	else:
+		player.cheat.execute(-1)
+		FrontendManager.new_info.emit()
 
 
 func target_selected(target: int)->void:
@@ -179,3 +183,4 @@ func target_selected(target: int)->void:
 	FrontendManager.new_info.emit()
 	hud.toggle_hud(true)
 	if player.cheat.name() == "Freeze": return
+	get_sprite(target).animation_player.do_action(GhostAnim.ActionMode.HURT)
