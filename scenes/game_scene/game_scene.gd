@@ -4,7 +4,7 @@ extends Node2D
 
 signal _next_action
 
-
+var player: Player
 @onready var hud: HUD = $HUD
 @onready var ghost: GhostSprite = $Objects/Ghost
 @onready var ghost_2: GhostSprite = $Objects/Ghost2
@@ -24,17 +24,33 @@ func _ready() -> void:
 	hud.toggle_hud(false)
 	card_back.visible=false
 	card_back_pos=card_back.global_position
-	#hud.update()
-	#hud.toggle_hud(true)
 	target_selector.toggle_selection.connect(_highlight_all)
 	target_selector.target_hovered.connect(_toggle_highlight.bind(true))
 	target_selector.target_out.connect(_toggle_highlight.bind(false))
+	hud.user_input.bet.pressed.connect(_end_user_turn)
+	hud.user_input.fold.pressed.connect(_game_over)
+	hud.pow.button.pressed.connect(_select_target_for_cheat)
 	PokerEngine.new_game()
-	#PokerEngine.game_over.connect(func(a,v): 
-		#await get_tree().create_timer(3).timeout
-		#CardHUD.unload_textures()
-		#get_tree().change_scene_to_file("res://scenes/title_menu/hud/title_menu_hud.tscn"))
+	player=PokerEngine.get_player(0)
 
+
+func _end_user_turn()->void:
+	hud.toggle_hud(false)
+	var bet: int = hud.user_input.bet_amount.value
+	if bet > player.chips: return
+	if bet < PokerEngine.highest_bet and bet < player.chips: return
+	
+	var rt: Bet
+	if bet==player.chips: rt = Bet.new(bet, Bet.Type.ALL_IN)
+	elif bet > PokerEngine.highest_bet: rt = Bet.new(bet, Bet.Type.RAISE)
+	else: rt = Bet.new(bet, Bet.Type.CALL)
+
+	PokerEngine.handle_user_input(rt)
+	FrontendManager.front_end_updated.emit()
+
+func _game_over()->void:
+	PokerEngine._clear_game_state()
+	get_tree().change_scene_to_file("res://scenes/title_menu/hud/title_menu_hud.tscn")
 
 func _highlight_all(on: bool)->void:
 	_toggle_highlight(1, !on)
@@ -52,12 +68,11 @@ func _toggle_highlight(target: int,on: bool)->void:
 	var mod_color: Color = Color.DIM_GRAY if (!on) and target_selector.selection_on else Color.WHITE
 	target_sprite.modulate=mod_color
 
-	
+
 var _changes: Array[LoggedAction] = []
 
 func update_scene_state(changes: Array[LoggedAction])->void:
 	assert(_changes.is_empty())
-	hud.update()
 	_changes = changes.duplicate()
 	_changes.reverse()
 	_next_action.connect(_update_scene_state)
@@ -67,7 +82,8 @@ func update_scene_state(changes: Array[LoggedAction])->void:
 func _update_scene_state()->void:
 	if _changes.is_empty():
 		_next_action.disconnect(_update_scene_state)
-		FrontendManager.front_end_updated.emit()
+		FrontendManager.new_info.emit()
+		hud.toggle_hud(true)
 		return 
 
 	var change: LoggedAction = _changes.pop_back()
@@ -149,28 +165,17 @@ func anim_deal_card(player: int)->void:
 	card_back.visible=false
 
 
-#func __select_target_for_cheat()->void:
-	#if player.cheat.charge<1: return
-	#var target: int = -1
-	#if player.cheat.offense:
-		#var selector: TargetSelector = FrontendManager.get_selector()
-		#selector._toggle_selection(true)
-		#selector.target_selected.connect(target_selected)
-#
-#
-#func target_selected(target: int)->void:
-	#target = selector.current_target
-	#selector._toggle_selection(false)
-#
-	#_use_cheat(target)
-	#PokerEngine.start_flinch.emit(target)
-	#FrontendManager.get_hud().update()
-#
+func _select_target_for_cheat()->void:
+	if player.cheat.charge<1: return
+	if player.cheat.offense:
+		target_selector._toggle_selection(true)
+		target_selector.target_selected.connect(target_selected, CONNECT_ONE_SHOT)
 
-#func __send_bet(bet: Bet) -> Bet:
-	#FrontendManager.get_hud().toggle_hud(false)
-	# send bet
-	#GlobalLogger.log_text("Player "+str(player.id)+" made bet: "+bet.Type.find_key(bet.type)+" "+str(bet.amount))
-	#PokerEngine.player_bet.emit(player.id, bet)
-	#FrontendManager.get_hud().update()
-	#return bet
+
+func target_selected(target: int)->void:
+	target_selector._toggle_selection(false)
+	player.cheat.execute(target)
+	if player.cheat.name() == "Clairvoyance": hud.show_other_hand(target)
+	FrontendManager.new_info.emit()
+	hud.toggle_hud(true)
+	if player.cheat.name() == "Freeze": return

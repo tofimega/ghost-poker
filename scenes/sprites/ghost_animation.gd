@@ -55,9 +55,11 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		current_state=AnimationState.IDLE
 		action_finished.emit()
 
+
 func _play(anim_name: StringName)->void:
 	play(anim_name)
 	advance(0)
+
 
 func _back_to_idle()->void:
 	_play("RESET")

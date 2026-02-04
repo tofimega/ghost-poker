@@ -48,6 +48,12 @@ func use_early_cheat()->bool:
 	return true
 
 
+func cheat(target: int)->float:
+	if player.cheat.charge < 1: return 1
+	PokerEngine.action_log.push_back(LCheatAction.new(player.id, target, player.cheat.name()))
+	return player.cheat.execute(target)
+
+
 func find_odds()->float:
 	var hand_rank: Ranking
 	if player.blinded: hand_rank=Ranking.new(4, [0,0,0,0,0])
@@ -125,17 +131,10 @@ var conf_last_turn: float = -1325
 
 var forced_all_in: bool = false
 
-func cheat(target: int)->float:
-	#if player.cheat.charge < 1: return 1 #NOTE: removed for TEST ing only
-	PokerEngine.action_log.push_back(LCheatAction.new(player.id, target, player.cheat.name()))
-	return player.cheat.execute(target)
-
 
 func bet() -> Bet:
 	if player == null or !player.in_game: return
 	forced_all_in=false
-	cheat(0 if player.id==1 else 1) #TEST
-	return Bet.new(PokerEngine.highest_bet+1, Bet.Type.RAISE) #TEST
 	GlobalLogger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	GlobalLogger.log_text(" ")
 	

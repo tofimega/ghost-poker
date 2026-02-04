@@ -26,30 +26,18 @@ func _ready() -> void:
 	target_hand.visible=false
 	bet_label.visible=false
 	showdown_label.visible=false
-	#PokerEngine.next_player.connect(func(a): update())
-	#PokerEngine.round_over.connect(update)
-	#PokerEngine.game_over.connect(_display_winner)
-	#PokerEngine.deck_empty.connect(update)
-	#PokerEngine.player_bet.connect(_show_bet)
-	#PokerEngine.s_showdown.connect(_show_down)
-	#PokerEngine.start_flinch.connect(flinch)
 	user_input.enabled=true
+	FrontendManager.new_info.connect(update)
 
 
-func flinch(t: int)->void:
-	if t!=0: return
-	display_info("ow")
-	PokerEngine.cont_cheat.emit()
-
-
-func show_other_hand(target: int)->void:
-	_show_hand(target_hand, target)
+func show_other_hand(target: int, time: float = 1.5)->void:
+	_refresh_hand(target_hand, target)
 	target_hand.visible=true
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(time).timeout
 	target_hand.visible=false
 
 
-func _display_winner(result: GameResult, winner)-> void:
+func display_winner(result: GameResult, winner)-> void:
 	update()
 	if result.result_type == GameResult.ResultType.TIE:
 		bet_label.text="DRAW!\n"
@@ -60,7 +48,7 @@ func _display_winner(result: GameResult, winner)-> void:
 	bet_label.visible=true
 
 
-func _show_down(cause: bool)->void:
+func show_down(cause: bool)->void:
 	showdown_label.text="SHOWDOWN!\n"
 	if cause: showdown_label.text+="Deck empty"
 	else: showdown_label.text+="Nobody can bet"
@@ -72,27 +60,19 @@ func display_info(message: String, time: float = 1)->void:
 	bet_label.visible=true
 	await get_tree().create_timer(time).timeout
 	bet_label.visible=false
-	
 
 
-func _show_bet(p: int, bet: Bet)->void:
-	if p != 0: return
-	display_info(str(bet))
-	PokerEngine.cont.emit()
-
-
-
-func update()-> void:
+func update()->void:
 	pool.text="Pot: "+str(PokerEngine.pool)
 	deck.text="Deck: "+str(PokerEngine.deck.size())
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)
 	ph_cheat_name.text=PokerEngine.get_player(0).cheat.name()
-	_show_hand(hand, 0)
+	_refresh_hand(hand, 0)
 
 
-func _show_hand(hand: HandCont, player: int)->void:
+func _refresh_hand(hand: HandCont, player: int)->void:
 	for c in hand.get_children():
 		c.queue_free()
 	if PokerEngine.get_player(0).blinded:

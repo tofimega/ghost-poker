@@ -7,20 +7,9 @@ enum GameState{
 
 }
 
-#signal hand_dealt(player: Player)
-#signal game_start
-#signal next_round
-#signal round_over
-#signal deck_empty
-#signal s_showdown(F_no_p_T_mt_d: bool)
-#signal no_player_found
-#signal player_out(p: int)
-#signal game_over(result: GameState, winner)
-
 signal player_cheat(player: int, target: int, cheat_name: String)
 
-#signal player_bet(p: int, bet: Bet)
-#signal next_player(p: int)
+signal player_bet(p: int, bet: Bet)
 
 const PLAYER_COUNT: int = 4
 const CARDS_PER_ROUND: int = 2
@@ -28,7 +17,6 @@ const STARING_HAND_SIZE: int = clamp(5-CARDS_PER_ROUND, 0, 5)
 const STARING_CHIP_COUNT: int = 100
 const STARTING_ANTE: int = 40
 const MINIMUM_BET: int = 3
-
 
 var players: Dictionary[int, Player] = {}
 
@@ -39,7 +27,7 @@ var pool: int=0
 var game_state: GameState=GameState.CLOSED
 var current_turn: int=-1
 
-#var current_player: Player = null
+
 var _turn_queue: Array[Player] = []
 var empty_deck_flag: bool=false
 
@@ -48,76 +36,24 @@ var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
 
 
-
 var cheats: Array[Cheat] = []
 
 var action_log: Array[LoggedAction] = []
 
 func _ready()->void:
-	pass #deck_empty.connect(func(): empty_deck_flag=true)
+	pass
 
 
-#func _incoming_bet(p: int, bet: Bet):
-	#assert(current_player!=null)
-	#if p == current_player.id and current_player.in_game: _handle_player_bet(current_player, bet)
-	#_next_step()
-
-
+#TODO: rework this function to handle end-of-game stuff
 #func _next_step()->NextStep:
-	#assert(current_player_count()>0)
-	#if empty_deck_flag:
-		#s_showdown.emit(true) #TODO: renew deck instead
-		#showdown()
-		#return
-#
-	#var players_available: bool = _find_next_player()
-	#
-	#if current_player_count() <= 1:
-		#game_state=GameState.CONCLUSIVE
-		#var winning_player: Player = players.values().filter(func(p: Player): return p.in_game)[0]
-		#GlobalLogger.log_text("GAME OVER!")
-		#GlobalLogger.log_text("WINNER: "+str(winning_player.id))
-		#GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
-		#GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
-		#game_over.emit(GameState.CONCLUSIVE, winning_player)
-		#return
-	#
-	#if !players_available:
-			#GlobalLogger.log_text("No player worth asking found...")
-			#GlobalLogger.log_text("Dealing remaining cards...")
-			#s_showdown.emit(false)
-			#
-			#var ps: Array[Player] = players.values()
-			#var p: int=0
-			#
-			#while !deck.is_empty():
-				#deal_cards(ps[p%ps.size()], 1)
-				#p+=1
-#
-			#for pr in ps: 
-				#hand_dealt.emit(pr)
-#
-			#showdown() 
-			#return
-#
-	#if current_player!=null: _ask_next_player()
-	#else: _final_bet()
 
 
 func _can_player_move(p: Player)->bool:
 	return p.in_game and !p.all_in and !p.chips<=0
 
 
-#func _find_next_player() ->bool:
-	#var current_player=_turn_queue.pop_front()
-	#GlobalLogger.log_text("CURRENT PLAYER: "+str(current_player))
-	#GlobalLogger.log_text("TURN QUEUE: "+str(_turn_queue))
-	#return current_player
-
-
 func get_player(id: int)->Player:
 	return players[id]
-
 
 
 func showdown()->GameResult:
@@ -149,8 +85,8 @@ func showdown()->GameResult:
 		GlobalLogger.log_text("TIE! "+str(winners.map(func(p: Player): return p.id)))
 		return GameResult.new(GameResult.ResultType.TIE, winners)
 
+
 func deal_cards(count: int)->void:
-	
 	for i in count:
 		for player: Player in players.values():
 			if !player.in_game: return
@@ -159,9 +95,6 @@ func deal_cards(count: int)->void:
 				return
 			player.hand.append(deck.pop_back())
 	
-	#if deck.is_empty():
-		#deck_empty.emit()
-
 
 func current_player_count()->int:
 	return players.values().reduce(func(acc, player):
@@ -183,7 +116,6 @@ func start_next_round()->void:
 	GlobalLogger.log_text("CURRENT TURN: " + str(current_turn))
 	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
 	GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
-	#next_round.emit()
 
 	deal_cards(CARDS_PER_ROUND)
 
@@ -192,6 +124,7 @@ func start_next_round()->void:
 		p.controller.use_early_cheat()
 	
 	_process_round()
+
 
 func _process_round()->void:
 	_process_queue()
@@ -202,8 +135,10 @@ func _process_round()->void:
 	FrontendManager.get_game_scene().update_scene_state(action_log)
 
 
-func handle_user_input(user_actions: Array[Action])->void:
-	for a: Action in user_actions: a.do_action()
+func handle_user_input(user_bet: Bet)->void:
+	var player: Player = get_player(0)
+	player.last_bet=user_bet
+	_handle_player_bet(player)
 
 
 func _process_queue()->void:
@@ -212,32 +147,6 @@ func _process_queue()->void:
 		assert(_can_player_move(player))
 		if player.controller.is_human(): return #func outside handles front-end stuff, front-end plays animations of computer moves (sent via queue), takes user input, handles bet, signals back, back-end calls function again
 		_handle_player_bet(player)
-
-
-func _process_game()->void:
-	pass
-	#var next_step=NextStep.CONTINUE
-	#while next_step==NextStep.CONTINUE:
-		#start_next_round()
-		#next_step = _next_step()
-		
-	#match next_step:
-		#SHOWDOWN: showdown()
-		#OVER: winner=remaining_player
-
-#func _ask_next_player()->void:
-	#if !current_player.in_game: return
-#
-	#var player_bets_text: Dictionary[int, String]
-	#for i in player_bets.keys(): player_bets_text[i] = Bet.Type.find_key(player_bets[i].type)
-	#GlobalLogger.log_text(" ")
-	#GlobalLogger.log_text("current highest bet: "+str(highest_bet))
-	#GlobalLogger.log_text("current player bets: "+str(player_bets_text))
-	#GlobalLogger.log_text("players remaining: "+str(current_player_count()))
-	#GlobalLogger.log_text(" ")
-	#current_player.bet()
-	#next_player.emit(current_player)
-	#return
 
 
 func _final_bet()->void:
@@ -255,7 +164,6 @@ func _final_bet()->void:
 		
 	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
 	GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
-	#round_over.emit()
 
 
 func _handle_player_bet(p: Player)->void:
@@ -267,6 +175,7 @@ func _handle_player_bet(p: Player)->void:
 		bet.amount=-1
 		player_bets[id] = bet
 		player_bets_noclear[id] = bet
+		action_log.push_back(LBetAction.new(id, bet, p.frozen))
 		return
 	
 	if bet.type==bet.Type.ALL_IN: p.all_in=true
@@ -279,6 +188,7 @@ func _handle_player_bet(p: Player)->void:
 	
 	if highest_bet>prev_highest: _expand_turn_queue(p)
 	action_log.push_back(LBetAction.new(id, bet, p.frozen))
+	player_bet.emit(p.id, bet)
 
 
 func _expand_turn_queue(exclude: Player)->void: 
@@ -359,7 +269,6 @@ func new_game()->void:
 	GlobalLogger.log_text("Beginning new game...")
 	_clear_game_state()
 	_init_game_state()
-	#game_start.emit()
 	start_next_round()
 
 
@@ -505,7 +414,7 @@ func compare_hands(left: Array[Card], right: Array[Card]) -> int:
 	var left_rank:  Ranking = rank_hand(left)
 	var right_rank: Ranking = rank_hand(right)
 	return compare_rankings(left_rank, right_rank)
-	
+
 
 func compare_rankings(left_rank: Ranking, right_rank: Ranking) -> int:
 	if left_rank.hand_rank>right_rank.hand_rank: return 1

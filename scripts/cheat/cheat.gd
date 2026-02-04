@@ -10,7 +10,7 @@ var charge: float = 0:
 var player: int = -1:
 	set(p):
 		assert(p in PokerEngine.players.keys())
-#		PokerEngine.player_bet.connect(_boost_charge)
+		PokerEngine.player_bet.connect(_boost_charge)
 		player=p
 		
 func offense()->bool: return true
