@@ -44,7 +44,7 @@ func use_early_cheat()->bool:
 	if player.cheat.charge<1:  return false
 	var target: int = _select_target()
 	if target <0: return false
-	early_result = player.cheat.execute(target)
+	early_result = cheat(target)
 	return true
 
 
@@ -98,7 +98,7 @@ func find_odds()->float:
 		GlobalLogger.log_text("Using cheat power...")
 		var target: int = _select_target()
 		if target <0: GlobalLogger.log_text("No available targets...")
-		else: rt*= player.cheat.execute(target)
+		else: rt*= cheat(target)
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)
@@ -125,10 +125,17 @@ var conf_last_turn: float = -1325
 
 var forced_all_in: bool = false
 
+func cheat(target: int)->float:
+	#if player.cheat.charge < 1: return 1 #NOTE: removed for TEST ing only
+	PokerEngine.action_log.push_back(LCheatAction.new(player.id, target, player.cheat.name()))
+	return player.cheat.execute(target)
+
 
 func bet() -> Bet:
 	if player == null or !player.in_game: return
 	forced_all_in=false
+	cheat(0 if player.id==1 else 1) #TEST
+	return Bet.new(PokerEngine.highest_bet+1, Bet.Type.RAISE) #TEST
 	GlobalLogger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	GlobalLogger.log_text(" ")
 	

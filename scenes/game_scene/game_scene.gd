@@ -52,7 +52,7 @@ func _toggle_highlight(target: int,on: bool)->void:
 	var mod_color: Color = Color.DIM_GRAY if (!on) and target_selector.selection_on else Color.WHITE
 	target_sprite.modulate=mod_color
 
-
+	
 var _changes: Array[LoggedAction] = []
 
 func update_scene_state(changes: Array[LoggedAction])->void:
@@ -82,10 +82,10 @@ func _playback_action(action: LoggedAction)->void:
 
 func _playback_bet(action: LBetAction)->void:
 	if action.player==0:
-		hud.display_info("ow", DISPLAY_TIME)
+		hud.display_info(str(action.bet), DISPLAY_TIME)
 		get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
-		return
-	
+		return	
+
 	var sprite: GhostSprite = get_sprite(action.player)
 	sprite.display_info(str(action.bet), Color.CADET_BLUE if action.frozen else Color.WHITE)
 	var bet_mode: GhostAnim.ActionMode
@@ -106,12 +106,14 @@ func _playback_bet(action: LBetAction)->void:
 func _playback_cheat(action: LCheatAction)->void:
 	var sprite: GhostSprite = get_sprite(action.player)
 	sprite.display_info(action.name)
-	sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
+	if action.name.to_lower() == "clairvoyance" or action.name.to_lower() == "stink": sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
+	else: sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 	sprite.animation_player.do_action(GhostAnim.ActionMode.CHEAT)
+
 
 const DISPLAY_TIME: float = 0.7
 func _playback_hurt(action: LCheatAction)->void:
-	match action.name:
+	match action.name.to_lower():
 		"clairvoyance", "stink":
 			if action.target == 0:
 				hud.display_info("ow", DISPLAY_TIME)
@@ -120,7 +122,7 @@ func _playback_hurt(action: LCheatAction)->void:
 				var sprite: GhostSprite = get_sprite(action.target)
 				sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT)
-		_: _next_action.emit()
+		_: pass
 
 
 func get_sprite(player: int)->GhostSprite:
