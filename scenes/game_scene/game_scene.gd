@@ -35,8 +35,8 @@ func _ready() -> void:
 
 
 func _end_user_turn()->void:
-	hud.toggle_hud(false)
 	var bet: int = hud.user_input.bet_amount.value
+	hud.toggle_hud(false)
 	if bet > player.chips: return
 	if bet < PokerEngine.highest_bet and bet < player.chips: return
 	
