@@ -4,7 +4,9 @@ extends RefCounted
 
 enum Type {
 	Bet,
-	Cheat
+	Cheat,
+	Deal,
+	Round
 }
 
 var player: int

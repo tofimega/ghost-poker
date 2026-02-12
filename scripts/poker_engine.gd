@@ -94,6 +94,7 @@ func deal_cards(count: int)->void:
 				#deck_empty.emit()
 				return
 			player.hand.append(deck.pop_back())
+	_push_action(LDealCardAction.new(count))
 	
 
 func current_player_count()->int:
@@ -123,14 +124,16 @@ func start_next_round()->void:
 		if !p.in_game or p.controller.is_human(): continue
 		p.controller.use_early_cheat()
 	
-	_process_round()
+	_push_action(LNewRoundAction.new(current_turn))
+	_process_round() #TODO: something happens out of order (or at least it's displayed wrong)
 
 
 func _process_round()->void:
 	_process_queue()
 	if _turn_queue.is_empty():
 		FrontendManager.get_game_scene().update_scene_state(action_log)
-		return #TODO: round over, begin next round...
+		FrontendManager.front_end_updated.connect(start_next_round, CONNECT_ONE_SHOT)
+		return
 	FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
 	FrontendManager.get_game_scene().update_scene_state(action_log)
 
@@ -139,6 +142,11 @@ func handle_user_input(user_bet: Bet)->void:
 	var player: Player = get_player(0)
 	player.last_bet=user_bet
 	_handle_player_bet(player)
+
+
+func _push_action(a: LoggedAction)->void:
+	action_log.push_back(a)
+	GlobalLogger.log_text("New action: "+ str(a))
 
 
 func _process_queue()->void:
@@ -175,7 +183,7 @@ func _handle_player_bet(p: Player)->void:
 		bet.amount=-1
 		player_bets[id] = bet
 		player_bets_noclear[id] = bet
-		action_log.push_back(LBetAction.new(id, bet, p.frozen))
+		_push_action(LBetAction.new(id, bet, p.frozen))
 		return
 	
 	if bet.type==bet.Type.ALL_IN: p.all_in=true
@@ -187,7 +195,7 @@ func _handle_player_bet(p: Player)->void:
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest: _expand_turn_queue(p)
-	action_log.push_back(LBetAction.new(id, bet, p.frozen))
+	_push_action(LBetAction.new(id, bet, p.frozen))
 	player_bet.emit(p.id, bet)
 
 
@@ -252,9 +260,10 @@ func _init_game_state()->void:
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 		players[i].cheat = cheats[i]
 		cheats[i].player=i
+	
+	deal_cards(STARING_HAND_SIZE)
 	for p: Player in players.values():
-		deal_cards(STARING_HAND_SIZE)
-		#hand_dealt.emit(p)
+		
 		p.chips=STARING_CHIP_COUNT
 		p.chips-=STARTING_ANTE
 		pool+=STARTING_ANTE

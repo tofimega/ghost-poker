@@ -47,13 +47,15 @@ func do_action(action: ActionMode)->void:
 
 func _on_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "RESET": return
+	if current_state==AnimationState.ACTION:
+		current_state=AnimationState.IDLE
+		action_finished.emit()
+
 	if idle_mode == IdleMode.FOLD: return
 	if anim_name == "idle_all_in_start": return
 	
 	_back_to_idle()
-	if current_state==AnimationState.ACTION:
-		current_state=AnimationState.IDLE
-		action_finished.emit()
+
 
 
 func _play(anim_name: StringName)->void:
@@ -75,7 +77,7 @@ func _on_timer_timeout() -> void:
 	match idle_mode:
 		IdleMode.DEFAULT:
 			if randi_range(0,1): play("idle_default")
-			else: _play("idle_"+PokerEngine.get_player(id).cheat.name().to_lower())
+			else: _play("idle_"+Cheat.Type.find_key(PokerEngine.get_player(id).cheat.name()).to_lower())
 
 
 func _ready() -> void:

@@ -2,7 +2,7 @@ class_name Clairvoyance
 extends Cheat
 
 
-func name() -> String: return "Clairvoyance"
+func name() -> Type: return Type.CLAIRVOYANCE
 
 func _execute(target: int)->float:
 	GlobalLogger.log_text("\tCLAIRVOYANCE")

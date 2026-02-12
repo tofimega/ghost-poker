@@ -3,7 +3,7 @@ extends Cheat
 
 
 
-func name()->String: return "WildCard"
+func name()->Type: return Type.WILDCARD
 func offense()->bool: return false
 
 

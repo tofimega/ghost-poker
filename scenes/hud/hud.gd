@@ -68,7 +68,7 @@ func update()->void:
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)
-	ph_cheat_name.text=PokerEngine.get_player(0).cheat.name()
+	ph_cheat_name.text=Cheat.Type.find_key(PokerEngine.get_player(0).cheat.name())
 	_refresh_hand(hand, 0)
 
 

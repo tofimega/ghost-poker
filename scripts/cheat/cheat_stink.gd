@@ -4,7 +4,7 @@ extends Cheat
 const length: int = 3
 
 
-func name()->String: return "Stink"
+func name()->Type: return Type.STINK
 
 
 func _execute(target: int)->float:

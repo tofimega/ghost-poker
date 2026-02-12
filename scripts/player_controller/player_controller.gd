@@ -50,7 +50,7 @@ func use_early_cheat()->bool:
 
 func cheat(target: int)->float:
 	if player.cheat.charge < 1: return 1
-	PokerEngine.action_log.push_back(LCheatAction.new(player.id, target, player.cheat.name()))
+	PokerEngine._push_action(LCheatAction.new(player.id, target, player.cheat.name()))
 	return player.cheat.execute(target)
 
 

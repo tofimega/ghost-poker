@@ -1,8 +1,6 @@
 class_name UserInput
 extends Control
 
-signal user_action(action: Action)
-
 # show-only
 @onready var current_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/CurrentChips
 @onready var remaining_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/RemainingChips

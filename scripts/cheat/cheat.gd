@@ -2,6 +2,15 @@
 class_name Cheat
 extends Object
 
+
+enum Type {
+	CLAIRVOYANCE,
+	STINK,
+	FREEZE,
+	WILDCARD
+}
+
+
 var charge: float = 0:
 	set(c):
 		charge=clamp(c,0,1.1)
@@ -15,7 +24,7 @@ var player: int = -1:
 		
 func offense()->bool: return true
 
-@abstract func name() -> String
+@abstract func name() -> Type
 
 func _boost_charge(p: int, bet: Bet)->void:
 	if p!=player: return

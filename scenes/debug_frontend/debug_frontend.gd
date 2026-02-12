@@ -1,4 +1,4 @@
-class_name  DebugFrontend
+class_name DebugFrontend
 extends VBoxContainer
 
 @onready var players: HBoxContainer = $Players

@@ -46,7 +46,7 @@ func my_turn()-> Bet:
 
 func fold()->void:
 	in_game=false
-	PokerEngine.player_out.emit(id)
+	#PokerEngine.player_out.emit(id)
 	
 	
 func _to_string() -> String:

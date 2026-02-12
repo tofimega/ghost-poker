@@ -10,7 +10,7 @@ var player: Player
 @onready var ghost_2: GhostSprite = $Objects/Ghost2
 @onready var ghost_3: GhostSprite = $Objects/Ghost3
 @onready var card_back: Sprite2D = $CardBack
-@onready var markers: Array[Marker2D] =[$P0, $P1, $P2, $P3]
+@onready var markers: Array[Marker2D] =[$P0, $P3, $P2, $P1]
 
 @onready var target_selector: TargetSelector = $TargetSelector
 
@@ -74,20 +74,24 @@ var _changes: Array[LoggedAction] = []
 
 func update_scene_state(changes: Array[LoggedAction])->void:
 	assert(_changes.is_empty())
+	GlobalLogger.log_text("Beginning action playback...")
 	_changes = changes.duplicate()
 	_changes.reverse()
+	changes.clear()
 	_next_action.connect(_update_scene_state)
 	_update_scene_state()
 
 
 func _update_scene_state()->void:
 	if _changes.is_empty():
+		GlobalLogger.log_text("All actions finished playing")
 		_next_action.disconnect(_update_scene_state)
 		FrontendManager.new_info.emit()
 		hud.toggle_hud(true)
 		return 
 
 	var change: LoggedAction = _changes.pop_back()
+	GlobalLogger.log_text("Playing action: " + str(change))
 	_playback_action(change)
 
 
@@ -95,6 +99,32 @@ func _playback_action(action: LoggedAction)->void:
 	match action.type():
 		LoggedAction.Type.Bet: _playback_bet(action as LBetAction)
 		LoggedAction.Type.Cheat: _playback_cheat(action as LCheatAction)
+		LoggedAction.Type.Deal: _playback_deal(action as LDealCardAction)
+		LoggedAction.Type.Round: _playback_round(action as LNewRoundAction)
+		_:
+			push_warning("UNKNOWN ACTION TYPE \""+LoggedAction.Type.find_key(action.type())+"\", IGNORING")
+			_next_action.emit()
+
+
+func _playback_round(action: LNewRoundAction)->void:
+	hud.display_info("Round "+str(action.player), DISPLAY_TIME)
+	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+
+
+func _playback_deal(action: LDealCardAction) ->void:
+	var players: Array[int] = PokerEngine.players.keys().filter(func (i: int)->bool: return PokerEngine.get_player(i).in_game)
+	var count = action.player *players.size()
+	_playback_next_deal(count, players)
+
+
+func _playback_next_deal(count: int, players: Array[int])->void:
+	GlobalLogger.log_text("Next card goes to: "+str(players[count%players.size()]))
+	card_back.visible=false
+	if count <= 1: anim_deal_card(players[count%players.size()])\
+					.finished.connect(func ()->void:
+									card_back.visible=false
+									_next_action.emit(), CONNECT_ONE_SHOT)
+	else: anim_deal_card(players[count%players.size()]).finished.connect(_playback_next_deal.bind(count-1, players), CONNECT_ONE_SHOT)
 
 
 func _playback_bet(action: LBetAction)->void:
@@ -122,16 +152,16 @@ func _playback_bet(action: LBetAction)->void:
 
 func _playback_cheat(action: LCheatAction)->void:
 	var sprite: GhostSprite = get_sprite(action.player)
-	sprite.display_info(action.name)
-	if action.name.to_lower() == "clairvoyance" or action.name.to_lower() == "stink": sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
+	sprite.display_info(Cheat.Type.find_key(action.name))
+	if action.name == Cheat.Type.CLAIRVOYANCE or action.name ==Cheat.Type.STINK: sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
 	else: sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 	sprite.animation_player.do_action(GhostAnim.ActionMode.CHEAT)
 
 
 const DISPLAY_TIME: float = 0.7
 func _playback_hurt(action: LCheatAction)->void:
-	match action.name.to_lower():
-		"clairvoyance", "stink":
+	match action.name:
+		Cheat.Type.CLAIRVOYANCE, Cheat.Type.STINK:
 			if action.target == 0:
 				hud.display_info("ow", DISPLAY_TIME)
 				get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
@@ -150,7 +180,7 @@ func get_sprite(player: int)->GhostSprite:
 		_: return null
 
 
-func anim_deal_card(player: int)->void:
+func anim_deal_card(player: int)->Tween:
 	card_back.global_position=card_back_pos
 	var move_tween: Tween = create_tween()
 	const transition_type := Tween.TRANS_LINEAR
@@ -161,9 +191,8 @@ func anim_deal_card(player: int)->void:
 	move_tween.tween_property(card_back, "global_position", markers[player].global_position, duration)\
 	.set_ease(ease_type).set_trans(transition_type)
 	
-	await move_tween.finished
-	hud.update()
-	card_back.visible=false
+	return move_tween
+	
 
 
 func _select_target_for_cheat()->void:
@@ -179,8 +208,8 @@ func _select_target_for_cheat()->void:
 func target_selected(target: int)->void:
 	target_selector._toggle_selection(false)
 	player.cheat.execute(target)
-	if player.cheat.name() == "Clairvoyance": hud.show_other_hand(target)
+	if player.cheat.name() == Cheat.Type.CLAIRVOYANCE: hud.show_other_hand(target)
 	FrontendManager.new_info.emit()
 	hud.toggle_hud(true)
-	if player.cheat.name() == "Freeze": return
+	if player.cheat.name() == Cheat.Type.FREEZE: return
 	get_sprite(target).animation_player.do_action(GhostAnim.ActionMode.HURT)

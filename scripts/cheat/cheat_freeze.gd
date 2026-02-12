@@ -4,7 +4,7 @@ extends Cheat
 
 
 
-func name()->String: return "Freeze"
+func name()->Type: return Type.FREEZE
 
 
 func _execute(target: int)->float:
