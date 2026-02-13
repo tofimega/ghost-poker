@@ -12,3 +12,6 @@ var winners: Array[Player]
 func _init(result_type: ResultType, winners: Array[Player])->void:
 	self.result_type=result_type
 	self.winners=winners
+
+func _to_string() -> String:
+	return ResultType.find_key(result_type) + ", " + str(winners) +" are winners"

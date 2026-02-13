@@ -43,9 +43,18 @@ var action_log: Array[LoggedAction] = []
 func _ready()->void:
 	pass
 
+enum NextStep {
+	NEW_ROUND,
+	SHOWDOWN,
+	ONE_LEFT
+}
 
-#TODO: rework this function to handle end-of-game stuff
-#func _next_step()->NextStep:
+
+func _next_step()->NextStep:
+	var p: Array[Player] = players.values().filter(func (f: Player)->bool: return f.in_game)
+	if p.size()<=1: return NextStep.ONE_LEFT
+	if p.filter(_can_player_move).is_empty(): return NextStep.SHOWDOWN
+	return NextStep.NEW_ROUND
 
 
 func _can_player_move(p: Player)->bool:
@@ -56,8 +65,18 @@ func get_player(id: int)->Player:
 	return players[id]
 
 
-func showdown()->GameResult:
+func _end_game_eliminated()->GameResult:
+	var winner: Array[Player] = players.values().filter(func (p: Player)->bool:return p.in_game)
+	assert(winner.size()==1)
+	var result: GameResult = GameResult.new(GameResult.ResultType.CONCLUSIVE, winner)
+	_push_action(LOverAction.new(result))
+	return result
+
+
+func _end_game_showdown()->GameResult:
 	GlobalLogger.log_text("Showdown!")
+	_push_action(LShowdownAction.new())
+	deal_cards(deck.size())
 	var winning_hand: Ranking = players.values().reduce(func(acc: Ranking, player: Player):
 		if !player.in_game: return acc
 		var rank: Ranking=rank_hand(player.hand)
@@ -76,15 +95,17 @@ func showdown()->GameResult:
 		if compare_rankings(ranking, winning_hand)>=0:
 			winners.append(p)
 
+	var result: GameResult
 	if winners.size()==1:
 		game_state=GameState.FINISHED
+		result = GameResult.new(GameResult.ResultType.CONCLUSIVE, winners)
 		GlobalLogger.log_text("WINNER: "+str(winners[0].id))
-		return GameResult.new(GameResult.ResultType.CONCLUSIVE, winners)
 	else:
 		game_state=GameState.FINISHED
 		GlobalLogger.log_text("TIE! "+str(winners.map(func(p: Player): return p.id)))
-		return GameResult.new(GameResult.ResultType.TIE, winners)
-
+		result = GameResult.new(GameResult.ResultType.TIE, winners)
+	_push_action(LOverAction.new(result))
+	return result
 
 func deal_cards(count: int)->void:
 	for i in count:
@@ -114,25 +135,38 @@ func start_next_round()->void:
 	GlobalLogger.log_text("TURN QUEUE INITIALIZED: "+str(_turn_queue))
 	highest_bet = MINIMUM_BET
 	current_turn+=1
+	
 	GlobalLogger.log_text("CURRENT TURN: " + str(current_turn))
 	GlobalLogger.log_text("CARDS IN DECK: "+ str(deck.size()))
 	GlobalLogger.log_text("CHIPS IN POOL: "+ str(pool))
 
 	deal_cards(CARDS_PER_ROUND)
-
+	_push_action(LNewRoundAction.new(current_turn))
 	for p: Player in players.values():
 		if !p.in_game or p.controller.is_human(): continue
 		p.controller.use_early_cheat()
 	
-	_push_action(LNewRoundAction.new(current_turn))
-	_process_round() #TODO: something happens out of order (or at least it's displayed wrong)
+
+	FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
+	FrontendManager.get_game_scene().update_scene_state(action_log, false)
 
 
 func _process_round()->void:
+	assert(!_turn_queue.is_empty())
 	_process_queue()
 	if _turn_queue.is_empty():
-		FrontendManager.get_game_scene().update_scene_state(action_log)
-		FrontendManager.front_end_updated.connect(start_next_round, CONNECT_ONE_SHOT)
+		_final_bet()
+		var next_step: NextStep = _next_step()
+		match next_step:
+			NextStep.NEW_ROUND:
+				FrontendManager.front_end_updated.connect(start_next_round, CONNECT_ONE_SHOT)
+				FrontendManager.get_game_scene().update_scene_state(action_log, false)
+			NextStep.SHOWDOWN:
+				_end_game_showdown()
+				FrontendManager.get_game_scene().update_scene_state(action_log, false)
+			NextStep.ONE_LEFT:
+				_end_game_eliminated()
+				FrontendManager.get_game_scene().update_scene_state(action_log, false)
 		return
 	FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
 	FrontendManager.get_game_scene().update_scene_state(action_log)

@@ -42,7 +42,7 @@ func do_action(action: ActionMode)->void:
 		ActionMode.BET_FOLD: _play("fold")
 		ActionMode.CHEAT: _play("bet")
 		ActionMode.HURT: _play("flinch")
-		_:return
+		_: action_finished.emit()
 
 
 func _on_animation_finished(anim_name: StringName) -> void:

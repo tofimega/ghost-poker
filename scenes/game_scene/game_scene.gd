@@ -71,9 +71,12 @@ func _toggle_highlight(target: int,on: bool)->void:
 
 
 var _changes: Array[LoggedAction] = []
-
-func update_scene_state(changes: Array[LoggedAction])->void:
+var _get_input: bool =false
+func update_scene_state(changes: Array[LoggedAction], get_input: bool =true)->void:
 	assert(_changes.is_empty())
+	_get_input=get_input
+	GlobalLogger.log_text("Received actions: " + str(changes))
+	GlobalLogger.log_text("get_input is " + str(get_input))
 	GlobalLogger.log_text("Beginning action playback...")
 	_changes = changes.duplicate()
 	_changes.reverse()
@@ -87,28 +90,41 @@ func _update_scene_state()->void:
 		GlobalLogger.log_text("All actions finished playing")
 		_next_action.disconnect(_update_scene_state)
 		FrontendManager.new_info.emit()
-		hud.toggle_hud(true)
+		if _get_input: hud.toggle_hud(true)
+		else: FrontendManager.front_end_updated.emit()
 		return 
 
 	var change: LoggedAction = _changes.pop_back()
-	GlobalLogger.log_text("Playing action: " + str(change))
 	_playback_action(change)
 
 
 func _playback_action(action: LoggedAction)->void:
+	GlobalLogger.log_text("Playing action: " + str(action))
 	match action.type():
 		LoggedAction.Type.Bet: _playback_bet(action as LBetAction)
 		LoggedAction.Type.Cheat: _playback_cheat(action as LCheatAction)
 		LoggedAction.Type.Deal: _playback_deal(action as LDealCardAction)
 		LoggedAction.Type.Round: _playback_round(action as LNewRoundAction)
+		LoggedAction.Type.GameOver: _playback_over(action as LOverAction)
+		LoggedAction.Type.Showdown: _playback_showdown(action as LShowdownAction)
 		_:
 			push_warning("UNKNOWN ACTION TYPE \""+LoggedAction.Type.find_key(action.type())+"\", IGNORING")
 			_next_action.emit()
 
 
-func _playback_round(action: LNewRoundAction)->void:
-	hud.display_info("Round "+str(action.player), DISPLAY_TIME)
+func _playback_showdown(action: LShowdownAction)->void:
 	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+	hud.display_info("Showdown!", DISPLAY_TIME)
+
+
+func _playback_over(action: LOverAction)->void:
+	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_game_over, CONNECT_ONE_SHOT)
+	hud.display_info(str(action), DISPLAY_TIME)
+
+
+func _playback_round(action: LNewRoundAction)->void:
+	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+	hud.display_info("Round "+str(action.player), DISPLAY_TIME)
 
 
 func _playback_deal(action: LDealCardAction) ->void:
@@ -129,8 +145,8 @@ func _playback_next_deal(count: int, players: Array[int])->void:
 
 func _playback_bet(action: LBetAction)->void:
 	if action.player==0:
-		hud.display_info(str(action.bet), DISPLAY_TIME)
 		get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+		hud.display_info(str(action.bet), DISPLAY_TIME)
 		return	
 
 	var sprite: GhostSprite = get_sprite(action.player)
@@ -163,8 +179,8 @@ func _playback_hurt(action: LCheatAction)->void:
 	match action.name:
 		Cheat.Type.CLAIRVOYANCE, Cheat.Type.STINK:
 			if action.target == 0:
-				hud.display_info("ow", DISPLAY_TIME)
 				get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+				hud.display_info("ow", DISPLAY_TIME)
 			else:
 				var sprite: GhostSprite = get_sprite(action.target)
 				sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)

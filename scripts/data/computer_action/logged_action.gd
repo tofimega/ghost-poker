@@ -6,7 +6,9 @@ enum Type {
 	Bet,
 	Cheat,
 	Deal,
-	Round
+	Round,
+	GameOver,
+	Showdown
 }
 
 var player: int
