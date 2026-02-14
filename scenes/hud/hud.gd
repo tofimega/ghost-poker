@@ -19,6 +19,7 @@ extends Control
 
 const CARD_HUD: PackedScene = preload("res://scenes/hud/card_hud/card_hud.tscn")
 
+signal display_finished
 
 func _ready() -> void:
 	animation_player.play("RESET")
@@ -60,11 +61,18 @@ func display_info(message: String, time: float = 1)->void:
 	bet_label.visible=true
 	await get_tree().create_timer(time).timeout
 	bet_label.visible=false
+	display_finished.emit()
 
+
+var deck_size: int
+
+func set_deck()->void:
+	deck.text="Deck: "+str(deck_size)
 
 func update()->void:
 	pool.text="Pot: "+str(PokerEngine.pool)
-	deck.text="Deck: "+str(PokerEngine.deck.size())
+	deck_size=PokerEngine.deck.size()
+	set_deck()
 	highest_bet.text="Highest Bet: "+str(PokerEngine.highest_bet)
 	round.text="Round "+str(PokerEngine.current_turn)
 	pow.modulate_progress(PokerEngine.get_player(0).cheat.charge)

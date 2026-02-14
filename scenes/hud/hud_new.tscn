@@ -347,6 +347,7 @@ theme_override_font_sizes/font_size = 20
 text = "XXXXXXXX"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="Showdown" type="Label" parent="." unique_id=802741447]
 layout_mode = 0

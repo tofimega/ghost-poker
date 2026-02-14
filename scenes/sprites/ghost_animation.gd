@@ -34,11 +34,13 @@ signal action_finished
 
 
 func do_action(action: ActionMode)->void:
+	assert(current_state == AnimationState.IDLE)
 	current_state = AnimationState.ACTION
 	_play("RESET")
 	match action:
 		ActionMode.BET_DEFAULT: _play("bet")
 		ActionMode.BET_ALL_IN: _play("all_in")
+		ActionMode.BET_FROZEN: _play("bet")
 		ActionMode.BET_FOLD: _play("fold")
 		ActionMode.CHEAT: _play("bet")
 		ActionMode.HURT: _play("flinch")
@@ -47,15 +49,16 @@ func do_action(action: ActionMode)->void:
 
 func _on_animation_finished(anim_name: StringName) -> void:
 	if anim_name == "RESET": return
-	if current_state==AnimationState.ACTION:
-		current_state=AnimationState.IDLE
-		action_finished.emit()
+	var from_action: bool = false
+	if current_state==AnimationState.ACTION: from_action = true
+	current_state=AnimationState.IDLE
+		
 
 	if idle_mode == IdleMode.FOLD: return
 	if anim_name == "idle_all_in_start": return
 	
 	_back_to_idle()
-
+	if from_action: action_finished.emit()
 
 
 func _play(anim_name: StringName)->void:

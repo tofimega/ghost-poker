@@ -27,7 +27,6 @@ var pool: int=0
 var game_state: GameState=GameState.CLOSED
 var current_turn: int=-1
 
-
 var _turn_queue: Array[Player] = []
 var empty_deck_flag: bool=false
 
@@ -35,13 +34,10 @@ var player_bets: Dictionary[int, Bet]
 var player_bets_noclear: Dictionary[int, Bet]
 var highest_bet: int = 0
 
-
 var cheats: Array[Cheat] = []
 
 var action_log: Array[LoggedAction] = []
 
-func _ready()->void:
-	pass
 
 enum NextStep {
 	NEW_ROUND,
@@ -76,7 +72,7 @@ func _end_game_eliminated()->GameResult:
 func _end_game_showdown()->GameResult:
 	GlobalLogger.log_text("Showdown!")
 	_push_action(LShowdownAction.new())
-	deal_cards(deck.size())
+	deal_cards(deck.size(), false)
 	var winning_hand: Ranking = players.values().reduce(func(acc: Ranking, player: Player):
 		if !player.in_game: return acc
 		var rank: Ranking=rank_hand(player.hand)
@@ -107,16 +103,25 @@ func _end_game_showdown()->GameResult:
 	_push_action(LOverAction.new(result))
 	return result
 
-func deal_cards(count: int)->void:
+
+func refill_deck()->void:
+	for i in Card.Suit.size():
+		for j in Card.Rank.size():
+			deck.append(Card.new(i,j))
+
+
+func deal_cards(count: int, refill: bool=true)->void:
+	var p: Array[Player] = players.values().filter(func (f: Player)->bool: return f.in_game)
+	var c: int = 0
 	for i in count:
-		for player: Player in players.values():
-			if !player.in_game: return
+		for player: Player in p:
 			if deck.is_empty():
-				#deck_empty.emit()
-				return
+				if refill: refill_deck()
+				else: break
+			c+=1
 			player.hand.append(deck.pop_back())
-	_push_action(LDealCardAction.new(count))
-	
+	_push_action(LDealCardAction.new(c/p.size()))
+
 
 func current_player_count()->int:
 	return players.values().reduce(func(acc, player):
@@ -152,9 +157,11 @@ func start_next_round()->void:
 
 
 func _process_round()->void:
-	assert(!_turn_queue.is_empty())
-	_process_queue()
-	if _turn_queue.is_empty():
+
+	if _process_queue(): 
+		FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
+		FrontendManager.get_game_scene().update_scene_state(action_log)
+	else:
 		_final_bet()
 		var next_step: NextStep = _next_step()
 		match next_step:
@@ -168,8 +175,7 @@ func _process_round()->void:
 				_end_game_eliminated()
 				FrontendManager.get_game_scene().update_scene_state(action_log, false)
 		return
-	FrontendManager.front_end_updated.connect(_process_round, CONNECT_ONE_SHOT)
-	FrontendManager.get_game_scene().update_scene_state(action_log)
+	
 
 
 func handle_user_input(user_bet: Bet)->void:
@@ -183,12 +189,13 @@ func _push_action(a: LoggedAction)->void:
 	GlobalLogger.log_text("New action: "+ str(a))
 
 
-func _process_queue()->void:
+func _process_queue()->bool:
 	while !_turn_queue.is_empty():
 		var player: Player = _turn_queue.pop_front()
 		assert(_can_player_move(player))
-		if player.controller.is_human(): return #func outside handles front-end stuff, front-end plays animations of computer moves (sent via queue), takes user input, handles bet, signals back, back-end calls function again
+		if player.controller.is_human(): return true #func outside handles front-end stuff, front-end plays animations of computer moves (sent via queue), takes user input, handles bet, signals back, back-end calls function again
 		_handle_player_bet(player)
+	return false
 
 
 func _final_bet()->void:
@@ -273,9 +280,7 @@ func _init_game_state()->void:
 	GlobalLogger.log_text("Initializing game state...")
 	current_turn=0
 	GlobalLogger.log_text("Turn count initialized")
-	for i in Card.Suit.size():
-		for j in Card.Rank.size():
-			deck.append(Card.new(i,j))
+	refill_deck()
 	empty_deck_flag=false
 	action_log.clear()
 	GlobalLogger.log_text("Deck created")
@@ -294,7 +299,7 @@ func _init_game_state()->void:
 		players[i].controller = PlayerController.new(players[i]) if i !=0 else UserPlayerController.new(players[i])
 		players[i].cheat = cheats[i]
 		cheats[i].player=i
-	
+	FrontendManager.new_info.emit()
 	deal_cards(STARING_HAND_SIZE)
 	for p: Player in players.values():
 		
@@ -305,6 +310,7 @@ func _init_game_state()->void:
 	
 	game_state=GameState.RUNNING
 	GlobalLogger.log_text("Game Opened")
+
 
 
 func new_game()->void:

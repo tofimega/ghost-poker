@@ -113,17 +113,17 @@ func _playback_action(action: LoggedAction)->void:
 
 
 func _playback_showdown(action: LShowdownAction)->void:
-	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+	hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 	hud.display_info("Showdown!", DISPLAY_TIME)
 
 
 func _playback_over(action: LOverAction)->void:
-	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_game_over, CONNECT_ONE_SHOT)
-	hud.display_info(str(action), DISPLAY_TIME)
+	hud.display_finished.connect(_game_over, CONNECT_ONE_SHOT)
+	hud.display_info(str(action._result), DISPLAY_TIME)
 
 
 func _playback_round(action: LNewRoundAction)->void:
-	get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+	hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 	hud.display_info("Round "+str(action.player), DISPLAY_TIME)
 
 
@@ -145,7 +145,7 @@ func _playback_next_deal(count: int, players: Array[int])->void:
 
 func _playback_bet(action: LBetAction)->void:
 	if action.player==0:
-		get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+		hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 		hud.display_info(str(action.bet), DISPLAY_TIME)
 		return	
 
@@ -179,7 +179,7 @@ func _playback_hurt(action: LCheatAction)->void:
 	match action.name:
 		Cheat.Type.CLAIRVOYANCE, Cheat.Type.STINK:
 			if action.target == 0:
-				get_tree().create_timer(DISPLAY_TIME).timeout.connect(_next_action.emit, CONNECT_ONE_SHOT)
+				hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 				hud.display_info("ow", DISPLAY_TIME)
 			else:
 				var sprite: GhostSprite = get_sprite(action.target)
@@ -204,6 +204,8 @@ func anim_deal_card(player: int)->Tween:
 	const duration :float = 0.3
 	
 	card_back.visible=true
+	hud.deck_size-=1
+	hud.set_deck()
 	move_tween.tween_property(card_back, "global_position", markers[player].global_position, duration)\
 	.set_ease(ease_type).set_trans(transition_type)
 	
