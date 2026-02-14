@@ -1,8 +1,6 @@
 class_name UserInput
 extends Control
 
-signal user_bet(bet: Bet)
-
 # show-only
 @onready var current_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/CurrentChips
 @onready var remaining_chips: Label = $VBoxContainer/HBoxContainer/ChipCount/RemainingChips
@@ -30,26 +28,9 @@ var enabled: bool = false:
 		_update_text(true)
 		input_enabled.emit(e)
 
+
 func _ready()->void:
 	_update_text(true)
-
-
-func _on_fold_pressed() -> void:
-	user_bet.emit(Bet.new(0,Bet.Type.FOLD))
-
-
-func _on_bet_pressed() -> void:
-	#TODO: show confirmation or error popups as needed
-	_update_text(false)
-	var bet: int = bet_amount.value
-	if bet > PokerEngine.players[player_id].chips: return
-	if bet < PokerEngine.highest_bet and bet <PokerEngine.players[player_id].chips: return
-	
-	var rt: Bet
-	if bet==PokerEngine.players[player_id].chips: rt = Bet.new(bet, Bet.Type.ALL_IN)
-	elif bet > PokerEngine.highest_bet: rt = Bet.new(bet, Bet.Type.RAISE)
-	else: rt = Bet.new(bet, Bet.Type.CALL)
-	user_bet.emit(rt)
 
 
 func _on_bet_amount_value_changed(value: float) -> void:

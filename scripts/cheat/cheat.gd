@@ -1,12 +1,20 @@
+@abstract
 class_name Cheat
 extends Object
 
-#TODO: allow cheats to be "hidden" so that animation doesn't play
+
+enum Type {
+	CLAIRVOYANCE,
+	STINK,
+	FREEZE,
+	WILDCARD
+}
+
 
 var charge: float = 0:
 	set(c):
 		charge=clamp(c,0,1.1)
-		FrontendManager.get_hud().update()
+		
 
 var player: int = -1:
 	set(p):
@@ -14,42 +22,20 @@ var player: int = -1:
 		PokerEngine.player_bet.connect(_boost_charge)
 		player=p
 		
-var offense: bool = true
+func offense()->bool: return true
 
-var _name: String= ""
+@abstract func name() -> Type
 
 func _boost_charge(p: int, bet: Bet)->void:
 	if p!=player: return
 	if bet.type==Bet.Type.FOLD: return
 	charge+=1.1
-	
-
-func play_anim(target: int=-1)->void:
-	if !offense: target = -1
-	PokerEngine.player_cheat.emit(player, target, _name)
 
 
-func computer(target: int)->float:
+func execute(target: int)->float:
 	if charge <1 : return 1
 	charge=0
-	play_anim(target)
 	GlobalLogger.log_text("\tSufficient charge")
-	return _computer(target)
-
-
-func user(target: int)->void:
-	if charge <1: return
-	charge=0
-	play_anim(target)
-	GlobalLogger.log_text("\tSufficient charge")
-	_user(target)
-
-
-func _computer(target: int)-> float:
-	GlobalLogger.log_text("\tCheat not implemented, default: 1")
-	return 1
-
-
-func _user(target: int) -> void:
-	GlobalLogger.log_text("\tCheat not implemented")
-	pass
+	return _execute(target)
+	
+@abstract func _execute(target: int)

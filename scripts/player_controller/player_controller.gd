@@ -36,15 +36,22 @@ func _select_target()->int:
 	others.shuffle()
 	return others[0]
 
-#TODO: make players randomly choose to not cheat
+
 var early_result: float=0
 func use_early_cheat()->bool:
 	if !PokerEngine._can_player_move(player): return false
+	if randi_range(0,1): return false
 	if player.cheat.charge<1:  return false
 	var target: int = _select_target()
 	if target <0: return false
-	early_result = player.cheat.computer(target)
+	early_result = cheat(target)
 	return true
+
+
+func cheat(target: int)->float:
+	if player.cheat.charge < 1: return 1
+	PokerEngine._push_action(LCheatAction.new(player.id, target, player.cheat.name()))
+	return player.cheat.execute(target)
 
 
 func find_odds()->float:
@@ -97,7 +104,7 @@ func find_odds()->float:
 		GlobalLogger.log_text("Using cheat power...")
 		var target: int = _select_target()
 		if target <0: GlobalLogger.log_text("No available targets...")
-		else: rt*= player.cheat.computer(target)
+		else: rt*= cheat(target)
 	GlobalLogger.log_text("Confidence after cheat: "+str(rt))
 
 	rt=clamp(rt,0,1)
@@ -125,13 +132,13 @@ var conf_last_turn: float = -1325
 var forced_all_in: bool = false
 
 
-func my_turn() -> void:
+func bet() -> Bet:
 	if player == null or !player.in_game: return
 	forced_all_in=false
 	GlobalLogger.log_text("PLAYER "+str(player.id)+"'S TURN!" + " (chips: "+str(player.chips)+")")
 	GlobalLogger.log_text(" ")
 	
-	var confidence: float = await find_odds()
+	var confidence: float =  find_odds()
 	
 	GlobalLogger.log_text("player "+str(player.id)+"'s confidence: "+ str(confidence))
 	conf_last_turn = confidence
@@ -139,19 +146,17 @@ func my_turn() -> void:
 	GlobalLogger.log_text("player "+str(player.id)+" considers going ALL IN... "+" (threshold: " + str(ALL_IN_THRESHOLD) + ")")
 	if confidence >= ALL_IN_THRESHOLD:
 		GlobalLogger.log_text("player "+str(player.id)+" goes ALL IN!")
-		PokerEngine.player_bet.emit(player.id, Bet.new(player.chips, Bet.Type.ALL_IN))
-		return
+		return Bet.new(player.chips, Bet.Type.ALL_IN)
 	
 	if player.chips <= PokerEngine.highest_bet or player.chips==0:
 		GlobalLogger.log_text("player "+str(player.id)+" has insufficient chips, considering going ALL IN... "+ "(threshold: " + str(CALL_THRESHOLD*FORCED_ALL_IN_MULT) + ")")
 		if confidence >= CALL_THRESHOLD*FORCED_ALL_IN_MULT:
 			GlobalLogger.log_text("player "+str(player.id)+" goes ALL IN!")
 			forced_all_in=true
-			PokerEngine.player_bet.emit(player.id, Bet.new(player.chips, Bet.Type.ALL_IN))
-			return
+			return Bet.new(player.chips, Bet.Type.ALL_IN)
+
 		GlobalLogger.log_text("player "+str(player.id)+" FOLDS!")
-		PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
-		return
+		return Bet.new(0, Bet.Type.FOLD)
 
 	GlobalLogger.log_text("player "+str(player.id)+" considers RAISING... "+" (threshold: " + str(RAISE_THRESHOLD) + ")")
 	if confidence >= RAISE_THRESHOLD:
@@ -162,26 +167,21 @@ func my_turn() -> void:
 			
 			if confidence >= RAISE_THRESHOLD*FORCED_ALL_IN_MULT: 
 				GlobalLogger.log_text("player "+str(player.id)+" goes ALL IN!")
-				PokerEngine.player_bet.emit(player.id, Bet.new(amount, Bet.Type.ALL_IN))
-				return
+				return Bet.new(amount, Bet.Type.ALL_IN)
 				
 			GlobalLogger.log_text("player "+str(player.id)+" CALLS instead!")
-			PokerEngine.player_bet.emit(player.id, Bet.new(PokerEngine.highest_bet, Bet.Type.CALL))
-			return
+			return Bet.new(PokerEngine.highest_bet, Bet.Type.CALL)
 		
 		GlobalLogger.log_text("player "+str(player.id)+" RAISES!")
-		PokerEngine.player_bet.emit(player.id, Bet.new(amount, Bet.Type.RAISE))
-		return
+		return Bet.new(amount, Bet.Type.RAISE)
 	
 	GlobalLogger.log_text("player "+str(player.id)+" considers CALLING... "+" (threshold: " + str(CALL_THRESHOLD) + ")")
 	if confidence >= CALL_THRESHOLD:
 		GlobalLogger.log_text("player "+str(player.id)+" CALLS!")
-		PokerEngine.player_bet.emit(player.id, Bet.new(PokerEngine.highest_bet, Bet.Type.CALL))
-		return
+		return Bet.new(PokerEngine.highest_bet, Bet.Type.CALL)
 		
 	GlobalLogger.log_text("player "+str(player.id)+" FOLDS!")
-	PokerEngine.player_bet.emit(player.id, Bet.new(0, Bet.Type.FOLD))
-	return
+	return Bet.new(0, Bet.Type.FOLD)
 
 func is_human()->bool:
 	return false
