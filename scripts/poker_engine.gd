@@ -228,7 +228,7 @@ func _handle_player_bet(p: Player)->void:
 		return
 	
 	if bet.type==bet.Type.ALL_IN: p.all_in=true
-
+	_push_action(LBetAction.new(id, bet, p.frozen))
 	player_bets[id] = bet
 	player_bets_noclear[id] = bet
 	var prev_highest: int = highest_bet
@@ -236,7 +236,7 @@ func _handle_player_bet(p: Player)->void:
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest: _expand_turn_queue(p)
-	_push_action(LBetAction.new(id, bet, p.frozen))
+	
 	player_bet.emit(p.id, bet)
 
 
