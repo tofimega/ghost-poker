@@ -232,7 +232,7 @@ func _handle_player_bet(p: Player)->void:
 	player_bets[id] = bet
 	player_bets_noclear[id] = bet
 	var prev_highest: int = highest_bet
-	if !p.frozen: highest_bet=max(bet.amount, highest_bet)
+	if !p.frozen: highest_bet=maxi(bet.amount, highest_bet)
 	else: p.frozen=false
 	
 	if highest_bet>prev_highest: _expand_turn_queue(p)
