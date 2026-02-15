@@ -54,10 +54,9 @@ func _on_animation_finished(anim_name: StringName) -> void:
 	current_state=AnimationState.IDLE
 		
 
-	if idle_mode == IdleMode.FOLD: return
-	if anim_name == "idle_all_in_start": return
+	if not (idle_mode == IdleMode.FOLD or anim_name == "idle_all_in_start"):
+		_back_to_idle()
 	
-	_back_to_idle()
 	if from_action: action_finished.emit()
 
 
