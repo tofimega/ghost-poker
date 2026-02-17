@@ -87,10 +87,16 @@ func _refresh_hand(hand: HandCont, player: int)->void:
 		for i in PokerEngine.get_player(0).hand.size():
 			hand.add_child(CARD_HUD.instantiate())
 		return
+	
+	var chs: Array[CardHUD]
 	for c in PokerEngine.get_player(player).hand:
 		var ch: CardHUD = CARD_HUD.instantiate()
 		ch.card=c
-		hand.add_child(ch)
+		chs.append(ch)
+
+	chs.sort_custom(func (a: CardHUD, b: CardHUD): return a.card.suit > b.card.suit)
+	chs.sort_custom(func (a: CardHUD, b: CardHUD): return a.card.rank > b.card.rank)
+	for ch: CardHUD in chs: hand.add_child(ch)
 
 
 const PLAYER_HAND_ON_POSITION: Vector2 = Vector2(120, 171)
