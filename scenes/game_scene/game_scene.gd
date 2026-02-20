@@ -129,6 +129,12 @@ func _playback_round(action: LNewRoundAction)->void:
 
 func _playback_deal(action: LDealCardAction) ->void:
 	var players: Array[int] = PokerEngine.players.keys().filter(func (i: int)->bool: return PokerEngine.get_player(i).in_game)
+	if players.has(1) and !players.has(3):
+		players[players.find(1)]=3 #ANIMAION FIX: make sure the card goes to the right marker
+		players.insert(1,players.pop_at(players.find(1))) #fix order of markers
+	elif players.has(3) and !players.has(1): 
+		players[players.find(3)]=1
+		players.insert(1,players.pop_at(players.find(1)))
 	var count = action.player *players.size()
 	_playback_next_deal(count, players)
 
