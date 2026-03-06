@@ -188,9 +188,13 @@ func _playback_hurt(action: LCheatAction)->void:
 				hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 				hud.display_info("ow", DISPLAY_TIME)
 			else:
+				var type: String = "new"
+				match action.name:
+					Cheat.Type.CLAIRVOYANCE: pass #type = clair
+					Cheat.Type.STINK: pass #type = stink
 				var sprite: GhostSprite = get_sprite(action.target)
 				sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
-				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT)
+				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT, type)
 		_: pass
 
 

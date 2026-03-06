@@ -226,6 +226,66 @@ tracks/17/keys = {
 "update": 1,
 "values": [-2.0]
 }
+tracks/18/type = "value"
+tracks/18/imported = false
+tracks/18/enabled = true
+tracks/18/path = NodePath(".:modulate")
+tracks/18/interp = 1
+tracks/18/loop_wrap = true
+tracks/18/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("Eyes:offset")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/20/type = "value"
+tracks/20/imported = false
+tracks/20/enabled = true
+tracks/20/path = NodePath("Hands/Cards:offset")
+tracks/20/interp = 1
+tracks/20/loop_wrap = true
+tracks/20/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/21/type = "value"
+tracks/21/imported = false
+tracks/21/enabled = true
+tracks/21/path = NodePath("Hands/HandL:offset")
+tracks/21/interp = 1
+tracks/21/loop_wrap = true
+tracks/21/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/22/type = "value"
+tracks/22/imported = false
+tracks/22/enabled = true
+tracks/22/path = NodePath("Hands/HandR:offset")
+tracks/22/interp = 1
+tracks/22/loop_wrap = true
+tracks/22/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_ajv5v"]
 resource_name = "all_in"
@@ -306,6 +366,118 @@ tracks/1/keys = {
 "values": [Vector2(-1, -1), Vector2(1, -1)]
 }
 
+[sub_resource type="Animation" id="Animation_fudoy"]
+resource_name = "bet_freeze"
+length = 1.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hands/HandL:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.151144, 0.199096, 0.249955, 0.3, 0.348795, 0.400293, 0.99675405, 1.0967541, 1.163421),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-2, 4.76837e-07), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-20, -23), Vector2(-23, -23), Vector2(-23, -23), Vector2(-17, -6), Vector2(-2, 4.76837e-07)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hands/HandL:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.0967541),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(-1, -1), Vector2(1, -1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:modulate")
+tracks/2/interp = 0
+tracks/2/loop_wrap = false
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.39999998, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.5531263, 0.80732965, 1, 1), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:offset")
+tracks/3/interp = 0
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.40084675, 0.42756987, 0.4515656, 0.4782887, 0.5046037, 0.5313268, 0.55648875, 0.5832119, 0.6, 0.6267232, 0.6666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Eyes:texture")
+tracks/4/interp = 0
+tracks/4/loop_wrap = false
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.40439075, 1.0024334),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [ExtResource("3_48iy0"), ExtResource("6_e5mws"), ExtResource("3_48iy0")]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Eyes:offset")
+tracks/5/interp = 0
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.43074387, 0.457467, 0.4814627, 0.50818586, 0.53450084, 0.56122386, 0.58638585, 0.613109, 0.6298971, 0.65662026, 0.69656384, 1.0021169),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-5, 1), Vector2(4, 1), Vector2(-3, 1), Vector2(2.5, 1), Vector2(-1, 1), Vector2(0.75, 1), Vector2(-0.5, 1), Vector2(0.25, 1), Vector2(-0.1, 1), Vector2(0.05, 1), Vector2(0, 1), Vector2(0, 0)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Hands/Cards:offset")
+tracks/6/interp = 0
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.41844976, 0.44517288, 0.46916863, 0.49589172, 0.52220666, 0.5489298, 0.5740918, 0.60081494, 0.61760306, 0.6443262, 0.68426967),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Hands/HandL:offset")
+tracks/7/interp = 0
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.41763487, 0.444358, 0.46835372, 0.49507684, 0.5213918, 0.5481149, 0.5732769, 0.6, 0.61678815, 0.6435113, 0.6834548),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("Hands/HandR:offset")
+tracks/8/interp = 0
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.41844976, 0.44517288, 0.46916863, 0.49589172, 0.52220666, 0.5489298, 0.5740918, 0.60081494, 0.61760306, 0.6443262, 0.68426967),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+
 [sub_resource type="Animation" id="Animation_kclr6"]
 resource_name = "cheat"
 tracks/0/type = "value"
@@ -333,6 +505,82 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(-7.42, 0), Vector2(2.89, 0), Vector2(-2.325, 0), Vector2(1.225, 0), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_5k4if"]
+resource_name = "flinch_new"
+length = 1.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:offset")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.039943554, 0.06666667, 0.0906624, 0.117385514, 0.14370048, 0.17042357, 0.19558555, 0.2223087, 0.23909682, 0.26581997, 0.30576348),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Eyes:texture")
+tracks/1/interp = 0
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0.043487556, 0.6415302),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("6_e5mws"), ExtResource("3_48iy0")]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Eyes:offset")
+tracks/2/interp = 0
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.06984068, 0.09656379, 0.12055949, 0.14728266, 0.17359763, 0.20032066, 0.22548264, 0.2522058, 0.2689939, 0.29571706, 0.33566064, 0.6412137),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5, 1), Vector2(4, 1), Vector2(-3, 1), Vector2(2.5, 1), Vector2(-1, 1), Vector2(0.75, 1), Vector2(-0.5, 1), Vector2(0.25, 1), Vector2(-0.1, 1), Vector2(0.05, 1), Vector2(0, 1), Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Hands/Cards:offset")
+tracks/3/interp = 0
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.057546563, 0.08426968, 0.10826544, 0.13498852, 0.16130346, 0.1880266, 0.21318859, 0.23991174, 0.25669986, 0.283423, 0.32336646),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Hands/HandL:offset")
+tracks/4/interp = 0
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.05673168, 0.083454795, 0.10745052, 0.13417363, 0.1604886, 0.18721169, 0.21237367, 0.23909682, 0.25588495, 0.2826081, 0.3225516),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Hands/HandR:offset")
+tracks/5/interp = 0
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.057546563, 0.08426968, 0.10826544, 0.13498852, 0.16130346, 0.1880266, 0.21318859, 0.23991174, 0.25669986, 0.283423, 0.32336646),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-5, 0), Vector2(4, 0), Vector2(-3, 0), Vector2(2.5, 0), Vector2(-1, 0), Vector2(0.75, 0), Vector2(-0.5, 0), Vector2(0.25, 0), Vector2(-0.1, 0), Vector2(0.05, 0), Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_satjj"]
@@ -852,8 +1100,10 @@ _data = {
 &"RESET": SubResource("Animation_48iy0"),
 &"all_in": SubResource("Animation_ajv5v"),
 &"bet": SubResource("Animation_e5mws"),
+&"bet_freeze": SubResource("Animation_fudoy"),
 &"cheat": SubResource("Animation_kclr6"),
 &"flinch": SubResource("Animation_a66qs"),
+&"flinch_new": SubResource("Animation_5k4if"),
 &"fold": SubResource("Animation_satjj"),
 &"idle_all_in": SubResource("Animation_h2buo"),
 &"idle_all_in_start": SubResource("Animation_55qcu"),

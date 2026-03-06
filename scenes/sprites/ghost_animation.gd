@@ -33,17 +33,17 @@ var current_state: AnimationState = AnimationState.IDLE
 signal action_finished
 
 
-func do_action(action: ActionMode)->void:
+func do_action(action: ActionMode, hurt_type: String = "new")->void:
 	assert(current_state == AnimationState.IDLE)
 	current_state = AnimationState.ACTION
 	_play("RESET")
 	match action:
 		ActionMode.BET_DEFAULT: _play("bet")
 		ActionMode.BET_ALL_IN: _play("all_in")
-		ActionMode.BET_FROZEN: _play("bet")
+		ActionMode.BET_FROZEN: _play("bet_freeze")
 		ActionMode.BET_FOLD: _play("fold")
 		ActionMode.CHEAT: _play("bet")
-		ActionMode.HURT: _play("flinch")
+		ActionMode.HURT: _play("flinch_"+hurt_type)
 		_: action_finished.emit()
 
 
