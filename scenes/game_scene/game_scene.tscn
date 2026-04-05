@@ -18,6 +18,11 @@ rotation = 3.14159
 scale = Vector2(1, -1)
 id = 1
 
+[node name="Label" parent="Objects/Ghost" index="2" unique_id=1932404719]
+offset_left = 18.0
+offset_right = 58.0
+scale = Vector2(-1, 1)
+
 [node name="Button" type="Button" parent="Objects/Ghost" unique_id=1330323062]
 top_level = true
 offset_left = 43.0
@@ -30,6 +35,10 @@ flat = true
 [node name="Ghost2" parent="Objects" unique_id=278175455 instance=ExtResource("1_72663")]
 position = Vector2(163, 110)
 id = 2
+
+[node name="Label" parent="Objects/Ghost2" index="2" unique_id=1932404719]
+offset_top = -59.0
+offset_bottom = -51.0
 
 [node name="Button" type="Button" parent="Objects/Ghost2" unique_id=466632478]
 top_level = true
@@ -77,3 +86,7 @@ position = Vector2(162, 97)
 
 [node name="P3" type="Marker2D" parent="." unique_id=1270837561]
 position = Vector2(256, 118)
+
+[editable path="Objects/Ghost"]
+[editable path="Objects/Ghost2"]
+[editable path="Objects/Ghost3"]

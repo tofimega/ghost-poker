@@ -177,6 +177,8 @@ func _playback_cheat(action: LCheatAction)->void:
 	sprite.display_info(Cheat.Type.find_key(action.name))
 	if action.name == Cheat.Type.CLAIRVOYANCE or action.name ==Cheat.Type.STINK: sprite.animation_player.action_finished.connect(func (): _playback_hurt(action), CONNECT_ONE_SHOT)
 	else: sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
+	match action.name:
+		_:pass #TODO: different cheat anims
 	sprite.animation_player.do_action(GhostAnim.ActionMode.CHEAT)
 
 
@@ -188,13 +190,10 @@ func _playback_hurt(action: LCheatAction)->void:
 				hud.display_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
 				hud.display_info("ow", DISPLAY_TIME)
 			else:
-				var type: String = "new"
-				match action.name:
-					Cheat.Type.CLAIRVOYANCE: pass #type = clair
-					Cheat.Type.STINK: pass #type = stink
+				
 				var sprite: GhostSprite = get_sprite(action.target)
 				sprite.animation_player.action_finished.connect(_next_action.emit, CONNECT_ONE_SHOT)
-				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT, type)
+				sprite.animation_player.do_action(GhostAnim.ActionMode.HURT)
 		_: pass
 
 

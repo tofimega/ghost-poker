@@ -29,7 +29,11 @@ func offense()->bool: return true
 func _boost_charge(p: int, bet: Bet)->void:
 	if p!=player: return
 	if bet.type==Bet.Type.FOLD: return
-	charge+=1.1
+	
+	match bet.type:
+		Bet.Type.CALL: charge+= .2
+		Bet.Type.ALL_IN: charge+= .8
+		Bet.Type.RAISE: charge += .5
 
 
 func execute(target: int)->float:

@@ -10,6 +10,8 @@ extends Control
 @onready var target_hand: HandCont = $TargetHand
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var label_anim: AnimationPlayer = %AnimationPlayer
+
 
 @onready var pow: CheatProgress = $CheatProgress
 @onready var bet_label: Label = $Bet
@@ -25,7 +27,7 @@ func _ready() -> void:
 	animation_player.play("RESET")
 	toggle_hud(false)
 	target_hand.visible=false
-	bet_label.visible=false
+	label_anim.play("RESET")
 	showdown_label.visible=false
 	user_input.enabled=true
 	FrontendManager.new_info.connect(update)
@@ -57,10 +59,11 @@ func show_down(cause: bool)->void:
 
 
 func display_info(message: String, time: float = 1)->void:
+	label_anim.play("RESET")
 	bet_label.text=message
-	bet_label.visible=true
+	label_anim.play("show")
 	await get_tree().create_timer(time).timeout
-	bet_label.visible=false
+	
 	display_finished.emit()
 
 
